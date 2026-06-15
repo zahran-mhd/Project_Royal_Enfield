@@ -1,0 +1,112 @@
+# core/app_context.py
+
+from models.data_model import DataModel
+from models.app_state import AppState
+from models.test_session import TestSession
+
+
+class AppContext:
+
+    def __init__(self):
+
+        # ==================================
+        # RUNTIME MODELS
+        # ==================================
+
+        self.data_model = DataModel()
+
+        self.app_state = AppState()
+
+        self.test_session = TestSession()
+
+        # ==================================
+        # CONFIGURATION MODELS
+        # ==================================
+
+        self.instrument_config = None
+
+        self.user_config = None
+
+        self.test_settings = None
+
+        self.threshold_settings = None
+
+        # ==================================
+        # DATABASE
+        # ==================================
+
+        self.db = None
+
+        # ==================================
+        # REPOSITORIES
+        # ==================================
+
+        self.user_repo = None
+
+        self.instrument_repo = None
+
+        self.settings_repo = None
+
+        self.threshold_repo = None
+
+        self.result_repo = None
+
+        # ==================================
+        # SERVICES
+        # ==================================
+
+        self.logger = None
+
+        self.alarm_service = None
+
+        self.report_service = None
+
+        self.csv_service = None
+
+        # ==================================
+        # INSTRUMENTS
+        # ==================================
+
+        self.asr3400 = None
+
+        self.rp5935a = None
+
+        self.el34243a = None
+
+        self.el4913a = None
+
+        self.pw3337 = None
+
+        self.daq970a = None
+
+        # ==================================
+        # INSTRUMENT MANAGER
+        # ==================================
+
+        self.instrument_manager = None
+
+        # ==================================
+        # CONTROLLERS
+        # ==================================
+
+        self.login_controller = None
+
+        self.settings_controller = None
+
+        self.test_controller = None
+
+        self.graph_controller = None
+
+        self.opentap_controller = None
+
+        # ==================================
+        # GUI REFERENCES (OPTIONAL)
+        # ==================================
+
+        self.root = None
+
+        self.main_window = None
+
+        self.graph_window = None
+
+        self.settings_window = None

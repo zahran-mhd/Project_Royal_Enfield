@@ -1,6 +1,6 @@
 import sqlite3
 from pathlib import Path
-from repositories.user_repository import UserRepository
+from database.repositories.user_repository import UserRepository
 
 
 class DatabaseManager:
@@ -56,7 +56,7 @@ class DatabaseManager:
         (
             ChannelID INTEGER PRIMARY KEY,
 
-            ChannelName UNIQUE TEXT
+              ChannelName TEXT UNIQUE
 
         )
         """)
@@ -188,7 +188,7 @@ class DatabaseManager:
 
         cursor.execute("""
 
-        CREATE TABLE AlarmSettings
+        CREATE TABLE IF NOT EXISTS AlarmSettings
         (
             AlarmID INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -271,8 +271,8 @@ class DatabaseManager:
             """
             INSERT OR IGNORE INTO Channel
             (
-                Channel_id,
-                Channel_name
+                  ChannelID,
+        ChannelName
             )
             VALUES (?, ?)
             """,

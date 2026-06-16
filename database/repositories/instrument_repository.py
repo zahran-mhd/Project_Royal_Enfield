@@ -1,4 +1,4 @@
-from models.instrument_config import InstrumentConfig
+from models.instrument_data import InstrumentData
 
 
 class InstrumentRepository:
@@ -11,7 +11,7 @@ class InstrumentRepository:
     # ADD INSTRUMENT
     # ------------------------------------------------
 
-    def add(self, instrument: InstrumentConfig):
+    def add(self, instrument: InstrumentData):
 
         cursor = self.db.conn.cursor()
 
@@ -65,6 +65,7 @@ class InstrumentRepository:
             )
 
         self.db.commit()
+        print(f"Inserted Instrument ID: {instrument_id}")
 
         return instrument_id
 
@@ -72,7 +73,7 @@ class InstrumentRepository:
     # UPDATE INSTRUMENT
     # ------------------------------------------------
 
-    def update(self, instrument: InstrumentConfig):
+    def update(self, instrument: InstrumentData):
 
         cursor = self.db.conn.cursor()
 
@@ -195,7 +196,7 @@ class InstrumentRepository:
         for row in rows:
 
             instruments.append(
-                InstrumentConfig(
+                InstrumentData(
                     instrument_id=row["InstrumentID"],
                     sno=row["Sno"],
                     instrument_name=row["InstrumentName"],
@@ -252,7 +253,7 @@ class InstrumentRepository:
         if row is None:
             return None
 
-        return InstrumentConfig(
+        return InstrumentData(
             instrument_id=row["InstrumentID"],
             sno=row["Sno"],
             instrument_name=row["InstrumentName"],
@@ -279,3 +280,13 @@ class InstrumentRepository:
         )
 
         return cursor.fetchone()
+    
+    
+    def get_next_sno(self):
+        cursor = self.db.conn.cursor()
+
+        cursor.execute(
+            "SELECT COALESCE(MAX(Sno), 0) + 1 AS NextSno FROM Instruments"
+        )
+
+        return cursor.fetchone()["NextSno"]

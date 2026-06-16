@@ -19,6 +19,7 @@ class DatabaseManager:
         self.create_tables()
         self.create_default_users()
         self.create_default_channels()
+        # self.create_default_alarms()
 
     # --------------------------------------------------
     # CREATE TABLES
@@ -181,6 +182,28 @@ class DatabaseManager:
         #     AlarmLimit REAL
         # )
         # """)
+        # ==========================================
+        # ALARM SETTINGS
+        # ==========================================
+
+        cursor.execute("""
+
+        CREATE TABLE AlarmSettings
+        (
+            AlarmID INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            AlarmName TEXT UNIQUE NOT NULL,
+
+            IsEnabled INTEGER NOT NULL DEFAULT 1,
+
+            MinValue REAL,
+
+            MaxValue REAL,
+
+            AlarmType TEXT NOT NULL
+                CHECK (AlarmType IN ('Critical', 'Warning'))
+        )
+        """)
 
         # # ==========================================
         # # AUDIT LOG
@@ -259,4 +282,34 @@ class DatabaseManager:
             ]
         )
 
+        self.conn.commit()
+
+    def create_default_alarms(self):
+
+        cursor = self.conn.cursor()
+
+        cursor.executemany(
+            """
+            INSERT OR IGNORE INTO AlarmSettings
+        (AlarmName)
+        VALUES(?)
+            """,
+            [
+        ('Input Under Voltage'),
+
+        ('Output Under Voltage'),
+
+        ('Input Over Voltage'),
+
+        ('Output Over Voltage'),
+
+        ('OBC Over Current Protection'),
+
+        ('OBC Short Current Protection'),
+
+        ('HP DCDC Over Current Protection'),
+
+        ('HP DCDC Short Current Protection')
+            ]
+        )
         self.conn.commit()

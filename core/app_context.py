@@ -41,9 +41,9 @@ class AppContext:
         # REPOSITORIES
         # ==================================
 
-        self.user_repo = None
+        self.user_repository = None
 
-        self.instrument_repo = None
+        self.instrument_repository = None
 
         self.settings_repo = None
 

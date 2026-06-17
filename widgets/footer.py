@@ -2,11 +2,11 @@ import tkinter as tk
 
 class Footer(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,app):
         super().__init__(parent, bg="#173A8F", height=80)
 
         self.pack_propagate(False)
-
+        self.app=app
         
 
         center = tk.Frame(self, bg="#173A8F")
@@ -36,5 +36,5 @@ class Footer(tk.Frame):
             widget.destroy()
 
         # Open Home Screen
-        home = HomeScreen(root)
+        home = HomeScreen(root,self.app)
         home.pack(fill="both", expand=True)

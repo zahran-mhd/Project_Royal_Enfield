@@ -20,14 +20,17 @@ from controllers.app_controller import AppController
 
 class MenuWindow(tk.Frame):
 
-    def __init__(self,parent):
+    def __init__(self,parent,app):
         super().__init__(parent)
 
         
         self.configure(bg="white")
+        self.app = app
+
+        self.controller = app.app_controller
 
         # ================= Controller =================
-        self.controller = AppController()
+        # self.controller = AppController()
 
         # ================= Header =================
         self.header = Header(self)
@@ -50,7 +53,7 @@ class MenuWindow(tk.Frame):
         self.sub_header.pack(side="top", fill="x")
 
         # ================= Footer =================
-        self.footer = Footer(right_frame)
+        self.footer = Footer(right_frame,self.app)
         self.footer.pack(side="bottom", fill="x")
 
         # ================= Content Area =================

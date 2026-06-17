@@ -2,13 +2,15 @@ import tkinter as tk
 
 class HomeSidebar(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent, app):
 
         super().__init__(
             parent,
             bg="#1f2937",
             width=250
         )
+
+        self.app = app
         self.parent = parent
 
         self.pack_propagate(False)
@@ -42,6 +44,7 @@ class HomeSidebar(tk.Frame):
             bg="#16a34a",
             fg="white",
             font=("Arial", 12, "bold"),
+            command=self.open_menu,
             relief="flat"
         )
         self.login_btn.pack(
@@ -51,16 +54,71 @@ class HomeSidebar(tk.Frame):
             pady=15,
             ipady=10
         )
-        
-    def open_menu(self):
 
-        from views.menu_window import MenuWindow
+    def open_menu(self):
 
         root = self.winfo_toplevel()
 
-        # Remove HomeScreen
+        # Login only once
+        if not self.app.app_state.logged_in:
+
+            from views.login_dialog import LoginDialog
+
+            login = LoginDialog(root, self.app)
+
+            self.wait_window(login)
+
+            if not self.app.app_state.logged_in:
+                return
+
+        # Menu already exists?
+        if self.app.main_window:
+
+            self.app.main_window.tkraise()
+            return
+
+        from views.menu_window import MenuWindow
+
         self.master.destroy()
 
-        # Create MenuWindow
-        menu = MenuWindow(root)
-        menu.pack(fill="both", expand=True)
+        self.app.main_window = MenuWindow(
+            root,
+            self.app
+        )
+
+        self.app.main_window.pack(
+            fill="both",
+            expand=True
+        )
+        
+    # def open_menu(self):
+
+    #     from views.login_dialog import LoginDialog
+
+    #     root = self.winfo_toplevel()
+
+    #     login = LoginDialog(
+    #         root,
+    #         self.app
+    #     )
+
+    #     self.wait_window(login)
+
+    #     if not self.app.app_state.logged_in:
+    #         return
+
+    #     from views.menu_window import MenuWindow
+
+    #     self.master.destroy()
+
+    #     menu = MenuWindow(
+    #         root,
+    #         self.app
+    #     )
+
+    #     self.app.main_window = menu
+
+    #     menu.pack(
+    #         fill="both",
+    #         expand=True
+    #     )

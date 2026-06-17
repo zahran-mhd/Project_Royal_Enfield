@@ -7,15 +7,17 @@ from widgets.sub_header import SubHeader
 
 class HomeScreen(tk.Frame):
 
-    def __init__(self,parent):
+    def __init__(self, parent, app):
+
         super().__init__(parent)
 
+        self.app = app
         
         
         # ================= Header =================
         self.header = Header(self)
         self.header.pack(side="top", fill="x")
-        self.sidebar = HomeSidebar(self)
+        self.sidebar = HomeSidebar(self,self.app)
         self.sidebar.pack(side="left", fill="y")
         body_frame = tk.Frame(self, bg="white")
         body_frame.pack(fill="both", expand=True)

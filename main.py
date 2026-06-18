@@ -10,6 +10,8 @@ from database.repositories.instrument_repository import InstrumentRepository
 
 from controllers.login_controller import LoginController
 from controllers.app_controller import AppController
+from controllers.historical_trend_controller import HistoricalTrendController
+from instruments.instrument_manager import InstrumentManager
 
 from views.home_window import HomeScreen
 from views.menu_window import MenuWindow
@@ -60,6 +62,12 @@ def main():
     app.app_controller = AppController(
         app
     )
+    
+    app.historical_trend_controller = HistoricalTrendController(app)
+   
+    app.instrument_manager = InstrumentManager(
+    app
+)
 
     # =====================================
     # HOME SCREEN

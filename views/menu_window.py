@@ -13,8 +13,7 @@ from pages.live_monitoring_page import LiveMonitoringPage
 from pages.line_regulation_page import LineRegulationPage
 from pages.load_regulation_page import LoadRegulationPage
 from pages.historical_trend_page import HistoricalTrendPage
-from pages.report_page import ReportPage
-
+from pages.report_page import ReportsPage
 from controllers.app_controller import AppController
 
 
@@ -70,7 +69,7 @@ class MenuWindow(tk.Frame):
         line_regulation_page = LineRegulationPage(self.content)
         load_regulation_page = LoadRegulationPage(self.content)
         historical_trend_page = HistoricalTrendPage(self.content)
-        report_page = ReportPage(self.content)
+        report_page =ReportsPage(self.content)
 
         self.controller.register_page(
     "Test Settings",

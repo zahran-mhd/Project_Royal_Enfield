@@ -72,8 +72,7 @@ class HistoricalTrendPage(tk.Frame):
             text="Y-Axis Parameter",
             bg="white",
             font=("Segoe UI", 10, "bold")
-        ).grid(row=0, column=2, padx=20, pady=(15, 5), sticky="w")
-
+        ).grid(row=0, column=2, padx=(5, 20), pady=(15, 5), sticky="w")
         # From Entry
         self.from_entry = ttk.Entry(
             filter_frame,

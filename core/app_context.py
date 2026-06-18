@@ -97,7 +97,7 @@ class AppContext:
 
         self.graph_controller = None
 
-        self.opentap_controller = None
+        self.historical_trend_controller = None
 
         # ==================================
         # GUI REFERENCES (OPTIONAL)

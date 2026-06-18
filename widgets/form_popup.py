@@ -71,7 +71,7 @@ class FormPopup:
         # Title
         tk.Label(
             card,
-            text="Instrument Configuration",
+            text="",
             font=("Segoe UI", 14, "bold"),
             bg="white",
             fg="#1f2937"

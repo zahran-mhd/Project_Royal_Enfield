@@ -5,6 +5,7 @@ from widgets.form_popup import FormPopup
 from database.repositories.instrument_repository import InstrumentRepository
 from database.database_manager import DatabaseManager
 from models.instrument_data import InstrumentData
+from tkinter import messagebox
 
 
 class InstrumentConfig(tk.Frame):
@@ -18,7 +19,7 @@ class InstrumentConfig(tk.Frame):
         self.instrument_repository = InstrumentRepository(self.db)
         self.create_ui()
         
-        self.create_table()
+        self.create_InstrumentTable()
         
         self.load_instruments()
     
@@ -51,7 +52,7 @@ class InstrumentConfig(tk.Frame):
         add_btn.pack(side="left")
         
        
-    def create_table(self):
+    def create_InstrumentTable(self):
 
         columns = (
             "S.No",
@@ -63,7 +64,11 @@ class InstrumentConfig(tk.Frame):
             "Action"
         )
 
-        self.table = TableWidget(self.card, columns)
+        self.table = TableWidget(
+    self.card,
+    columns,
+    key_column=0   # S.No column
+)
  
         self.table.pack(fill="both", expand=True, padx=20, pady=10)
         self.table.delete_callback = self.delete_instrument
@@ -134,31 +139,43 @@ class InstrumentConfig(tk.Frame):
         
     def delete_instrument(self, sno):
 
+        confirm = messagebox.askyesno(
+            "Delete Instrument",
+            f"Are you sure you want to delete Instrument S.No {sno}?"
+        )
+
+        if not confirm:
+            return
+
         instrument = self.instrument_repository.get_by_sno(sno)
 
-        if instrument:
-            self.instrument_repository.delete(
-                instrument["InstrumentID"]
+        if not instrument:
+            messagebox.showerror(
+                "Error",
+                "Instrument not found!"
             )
+            return
 
-            print("Deleted successfully")
+        self.instrument_repository.delete(
+            instrument.instrument_id
+        )
+
+        # messagebox.showinfo(
+        #     "Success",
+        #     "Instrument deleted successfully."
+        # )
 
         self.load_instruments()
                         
     def edit_instrument(self, sno):
 
-        instrument_row = self.instrument_repository.get_by_sno(sno)
+        instrument = self.instrument_repository.get_by_sno(sno)
 
-        if not instrument_row:
+        if not instrument:
             return
 
-        instrument = self.instrument_repository.get_by_id(
-            instrument_row["InstrumentID"]
-        )
-
         def save(values):
-
-            updated_instrument = InstrumentData(
+            updated = InstrumentData(
                 instrument_id=instrument.instrument_id,
                 sno=instrument.sno,
                 instrument_name=values[0],
@@ -171,11 +188,10 @@ class InstrumentConfig(tk.Frame):
                 is_shared=instrument.is_shared
             )
 
-            self.instrument_repository.update(updated_instrument)
-
-            print("Updated successfully")
-
+            self.instrument_repository.update(updated)
             self.load_instruments()
+
+    
 
         FormPopup(
             self,

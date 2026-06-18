@@ -3,14 +3,13 @@ from tkinter import ttk
 from tkinter import messagebox
 
 
-
 class TableWidget(tk.Frame):
 
-    def __init__(self, parent, columns, action_column_index=None):
+    def __init__(self, parent, columns,key_column=0):
         super().__init__(parent)
 
         self.columns = columns
-        self.action_column_index = action_column_index
+        self.key_column = key_column
 
         self.tree = ttk.Treeview(self, columns=columns, show="headings")
         self.tree.pack(fill="both", expand=True)
@@ -18,39 +17,15 @@ class TableWidget(tk.Frame):
         self.setup_columns()
         self.setup_style()
 
-        # 🔥 Bind click event
+        # Bind events
         self.tree.bind("<Button-1>", self.on_click)
         self.tree.bind("<Motion>", self.on_hover)
 
         # callbacks (set from outside)
-        self.on_edit = None
-        self.on_delete = None
-        self.action_column_index = len(columns)
-        
-    def update_row(self, row_id, new_values):
-        self.tree.item(row_id, values=new_values)
-    def insert(self, row):
-        row = list(row)
+        self.edit_callback = None
+        self.delete_callback = None
 
-        # ensure action column exists
-        if len(row) == len(self.columns) - 1:
-            row.append("Edit    Delete")
-
-        self.tree.insert("", "end", values=row)
-        
-    def on_hover(self, event):
-        region = self.tree.identify("region", event.x, event.y)
-
-        if region == "cell":
-            self.tree.config(cursor="hand2")
-        else:
-            self.tree.config(cursor="")
-
-    def setup_columns(self):
-        for col in self.columns:
-            self.tree.heading(col, text=col)
-            self.tree.column(col, anchor="center")
-
+    # ---------------- STYLE ----------------
     def setup_style(self):
         style = ttk.Style()
         style.theme_use("default")
@@ -68,27 +43,39 @@ class TableWidget(tk.Frame):
             font=("Segoe UI", 10)
         )
 
-    # ---------- DATA METHODS ----------
+    # ---------------- COLUMNS ----------------
+    def setup_columns(self):
+        for col in self.columns:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, anchor="center")
+
+    # ---------------- INSERT ----------------
+    def insert(self, row):
+        row = list(row)
+
+        # Ensure action column exists
+        if len(row) == len(self.columns) - 1:
+            row.append("Edit | Delete")
+
+        self.tree.insert("", "end", values=row)
+
+    # ---------------- CLEAR ----------------
     def clear(self):
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-    def insert_row(self, values, tags=None):
-        self.tree.insert("", "end", values=values, tags=tags)
-        
-        
-      
+    # ---------------- HOVER ----------------
+    def on_hover(self, event):
+        region = self.tree.identify("region", event.x, event.y)
 
-    def get_selected(self):
-        selected = self.tree.focus()
-        return self.tree.item(selected, "values"), selected
+        if region == "cell":
+            self.tree.config(cursor="hand2")
+        else:
+            self.tree.config(cursor="")
 
-    def delete_selected(self):
-        selected = self.tree.focus()
-        if selected:
-            self.tree.delete(selected)
-            
+    # ---------------- CLICK HANDLER ----------------
     def on_click(self, event):
+
         row_id = self.tree.identify_row(event.y)
         column = self.tree.identify_column(event.x)
 
@@ -97,7 +84,9 @@ class TableWidget(tk.Frame):
 
         values = self.tree.item(row_id, "values")
 
-        # only action column
+        print("Row Values:", values)
+
+        # Action column
         if column != f"#{len(self.columns)}":
             return
 
@@ -108,45 +97,33 @@ class TableWidget(tk.Frame):
         x, y, width, height = bbox
         click_x = event.x - x
 
-        # split icon area
+        # IMPORTANT
+        key = values[self.key_column]
+
+        print("Selected Key:", key)
+
         if click_x < width / 2:
-            self.edit_row(row_id, values)
+            if hasattr(self, "edit_callback"):
+                self.edit_callback(key)
         else:
-            self.delete_row(row_id)
-    
-            
-            
-    def edit_row(self, row_id, values):
+            if hasattr(self, "delete_callback"):
+                self.delete_callback(key)
 
-        sno = values[0]
+    # ---------------- GET SELECTED ----------------
+    def get_selected(self):
+        selected = self.tree.focus()
+        return self.tree.item(selected, "values"), selected
 
-        if hasattr(self, "edit_callback"):
-            self.edit_callback(sno)
-        
-   
+    # ---------------- DELETE SELECTED ----------------
+    def delete_selected(self):
+        selected = self.tree.focus()
 
-    def delete_row(self, row_id):
+        if selected:
+            self.tree.delete(selected)
 
-        values = self.tree.item(row_id, "values")
-
-        sno = values[0]
-
-        if not messagebox.askyesno(
-            "Delete",
-            f"Delete instrument S.No {sno}?"
-        ):
-            return
-
-        if hasattr(self, "delete_callback"):
-            self.delete_callback(sno)
-
-       
-                
-            
+    # ---------------- UPDATE ROW ----------------
     def update_row(self, row_id, new_values):
         updated_row = list(new_values)
-
-        # re-add action column (IMPORTANT)
-        updated_row.append("Edit    Delete")
+        updated_row.append("Edit | Delete")
 
         self.tree.item(row_id, values=updated_row)

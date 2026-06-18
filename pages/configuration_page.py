@@ -24,9 +24,9 @@ class ConfigurationPage(tk.Frame):
     # Header Tab Bar
         tab_frame = tk.Frame(
             self,
-            bg="#ffffff",
+            # bg="#ffffff",
             height=60,
-            bd=1,
+            # bd=1,
             relief="solid"
         )
         tab_frame.pack(fill="x", padx=15, pady=(10, 0))

@@ -25,16 +25,20 @@ class Footer(tk.Frame):
     command=self.open_home
 ).pack(pady=10)
 
+    # def open_home(self):
+
+    #     from views.home_window import HomeScreen
+
+    #     root = self.winfo_toplevel()
+
+    #     # Remove all widgets currently displayed
+    #     for widget in root.winfo_children():
+    #         widget.destroy()
+
+    #     # Open Home Screen
+    #     home = HomeScreen(root,self.app)
+    #     home.pack(fill="both", expand=True)
+
     def open_home(self):
 
-        from views.home_window import HomeScreen
-
-        root = self.winfo_toplevel()
-
-        # Remove all widgets currently displayed
-        for widget in root.winfo_children():
-            widget.destroy()
-
-        # Open Home Screen
-        home = HomeScreen(root,self.app)
-        home.pack(fill="both", expand=True)
+        self.app.home_screen.tkraise()

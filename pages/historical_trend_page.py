@@ -1,11 +1,24 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
 
+import os
+import pandas as pd
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from matplotlib.ticker import MaxNLocator
+from controllers.historical_trend_controller import (
+    HistoricalTrendController
+)
 
 class HistoricalTrendPage(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,app):
         super().__init__(parent, bg="#E9EDF2")
+
+        self.app = app
+
+        self.controller = (app.historical_trend_controller)
 
         self.folder_path = tk.StringVar(value="No file selected")
 
@@ -132,7 +145,8 @@ class HistoricalTrendPage(tk.Frame):
             activeforeground="white",
             bd=0,
             width=12,
-            height=2
+            height=2,
+            command=self.plot_graph
         )
 
         plot_btn.grid(
@@ -168,13 +182,12 @@ class HistoricalTrendPage(tk.Frame):
             font=("Segoe UI", 11)
         ).pack(anchor="nw", padx=15, pady=15)
 
-        self.canvas = tk.Canvas(
+        self.graph_container = tk.Frame(
             graph_frame,
-            bg="white",
-            highlightthickness=0
+            bg="white"
         )
 
-        self.canvas.pack(
+        self.graph_container.pack(
             fill="both",
             expand=True,
             padx=10,
@@ -186,3 +199,187 @@ class HistoricalTrendPage(tk.Frame):
 
         if folder:
             self.folder_path.set(folder)
+
+    def plot_graph(self):
+
+        folder = self.folder_path.get()
+
+        try:
+
+            start_cycle = int(
+                self.from_entry.get()
+            )
+
+            end_cycle = int(
+                self.to_entry.get()
+            )
+
+        except ValueError:
+
+            return
+
+        parameter = self.parameter.get()
+
+        x_values, y_values = (
+            self.controller.get_graph_data(
+                folder,
+                start_cycle,
+                end_cycle,
+                parameter
+            )
+        )
+
+        self.draw_graph(
+            x_values,
+            y_values,
+            parameter
+        )
+
+    def draw_graph(self, x_values, y_values, parameter):
+
+        for widget in self.graph_container.winfo_children():
+            widget.destroy()
+
+        from matplotlib.figure import Figure
+        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+        fig = Figure(
+            figsize=(8, 4),
+            dpi=100
+        )
+
+        ax = fig.add_subplot(111)
+
+        ax.plot(
+            x_values,
+            y_values,
+            marker="o"
+        )
+
+        ax.set_xticks(x_values)
+
+        ax.set_title(
+            f"{parameter} vs Cycle Number"
+        )
+
+        ax.set_xlabel("Cycle Number")
+
+        ax.set_ylabel(parameter)
+
+        ax.grid(True)
+
+        # Display graph
+        canvas = FigureCanvasTkAgg(
+            fig,
+            master=self.graph_container
+        )
+
+        canvas.draw()
+
+        canvas.get_tk_widget().pack(
+            fill="both",
+            expand=True
+        )
+
+    
+    # def plot_graph(self):
+
+    #     folder = self.folder_path.get()
+
+    #     if folder == "No file selected":
+    #         return
+
+    #     try:
+
+    #         start_cycle = int(
+    #             self.from_entry.get()
+    #         )
+
+    #         end_cycle = int(
+    #             self.to_entry.get()
+    #         )
+
+    #     except ValueError:
+
+    #         return
+
+    #     parameter = self.parameter.get()
+
+    #     x_values = []
+    #     y_values = []
+
+    #     for cycle in range(
+    #         start_cycle,
+    #         end_cycle + 1
+    #     ):
+
+    #         file_path = os.path.join(
+    #             folder,
+    #             f"Cycle_{cycle}.csv"
+    #         )
+
+    #         if not os.path.exists(
+    #             file_path
+    #         ):
+    #             continue
+
+    #         try:
+
+    #             df = pd.read_csv(
+    #                 file_path
+    #             )
+
+    #             if parameter not in df.columns:
+    #                 continue
+
+    #             value = (
+    #                 df[parameter]
+    #                 .mean()
+    #             )
+
+    #             x_values.append(cycle)
+
+    #             y_values.append(value)
+
+    #         except Exception as ex:
+
+    #             print(ex)
+    #     for widget in self.graph_container.winfo_children():
+
+    #         widget.destroy()
+        
+    #     fig = Figure(
+    #         figsize=(8, 4),
+    #         dpi=100
+    #     )
+
+    #     ax = fig.add_subplot(111)
+
+    #     ax.plot(
+    #         x_values,
+    #         y_values,
+    #         marker="o"
+    #     )
+
+    #     ax.set_xticks(x_values)
+
+    #     ax.set_title(
+    #         f"{parameter} vs Cycle Number"
+    #     )
+
+    #     ax.set_xlabel("Cycle Number")
+    #     ax.set_ylabel(parameter)
+
+    #     ax.grid(True)
+
+    #     canvas = FigureCanvasTkAgg(
+    #         fig,
+    #         master=self.graph_container
+    #     )
+
+    #     canvas.draw()
+
+    #     canvas.get_tk_widget().pack(
+    #         fill="both",
+    #         expand=True
+    #     )

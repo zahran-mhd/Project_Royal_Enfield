@@ -270,6 +270,8 @@ class InstrumentRepository:
 
         cursor = self.db.conn.cursor()
 
+        print("SNO Value:", sno, type(sno))
+
         cursor.execute(
             """
             SELECT *
@@ -279,9 +281,22 @@ class InstrumentRepository:
             (sno,)
         )
 
-        return cursor.fetchone()
-    
-    
+        row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        return InstrumentData(
+            instrument_id=row["InstrumentID"],
+            sno=row["Sno"],
+            instrument_name=row["InstrumentName"],
+            address=row["Address"],
+            instrument_sno=row["InstrumentSNo"],
+            calibration_due_date=row["CalibrationDueDate"],
+            status=row["Status"],
+            is_locked=row["IsLocked"]
+        )
+        
     def get_next_sno(self):
         cursor = self.db.conn.cursor()
 

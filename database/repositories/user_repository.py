@@ -92,25 +92,27 @@ class UserRepository:
 
     def update_user(
         self,
-        username,
+        old_username,
+        new_username,
         password,
         role
     ):
-
         cursor = self.db.conn.cursor()
 
         cursor.execute(
             """
             UPDATE Users
             SET
+                Username = ?,
                 Password = ?,
                 Role = ?
             WHERE Username = ?
             """,
             (
+                new_username,
                 password,
                 role,
-                username
+                old_username
             )
         )
 
@@ -122,13 +124,12 @@ class UserRepository:
 
     def delete_user(self, username):
 
+        username = str(username)  # safety fix
+
         cursor = self.db.conn.cursor()
 
         cursor.execute(
-            """
-            DELETE FROM Users
-            WHERE Username = ?
-            """,
+            "DELETE FROM Users WHERE Username = ?",
             (username,)
         )
 

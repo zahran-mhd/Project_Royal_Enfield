@@ -69,7 +69,7 @@ class MenuWindow(tk.Frame):
         live_monitoring_page = LiveMonitoringPage(self.content)
         line_regulation_page = LineRegulationPage(self.content)
         load_regulation_page = LoadRegulationPage(self.content)
-        historical_trend_page = HistoricalTrendPage(self.content)
+        historical_trend_page = HistoricalTrendPage(self.content,app)
         report_page = ReportPage(self.content)
 
         self.controller.register_page(

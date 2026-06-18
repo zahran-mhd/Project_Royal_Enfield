@@ -8,150 +8,174 @@ class ReportsPage(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent, bg="#EEF2F7")
 
-        # Title
+        # ================= TITLE =================
         title = tk.Label(
             self,
             text="Reports",
-            font=("Segoe UI", 20, "bold"),
+            font=("Segoe UI", 22, "bold"),
             bg="#EEF2F7",
             fg="#0B1B44"
         )
         title.pack(anchor="w", padx=25, pady=(20, 10))
 
-        # ---------------- FILTER FRAME ----------------
+        # ================= FILTER CARD =================
         filter_frame = tk.Frame(
             self,
             bg="white",
-            bd=1,
-            relief="solid"
+            bd=0
         )
-        filter_frame.pack(fill="x", padx=25, pady=20)
+        filter_frame.pack(
+            fill="x",
+            padx=25,
+            pady=(10, 20)
+        )
 
-        filter_frame.grid_columnconfigure(0, weight=1)
-        filter_frame.grid_columnconfigure(1, weight=1)
-        filter_frame.grid_columnconfigure(2, weight=1)
+        for col in range(4):
+            filter_frame.grid_columnconfigure(col, weight=1)
 
-        # Filter Heading
+        # Heading
         tk.Label(
             filter_frame,
             text="Filter Options",
-            font=("Segoe UI", 14, "bold"),
-            bg="white"
+            font=("Segoe UI", 15, "bold"),
+            bg="white",
+            fg="#243B64"
         ).grid(
             row=0,
             column=0,
             columnspan=4,
             sticky="w",
-            padx=15,
-            pady=(15, 15)
+            padx=25,
+            pady=(20, 10)
         )
 
-        # ---------------- Report Name ----------------
+        # Separator
+        ttk.Separator(
+            filter_frame,
+            orient="horizontal"
+        ).grid(
+            row=1,
+            column=0,
+            columnspan=4,
+            sticky="ew",
+            padx=25,
+            pady=(0, 20)
+        )
+
+        # ================= LABELS =================
+
         tk.Label(
             filter_frame,
             text="Report Name",
+            font=("Segoe UI", 10, "bold"),
             bg="white",
-            font=("Segoe UI", 10, "bold")
+            fg="#243B64"
         ).grid(
-            row=1,
-            column=0,
-            padx=(15, 20),
-            pady=(5, 5),
-            sticky="w"
-        )
-
-        self.report_name = ttk.Entry(
-            filter_frame,
-            width=28
-        )
-        self.report_name.grid(
             row=2,
             column=0,
-            padx=(15, 20),
-            pady=(0, 15),
-            sticky="w"
+            sticky="w",
+            padx=25,
+            pady=(0, 6)
         )
 
-        # ---------------- Report Date ----------------
         tk.Label(
             filter_frame,
             text="Report Date",
+            font=("Segoe UI", 10, "bold"),
             bg="white",
-            font=("Segoe UI", 10, "bold")
+            fg="#243B64"
         ).grid(
-            row=1,
+            row=2,
             column=1,
-            padx=(15, 20),
-            pady=(5, 5),
-            sticky="w"
+            sticky="w",
+            padx=15,
+            pady=(0, 6)
+        )
+
+        tk.Label(
+            filter_frame,
+            text="Report Type",
+            font=("Segoe UI", 10, "bold"),
+            bg="white",
+            fg="#243B64"
+        ).grid(
+            row=2,
+            column=2,
+            sticky="w",
+            padx=15,
+            pady=(0, 6)
+        )
+
+        # ================= INPUTS =================
+
+        self.report_name = ttk.Entry(
+            filter_frame,
+            font=("Segoe UI", 10)
+        )
+        self.report_name.grid(
+            row=3,
+            column=0,
+            sticky="ew",
+            padx=25,
+            pady=(0, 25)
         )
 
         self.report_date = DateEntry(
             filter_frame,
-            width=25,
-            date_pattern="dd-mm-yyyy"
+            date_pattern="dd-mm-yyyy",
+            font=("Segoe UI", 10)
         )
         self.report_date.grid(
-            row=2,
+            row=3,
             column=1,
-            padx=(15, 20),
-            pady=(0, 15),
-            sticky="w"
-        )
-
-        # ---------------- Report Type ----------------
-        tk.Label(
-            filter_frame,
-            text="Report Type",
-            bg="white",
-            font=("Segoe UI", 10, "bold")
-        ).grid(
-            row=1,
-            column=2,
-            padx=(15, 20),
-            pady=(5, 5),
-            sticky="w"
+            sticky="ew",
+            padx=15,
+            pady=(0, 25)
         )
 
         self.report_type = ttk.Combobox(
             filter_frame,
             values=["Daily", "Weekly", "Monthly", "Custom"],
-            width=25
+            state="readonly",
+            font=("Segoe UI", 10)
         )
         self.report_type.set("Select report type")
         self.report_type.grid(
-            row=2,
+            row=3,
             column=2,
-            padx=(15, 20),
-            pady=(0, 15),
-            sticky="w"
+            sticky="ew",
+            padx=15,
+            pady=(0, 25)
         )
 
-        # ---------------- Filter Button ----------------
-        tk.Button(
+        # ================= BUTTON =================
+
+        filter_btn = tk.Button(
             filter_frame,
             text="Filter",
             font=("Segoe UI", 10, "bold"),
-            bg="#4F5AE8",
+            bg="#3567E5",
             fg="white",
-            activebackground="#4F5AE8",
+            activebackground="#2F5DD0",
             activeforeground="white",
             bd=0,
-            width=12,
-            height=2
-        ).grid(
-            row=2,
+            cursor="hand2"
+        )
+        filter_btn.grid(
+            row=3,
             column=3,
-            padx=(10, 20),
-            pady=(0, 15)
+            sticky="ew",
+            padx=(15, 25),
+            pady=(0, 25),
+            ipady=8
         )
 
-        # ---------------- REPORT FRAME ----------------
+        # ================= REPORT CARD =================
+
         report_frame = tk.Frame(
             self,
             bg="white",
-            bd=1,
-            relief="solid"
+            bd=0
         )
         report_frame.pack(
             fill="both",
@@ -160,11 +184,45 @@ class ReportsPage(tk.Frame):
             pady=(0, 20)
         )
 
+        # Heading
         tk.Label(
             report_frame,
             text="Available Reports",
-            font=("Segoe UI", 14, "bold"),
-            bg="white"
+            font=("Segoe UI", 15, "bold"),
+            bg="white",
+            fg="#243B64"
+        ).pack(
+            anchor="w",
+            padx=20,
+            pady=(20, 10)
+        )
+
+        ttk.Separator(
+            report_frame,
+            orient="horizontal"
+        ).pack(
+            fill="x",
+            padx=20,
+            pady=(0, 15)
+        )
+
+        # Empty State
+        empty_box = tk.Frame(
+            report_frame,
+            bg="#F7F9FC"
+        )
+        empty_box.pack(
+            fill="x",
+            padx=20,
+            pady=(0, 20)
+        )
+
+        tk.Label(
+            empty_box,
+            text="No reports found",
+            font=("Segoe UI", 11),
+            bg="#F7F9FC",
+            fg="#334155"
         ).pack(
             anchor="w",
             padx=15,

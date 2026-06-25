@@ -119,7 +119,7 @@ class UserConfig(tk.Frame):
             
     def edit_user(self, username):
 
-        print("Received:", username, type(username))
+        # print("Received:", username, type(username))
 
         user = self.user_repository.get_user(username)
 
@@ -185,8 +185,8 @@ class UserConfig(tk.Frame):
         current_user = self.context.app_state.current_user
         current_role = self.context.app_state.current_role
 
-        print("Current User:", current_user)
-        print("Current Role:", current_role)
+        # print("Current User:", current_user)
+        # print("Current Role:", current_role)
 
         # Prevent Admin/Root from deleting their own account
         if (

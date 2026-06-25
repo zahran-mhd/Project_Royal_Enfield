@@ -90,7 +90,7 @@ class TableWidget(tk.Frame):
 
         values = self.tree.item(row_id, "values")
 
-        print("Row Values:", values)
+        # print("Row Values:", values)
 
         # Action column
         if column != f"#{len(self.columns)}":
@@ -106,7 +106,7 @@ class TableWidget(tk.Frame):
         # Actual database ID
         key = self.row_keys.get(row_id)
 
-        print("Selected Instrument ID:", key)
+        # print("Selected Instrument ID:", key)
 
         if click_x < width / 2:
             if self.edit_callback:

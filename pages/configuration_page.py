@@ -94,7 +94,7 @@ class ConfigurationPage(tk.Frame):
 
     def show_instrument(self, channel_id):
 
-        print("Selected Channel:", channel_id)
+        # print("Selected Channel:", channel_id)
 
         self.instrument_page.set_channel(channel_id)
 

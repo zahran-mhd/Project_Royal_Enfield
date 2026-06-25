@@ -88,8 +88,8 @@ class InstrumentConfig(tk.Frame):
             self.selected_channel_id
         )
 
-        print("Selected Channel:", self.selected_channel_id)
-        print("Found:", len(instruments))
+        # print("Selected Channel:", self.selected_channel_id)
+        # print("Found:", len(instruments))
 
         for index, ins in enumerate(instruments, start=1):
 

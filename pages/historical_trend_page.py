@@ -22,6 +22,8 @@ class HistoricalTrendPage(tk.Frame):
 
         self.folder_path = tk.StringVar(value="No file selected")
 
+        self.current_figure = None
+
         # Title
         title = tk.Label(
             self,
@@ -112,23 +114,35 @@ class HistoricalTrendPage(tk.Frame):
             sticky="ew"
         )
 
+
+        self.upload_btn = tk.Button(
+            filter_frame,
+            text="Upload CSV",
+            font=("Segoe UI", 10, "bold"),
+            bg="#4F5AE8",
+            fg="white",
+            bd=0,
+            command=self.load_csv_columns
+        )
+
+        self.upload_btn.grid(
+            row=1,
+            column=2,
+            padx=10,
+            pady=(0, 15)
+        )
+
+
         # Dropdown
         self.parameter = ttk.Combobox(
             filter_frame,
-            values=[
-                "Voltage",
-                "Current",
-                "Power",
-                "Efficiency"
-            ],
-            width=40
+            state="readonly",
+            width=35
         )
-
-        self.parameter.set("Efficiency")
 
         self.parameter.grid(
             row=1,
-            column=2,
+            column=3,
             padx=10,
             pady=(0, 15),
             sticky="ew"
@@ -151,14 +165,32 @@ class HistoricalTrendPage(tk.Frame):
 
         plot_btn.grid(
             row=1,
-            column=3,
+            column=4,
+            padx=10,
+            pady=(0, 15)
+        )
+
+        export_btn = tk.Button(
+            filter_frame,
+            text="Export Graph",
+            font=("Segoe UI", 10, "bold"),
+            bg="#16a34a",
+            fg="white",
+            bd=0,
+            command=self.export_graph
+        )
+
+        export_btn.grid(
+            row=1,
+            column=5,
             padx=(10, 20),
             pady=(0, 15)
         )
 
         filter_frame.grid_columnconfigure(0, weight=1)
         filter_frame.grid_columnconfigure(1, weight=1)
-        filter_frame.grid_columnconfigure(2, weight=2)
+        filter_frame.grid_columnconfigure(2, weight=1)
+        filter_frame.grid_columnconfigure(3, weight=2)
 
         # Graph Preview 
         graph_frame = tk.Frame(
@@ -242,7 +274,7 @@ class HistoricalTrendPage(tk.Frame):
 
         from matplotlib.figure import Figure
         from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
+        
         fig = Figure(
             figsize=(8, 4),
             dpi=100
@@ -268,6 +300,8 @@ class HistoricalTrendPage(tk.Frame):
 
         ax.grid(True)
 
+        self.current_figure = fig
+
         # Display graph
         canvas = FigureCanvasTkAgg(
             fig,
@@ -281,13 +315,10 @@ class HistoricalTrendPage(tk.Frame):
             expand=True
         )
 
-    
-    # def plot_graph(self):
+
+    # def load_csv_columns(self):
 
     #     folder = self.folder_path.get()
-
-    #     if folder == "No file selected":
-    #         return
 
     #     try:
 
@@ -295,91 +326,82 @@ class HistoricalTrendPage(tk.Frame):
     #             self.from_entry.get()
     #         )
 
-    #         end_cycle = int(
-    #             self.to_entry.get()
-    #         )
-
     #     except ValueError:
 
     #         return
 
-    #     parameter = self.parameter.get()
+    #     file_path = os.path.join(
+    #         folder,
+    #         f"Cycle_{start_cycle}.csv"
+    #     )
 
-    #     x_values = []
-    #     y_values = []
+    #     if not os.path.exists(file_path):
 
-    #     for cycle in range(
-    #         start_cycle,
-    #         end_cycle + 1
-    #     ):
+    #         return
 
-    #         file_path = os.path.join(
-    #             folder,
-    #             f"Cycle_{cycle}.csv"
-    #         )
+    #     try:
 
-    #         if not os.path.exists(
-    #             file_path
-    #         ):
-    #             continue
+    #         df = pd.read_csv(file_path)
 
-    #         try:
+    #         columns = list(df.columns)
 
-    #             df = pd.read_csv(
-    #                 file_path
+    #         self.parameter["values"] = columns
+
+    #         if columns:
+
+    #             self.parameter.set(
+    #                 columns[0]
     #             )
 
-    #             if parameter not in df.columns:
-    #                 continue
+    #     except Exception as ex:
 
-    #             value = (
-    #                 df[parameter]
-    #                 .mean()
-    #             )
+    #         print(ex)
 
-    #             x_values.append(cycle)
+    def export_graph(self):
 
-    #             y_values.append(value)
+        if self.current_figure is None:
 
-    #         except Exception as ex:
+            return
 
-    #             print(ex)
-    #     for widget in self.graph_container.winfo_children():
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[
+                ("PNG Image", "*.png"),
+                ("JPEG Image", "*.jpg"),
+                ("PDF File", "*.pdf")
+            ]
+        )
 
-    #         widget.destroy()
-        
-    #     fig = Figure(
-    #         figsize=(8, 4),
-    #         dpi=100
-    #     )
+        if not file_path:
 
-    #     ax = fig.add_subplot(111)
+            return
 
-    #     ax.plot(
-    #         x_values,
-    #         y_values,
-    #         marker="o"
-    #     )
+        self.current_figure.savefig(
+            file_path,
+            dpi=300,
+            bbox_inches="tight"
+        )
 
-    #     ax.set_xticks(x_values)
+    def load_csv_columns(self):
 
-    #     ax.set_title(
-    #         f"{parameter} vs Cycle Number"
-    #     )
+        folder = self.folder_path.get()
 
-    #     ax.set_xlabel("Cycle Number")
-    #     ax.set_ylabel(parameter)
+        try:
+            start_cycle = int(
+                self.from_entry.get()
+            )
 
-    #     ax.grid(True)
+        except ValueError:
+            return
 
-    #     canvas = FigureCanvasTkAgg(
-    #         fig,
-    #         master=self.graph_container
-    #     )
+        columns = self.controller.get_columns(
+            folder,
+            start_cycle
+        )
 
-    #     canvas.draw()
+        self.parameter["values"] = columns
 
-    #     canvas.get_tk_widget().pack(
-    #         fill="both",
-    #         expand=True
-    #     )
+        if columns:
+            self.parameter.set(columns[0])
+    
+   

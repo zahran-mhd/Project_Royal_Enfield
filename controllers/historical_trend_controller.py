@@ -27,3 +27,15 @@ class HistoricalTrendController:
             end_cycle,
             parameter
         )
+    
+
+    def get_columns(
+        self,
+        folder,
+        cycle_no
+    ):
+
+        return self.service.get_columns(
+            folder,
+            cycle_no
+        )

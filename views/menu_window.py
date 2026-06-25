@@ -14,19 +14,20 @@ from pages.line_regulation_page import LineRegulationPage
 from pages.load_regulation_page import LoadRegulationPage
 from pages.historical_trend_page import HistoricalTrendPage
 from pages.report_page import ReportsPage
+
 from controllers.app_controller import AppController
 
 
 class MenuWindow(tk.Frame):
 
-    def __init__(self,parent,app):
+    def __init__(self,parent,context):
         super().__init__(parent)
 
         
         self.configure(bg="white")
-        self.app = app
+        self.context = context
 
-        self.controller = app.app_controller
+        self.controller = context.app_controller
 
         # ================= Controller =================
         # self.controller = AppController()
@@ -52,7 +53,7 @@ class MenuWindow(tk.Frame):
         self.sub_header.pack(side="top", fill="x")
 
         # ================= Footer =================
-        self.footer = Footer(right_frame,self.app)
+        self.footer = Footer(right_frame,self.context)
         self.footer.pack(side="bottom", fill="x")
 
         # ================= Content Area =================
@@ -61,15 +62,16 @@ class MenuWindow(tk.Frame):
 
         # ================= Pages =================
 
-        test_settings_page = TestSettingsPage(self.content)
-        configuration_page = ConfigurationPage(self.content)
+        test_settings_page = TestSettingsPage(self.content, self.context)
+        configuration_page = ConfigurationPage(self.content,self.context)
         parameter_settings_page = ParameterSettingsPage(self.content)
         alarm_settings_page = AlarmSettingsPage(self.content)
         live_monitoring_page = LiveMonitoringPage(self.content)
         line_regulation_page = LineRegulationPage(self.content)
         load_regulation_page = LoadRegulationPage(self.content)
-        historical_trend_page = HistoricalTrendPage(self.content,app)
-        report_page =ReportsPage(self.content)
+        historical_trend_page = HistoricalTrendPage(self.content, self.context)
+        
+        report_page = ReportsPage(self.content)
 
         self.controller.register_page(
     "Test Settings",

@@ -1,61 +1,57 @@
 import tkinter as tk
+from tkinter import messagebox
 
 from widgets.table_config import TableWidget
 from widgets.form_popup import FormPopup
-from database.repositories.instrument_repository import InstrumentRepository
-from database.database_manager import DatabaseManager
+
 from models.instrument_data import InstrumentData
-from tkinter import messagebox
 
 
 class InstrumentConfig(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,context):
         super().__init__(parent, bg="#eef2f7")
+        self.context = context
+        self.instrument_repository = self.context.instrument_repository
+        self.channel_repository = self.context.channel_repository
 
-        self.instrument_data = []
-      
-        self.db = DatabaseManager()
-        self.instrument_repository = InstrumentRepository(self.db)
+        self.selected_channel_id = None
+
+        channels = self.channel_repository.get_all_channels()
+        if channels:
+            self.selected_channel_id = channels[0]["ChannelID"]
+
         self.create_ui()
-        
-        self.create_InstrumentTable()
-        
+        self.create_table()
         self.load_instruments()
-    
 
+    # ---------------- UI ----------------
     def create_ui(self):
         self.card = tk.Frame(self, bg="white")
         self.card.pack(fill="both", expand=True, padx=20, pady=20)
 
-        # Header Frame
-        header_frame = tk.Frame(self.card, bg="white")
-        header_frame.pack(fill="x", padx=10, pady=(10, 15))
+        header = tk.Frame(self.card, bg="white")
+        header.pack(fill="x", padx=10, pady=(10, 15))
 
-     
-
-        # Add Button
-        add_btn = tk.Button(
-            header_frame,
+        tk.Button(
+            header,
             text="+ Add Instrument",
             font=("Segoe UI", 10, "bold"),
             bg="#16a34a",
             fg="white",
-            activebackground="#15803d",
-            activeforeground="white",
             relief="flat",
             cursor="hand2",
             padx=15,
             pady=8,
             command=self.add_data
-        )
-        add_btn.pack(side="left")
-        
-       
-    def create_InstrumentTable(self):
+        ).pack(side="left")
+
+    # ---------------- TABLE ----------------
+    def create_table(self):
 
         columns = (
-            "S.No",
+     
+            "SNo",
             "Instrument Name",
             "Address",
             "Serial Number",
@@ -65,63 +61,66 @@ class InstrumentConfig(tk.Frame):
         )
 
         self.table = TableWidget(
-    self.card,
-    columns,
-    key_column=0   # S.No column
-)
- 
+            self.card,
+            columns,
+            key_column=0   # instrument_id is KEY
+        )
+
         self.table.pack(fill="both", expand=True, padx=20, pady=10)
-        self.table.delete_callback = self.delete_instrument
+
         self.table.edit_callback = self.edit_instrument
-        
+        self.table.delete_callback = self.delete_instrument
+
+    # ---------------- CHANNEL ----------------
+    def set_channel(self, channel_id):
+        self.selected_channel_id = channel_id
+        self.load_instruments()
+
+    # ---------------- LOAD ----------------
     def load_instruments(self):
 
-        for item in self.table.tree.get_children():
-            self.table.tree.delete(item)
+        self.table.clear()
 
-        instruments = self.instrument_repository.get_all()
+        if not self.selected_channel_id:
+            return
 
-        print("Records from DB:", len(instruments))
+        instruments = self.instrument_repository.get_by_channel(
+            self.selected_channel_id
+        )
 
-        for instrument in instruments:
+        print("Selected Channel:", self.selected_channel_id)
+        print("Found:", len(instruments))
 
-            row = [
-                instrument.sno,
-                instrument.instrument_name,
-                instrument.address,
-                instrument.instrument_sno,
-                instrument.calibration_due_date,
-                instrument.status,
-                "Edit | Delete"
-            ]
+        for index, ins in enumerate(instruments, start=1):
 
-            self.table.insert(row)
-            
+            self.table.insert(
+                [
+                    index,                      # Display S.No
+                    ins.instrument_name,
+                    ins.address,
+                    ins.instrument_sno,
+                    ins.calibration_due_date,
+                    ins.status
+                ],
+                key=ins.instrument_id          # Real DB ID
+            )
+
+    # ---------------- ADD ----------------
     def add_data(self):
 
         def save(values):
 
-            sno = self.instrument_repository.get_next_sno()
-
             instrument = InstrumentData(
-                sno=sno,
                 instrument_name=values[0],
                 address=values[1],
                 instrument_sno=values[2],
                 calibration_due_date=values[3],
                 status=values[4],
-                is_locked=0
+                channel_id=self.selected_channel_id
             )
 
             self.instrument_repository.add(instrument)
-           
-            print("Inserted successfully")
             self.load_instruments()
-
-            
-            
-            
-            
 
         FormPopup(
             self,
@@ -133,51 +132,36 @@ class InstrumentConfig(tk.Frame):
                 "Calibration Date",
                 "Status"
             ],
-             
             save
         )
-        
-    def delete_instrument(self, sno):
+    # ---------------- DELETE ----------------
+    def delete_instrument(self, instrument_id):
 
         confirm = messagebox.askyesno(
-            "Delete Instrument",
-            f"Are you sure you want to delete Instrument S.No {sno}?"
+            "Delete",
+            "Are you sure you want to delete this instrument?"
         )
 
         if not confirm:
             return
 
-        instrument = self.instrument_repository.get_by_sno(sno)
-
-        if not instrument:
-            messagebox.showerror(
-                "Error",
-                "Instrument not found!"
-            )
-            return
-
-        self.instrument_repository.delete(
-            instrument.instrument_id
-        )
-
-        # messagebox.showinfo(
-        #     "Success",
-        #     "Instrument deleted successfully."
-        # )
-
+        self.instrument_repository.delete(instrument_id)
         self.load_instruments()
-                        
-    def edit_instrument(self, sno):
 
-        instrument = self.instrument_repository.get_by_sno(sno)
+    # ---------------- EDIT ----------------
+    def edit_instrument(self, instrument_id):
+        print("Edit Instrument ID:", instrument_id)
 
+        instrument = self.instrument_repository.get_by_id(instrument_id)
+        if instrument:
+            print("Channel:", instrument.channel_id)
         if not instrument:
             return
 
         def save(values):
+
             updated = InstrumentData(
                 instrument_id=instrument.instrument_id,
-                sno=instrument.sno,
                 instrument_name=values[0],
                 address=values[1],
                 instrument_sno=values[2],
@@ -190,8 +174,6 @@ class InstrumentConfig(tk.Frame):
 
             self.instrument_repository.update(updated)
             self.load_instruments()
-
-    
 
         FormPopup(
             self,
@@ -211,5 +193,4 @@ class InstrumentConfig(tk.Frame):
                 instrument.calibration_due_date,
                 instrument.status
             ]
-            
         )

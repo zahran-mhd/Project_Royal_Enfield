@@ -2,9 +2,9 @@
 
 class LoginController:
 
-    def __init__(self, app):
+    def __init__(self, context):
 
-        self.app = app
+        self.context = context
 
     # ------------------------------------
     # LOGIN
@@ -20,7 +20,7 @@ class LoginController:
         if not password:
             return False, "Password is required"
 
-        user = self.app.user_repository.authenticate(
+        user = self.context.user_repository.authenticate(
             username,
             password
         )
@@ -33,13 +33,13 @@ class LoginController:
         # UPDATE APP STATE
         # ------------------------------------
 
-        self.app.app_state.logged_in = True
+        self.context.app_state.logged_in = True
 
-        self.app.app_state.current_user = (
+        self.context.app_state.current_user = (
             user["Username"]
         )
 
-        self.app.app_state.current_role = (
+        self.context.app_state.current_role = (
             user["Role"]
         )
 
@@ -51,13 +51,13 @@ class LoginController:
 
     def logout(self):
 
-        self.app.app_state.logged_in = False
+        self.context.app_state.logged_in = False
 
-        self.app.app_state.current_user = ""
+        self.context.app_state.current_user = ""
 
-        self.app.app_state.current_role = ""
+        self.context.app_state.current_role = ""
 
-        self.app.app_state.test_running = False
+        self.context.app_state.test_running = False
 
     # ------------------------------------
     # ROLE CHECK
@@ -66,7 +66,7 @@ class LoginController:
     def has_role(self, role):
 
         return (
-            self.app.app_state.current_role.lower()
+            self.context.app_state.current_role.lower()
             == role.lower()
         )
 

@@ -1,20 +1,75 @@
 import tkinter as tk
-from tkinter import ttk
+
+from widgets.channel_card import ChannelCard
+
 
 class TestSettingsPage(tk.Frame):
 
-    def __init__(self, parent):
-        super().__init__(parent, bg="#f5f5f5")
+    def __init__(self, parent, context):
+        super().__init__(
+            parent,
+            bg="#f5f5f5"
+        )
+
+        self.context = context
+        
+       
+
+
+        self.create_ui()
+
+    def create_ui(self):
 
         title = tk.Label(
             self,
-            text="Test Settings_pages",
+            text="Test Settings",
             font=("Segoe UI", 18, "bold"),
             bg="#f5f5f5"
         )
-        title.pack(pady=10)
+        title.pack(pady=15)
 
-        container = tk.Frame(self, bg="#f5f5f5")
-        container.pack(fill="both", expand=True, padx=20, pady=10)
+        content = tk.Frame(
+            self,
+            bg="#f5f5f5"
+        )
+        content.pack(
+            fill="both",
+            expand=True,
+            padx=20,
+            pady=10
+        )
 
-       
+        channels = self.context.channel_repository.get_all_channels()
+
+        for col, channel in enumerate(channels):
+
+            channel_id = channel["ChannelID"]
+            channel_name = channel["ChannelName"]
+
+            card = ChannelCard(
+                content,
+                title=channel_name,
+                channel_name=channel_name,
+                dut_list = [
+    f"DUT{2 * int(channel_id) - 1}",
+    f"DUT{2 * int(channel_id)}"
+],
+                channel_id=channel_id
+            )
+           
+            card.grid(
+                row=0,
+                column=col,
+                padx=10,
+                pady=10,
+                sticky="nsew"
+            )
+
+            content.columnconfigure(col, weight=1)
+
+        # for channel in channels:
+        #     channel_id = channel["ChannelID"]
+        #     channel_name = channel["ChannelName"]
+
+        #     print(channel_id)
+        #     print(channel_name)

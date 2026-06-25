@@ -4,23 +4,19 @@ from models.instrument_data import InstrumentData
 class InstrumentRepository:
 
     def __init__(self, db):
-
         self.db = db
 
     # ------------------------------------------------
     # ADD INSTRUMENT
     # ------------------------------------------------
-
     def add(self, instrument: InstrumentData):
 
         cursor = self.db.conn.cursor()
 
-        # Insert Instrument
         cursor.execute(
             """
             INSERT INTO Instruments
             (
-                Sno,
                 InstrumentName,
                 Address,
                 InstrumentSNo,
@@ -28,10 +24,9 @@ class InstrumentRepository:
                 Status,
                 IsLocked
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?)
             """,
             (
-                instrument.sno,
                 instrument.instrument_name,
                 instrument.address,
                 instrument.instrument_sno,
@@ -43,10 +38,8 @@ class InstrumentRepository:
 
         instrument_id = cursor.lastrowid
 
-        # Create Channel Mapping
-
+        # Channel mapping
         if instrument.channel_id is not None:
-
             cursor.execute(
                 """
                 INSERT INTO ChannelInstrument
@@ -64,7 +57,7 @@ class InstrumentRepository:
                 )
             )
 
-        self.db.commit()
+        self.db.conn.commit()
         print(f"Inserted Instrument ID: {instrument_id}")
 
         return instrument_id
@@ -72,7 +65,6 @@ class InstrumentRepository:
     # ------------------------------------------------
     # UPDATE INSTRUMENT
     # ------------------------------------------------
-
     def update(self, instrument: InstrumentData):
 
         cursor = self.db.conn.cursor()
@@ -81,7 +73,6 @@ class InstrumentRepository:
             """
             UPDATE Instruments
             SET
-                Sno=?,
                 InstrumentName=?,
                 Address=?,
                 InstrumentSNo=?,
@@ -91,7 +82,6 @@ class InstrumentRepository:
             WHERE InstrumentID=?
             """,
             (
-                instrument.sno,
                 instrument.instrument_name,
                 instrument.address,
                 instrument.instrument_sno,
@@ -102,10 +92,17 @@ class InstrumentRepository:
             )
         )
 
+        # Remove old mapping
+        cursor.execute(
+            """
+            DELETE FROM ChannelInstrument
+            WHERE InstrumentID=?
+            """,
+            (instrument.instrument_id,)
+        )
+
         # Insert new mapping
-
         if instrument.channel_id is not None:
-
             cursor.execute(
                 """
                 INSERT INTO ChannelInstrument
@@ -123,38 +120,42 @@ class InstrumentRepository:
                 )
             )
 
-        self.db.commit()
+        self.db.conn.commit()
 
     # ------------------------------------------------
     # DELETE INSTRUMENT
     # ------------------------------------------------
-
     def delete(self, instrument_id):
 
         cursor = self.db.conn.cursor()
 
-        # Delete mapping first
+        try:
+            cursor.execute(
+                """
+                DELETE FROM ChannelInstrument
+                WHERE InstrumentID=?
+                """,
+                (instrument_id,)
+            )
 
-        cursor.execute(
-            """
-            DELETE FROM ChannelInstrument
-            WHERE InstrumentID=?
-            """,
-            (instrument_id,)
-        )
+            cursor.execute(
+                """
+                DELETE FROM Instruments
+                WHERE InstrumentID=?
+                """,
+                (instrument_id,)
+            )
 
-        # Delete instrument
+            self.db.conn.commit()
 
-        cursor.execute(
-            """
-            DELETE FROM Instruments
-            WHERE InstrumentID=?
-            """,
-            (instrument_id,)
-        )
+        except Exception as e:
+            self.db.conn.rollback()
+            print("Delete Error:", e)
+            raise
 
-        self.db.commit()
-
+    # ------------------------------------------------
+    # GET ALL
+    # ------------------------------------------------
     def get_all(self):
 
         cursor = self.db.conn.cursor()
@@ -162,9 +163,7 @@ class InstrumentRepository:
         cursor.execute(
             """
             SELECT
-
                 I.InstrumentID,
-                I.Sno,
                 I.InstrumentName,
                 I.Address,
                 I.InstrumentSNo,
@@ -172,47 +171,35 @@ class InstrumentRepository:
                 I.Status,
                 I.IsLocked,
 
-                C.ChannelID,
-                C.ChannelName,
-
+                CI.ChannelID,
                 CI.IsShared
 
             FROM Instruments I
-
             LEFT JOIN ChannelInstrument CI
                 ON I.InstrumentID = CI.InstrumentID
-
-            LEFT JOIN Channel C
-                ON CI.ChannelID = C.ChannelID
-
-            ORDER BY I.Sno
             """
         )
 
         rows = cursor.fetchall()
 
-        instruments = []
-
-        for row in rows:
-
-            instruments.append(
-                InstrumentData(
-                    instrument_id=row["InstrumentID"],
-                    sno=row["Sno"],
-                    instrument_name=row["InstrumentName"],
-                    address=row["Address"],
-                    instrument_sno=row["InstrumentSNo"],
-                    calibration_due_date=row["CalibrationDueDate"],
-                    status=row["Status"],
-                    is_locked=row["IsLocked"],
-                    channel_id=row["ChannelID"],
-                    is_shared=row["IsShared"] if row["IsShared"] is not None else 0
-                )
+        return [
+            InstrumentData(
+                instrument_id=row["InstrumentID"],
+                instrument_name=row["InstrumentName"],
+                address=row["Address"],
+                instrument_sno=row["InstrumentSNo"],
+                calibration_due_date=row["CalibrationDueDate"],
+                status=row["Status"],
+                is_locked=row["IsLocked"],
+                channel_id=row["ChannelID"],
+                is_shared=row["IsShared"] if row["IsShared"] else 0
             )
+            for row in rows
+        ]
 
-        return instruments
-    
-
+    # ------------------------------------------------
+    # GET BY ID
+    # ------------------------------------------------
     def get_by_id(self, instrument_id):
 
         cursor = self.db.conn.cursor()
@@ -220,9 +207,7 @@ class InstrumentRepository:
         cursor.execute(
             """
             SELECT
-
                 I.InstrumentID,
-                I.Sno,
                 I.InstrumentName,
                 I.Address,
                 I.InstrumentSNo,
@@ -230,19 +215,12 @@ class InstrumentRepository:
                 I.Status,
                 I.IsLocked,
 
-                C.ChannelID,
-                C.ChannelName,
-
+                CI.ChannelID,
                 CI.IsShared
 
             FROM Instruments I
-
             LEFT JOIN ChannelInstrument CI
                 ON I.InstrumentID = CI.InstrumentID
-
-            LEFT JOIN Channel C
-                ON CI.ChannelID = C.ChannelID
-
             WHERE I.InstrumentID = ?
             """,
             (instrument_id,)
@@ -250,12 +228,11 @@ class InstrumentRepository:
 
         row = cursor.fetchone()
 
-        if row is None:
+        if not row:
             return None
 
         return InstrumentData(
             instrument_id=row["InstrumentID"],
-            sno=row["Sno"],
             instrument_name=row["InstrumentName"],
             address=row["Address"],
             instrument_sno=row["InstrumentSNo"],
@@ -263,45 +240,51 @@ class InstrumentRepository:
             status=row["Status"],
             is_locked=row["IsLocked"],
             channel_id=row["ChannelID"],
-            is_shared=row["IsShared"] if row["IsShared"] is not None else 0
+            is_shared=row["IsShared"] if row["IsShared"] else 0
         )
-    
-    def get_by_sno(self, sno):
+
+    # ------------------------------------------------
+    # GET BY CHANNEL
+    # ------------------------------------------------
+    def get_by_channel(self, channel_id):
 
         cursor = self.db.conn.cursor()
-
-        print("SNO Value:", sno, type(sno))
 
         cursor.execute(
             """
-            SELECT *
-            FROM Instruments
-            WHERE Sno = ?
+            SELECT
+                I.InstrumentID,
+                I.InstrumentName,
+                I.Address,
+                I.InstrumentSNo,
+                I.CalibrationDueDate,
+                I.Status,
+                I.IsLocked,
+
+                CI.ChannelID,
+                CI.IsShared
+
+            FROM Instruments I
+            INNER JOIN ChannelInstrument CI
+                ON I.InstrumentID = CI.InstrumentID
+            WHERE CI.ChannelID = ?
             """,
-            (sno,)
+            (channel_id,)
         )
 
-        row = cursor.fetchone()
+        rows = cursor.fetchall()
 
-        if row is None:
-            return None
-
-        return InstrumentData(
-            instrument_id=row["InstrumentID"],
-            sno=row["Sno"],
-            instrument_name=row["InstrumentName"],
-            address=row["Address"],
-            instrument_sno=row["InstrumentSNo"],
-            calibration_due_date=row["CalibrationDueDate"],
-            status=row["Status"],
-            is_locked=row["IsLocked"]
-        )
-        
-    def get_next_sno(self):
-        cursor = self.db.conn.cursor()
-
-        cursor.execute(
-            "SELECT COALESCE(MAX(Sno), 0) + 1 AS NextSno FROM Instruments"
-        )
-
-        return cursor.fetchone()["NextSno"]
+        return [
+            InstrumentData(
+                instrument_id=row["InstrumentID"],
+                instrument_name=row["InstrumentName"],
+                address=row["Address"],
+                instrument_sno=row["InstrumentSNo"],
+                calibration_due_date=row["CalibrationDueDate"],
+                status=row["Status"],
+                is_locked=row["IsLocked"],
+                channel_id=row["ChannelID"],
+                is_shared=row["IsShared"] if row["IsShared"] else 0
+            )
+            for row in rows
+        ]

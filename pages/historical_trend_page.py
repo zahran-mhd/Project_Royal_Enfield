@@ -1,19 +1,13 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
 
-import os
-import pandas as pd
-
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-from matplotlib.ticker import MaxNLocator
-from controllers.historical_trend_controller import (
-    HistoricalTrendController
+from widgets.historical_trend_widget import (
+    HistoricalTrendWidget
 )
+
 
 class HistoricalTrendPage(tk.Frame):
 
-    def __init__(self, parent,app):
+    def __init__(self, parent, app):
         super().__init__(parent, bg="#E9EDF2")
 
         self.app = app
@@ -32,55 +26,12 @@ class HistoricalTrendPage(tk.Frame):
             bg="#E9EDF2",
             fg="#0B1B44"
         )
-        title.pack(anchor="w", padx=25, pady=(20, 10))
 
-        #  Folder Section
-        top_frame = tk.Frame(self, bg="#E9EDF2")
-        top_frame.pack(fill="x", padx=25)
-
-        select_btn = tk.Button(
-            top_frame,
-            text="Select Folder",
-            font=("Segoe UI", 10, "bold"),
-            bg="#4F5AE8",
-            fg="white",
-            activebackground="#4F5AE8",
-            activeforeground="white",
-            bd=0,
-            width=12,
-            height=2,
-            command=self.select_folder
-        )
-        select_btn.pack(side="left")
-
-        tk.Label(
-            top_frame,
-            textvariable=self.folder_path,
-            bg="#E9EDF2",
-            fg="#222222",
-            font=("Segoe UI", 11)
-        ).pack(side="left", padx=12)
-
-        # Filter Card
-        filter_frame = tk.Frame(
-            self,
-            bg="white",
-            bd=1,
-            relief="solid"
-        )
-        filter_frame.pack(
-            fill="x",
+        title.pack(
+            anchor="w",
             padx=25,
-            pady=20
+            pady=(20, 10)
         )
-
-        # Row 1 Labels
-        tk.Label(
-            filter_frame,
-            text="Cycle Number",
-            bg="white",
-            font=("Segoe UI", 10, "bold")
-        ).grid(row=0, column=0, padx=20, pady=(15, 5), sticky="w")
 
         tk.Label(
             filter_frame,
@@ -195,12 +146,8 @@ class HistoricalTrendPage(tk.Frame):
         # Graph Preview 
         graph_frame = tk.Frame(
             self,
-            bg="white",
-            bd=1,
-            relief="solid"
-        )
-
-        graph_frame.pack(
+            app
+        ).pack(
             fill="both",
             expand=True,
             padx=25,

@@ -5,8 +5,10 @@ from config_modules.user_config import UserConfig
 
 class ConfigurationPage(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,context):
         super().__init__(parent, bg="#f5f5f5")
+        
+        self.context = context
 
         self.create_header()
         self.create_tabs()
@@ -44,8 +46,11 @@ class ConfigurationPage(tk.Frame):
         )
 
         # Pages
-        self.instrument_page = InstrumentConfig(self.container)
-        self.user_page = UserConfig(self.container)
+        self.instrument_page = InstrumentConfig(self.container,self.context)
+        self.user_page = UserConfig(
+    self.container,
+    self.context
+)
 
         self.instrument_page.pack(fill="both", expand=True)
 
@@ -62,18 +67,17 @@ class ConfigurationPage(tk.Frame):
             "pady": 8
         }
 
-        self.instrument_btn = tk.Button(
-            tab_frame,
-            text="Channel 1 Configuration",
-            command=self.show_instrument,
-            **btn_style
-        )
-        self.instrument_btn.pack(
-            side="left",
-            padx=10,
-            pady=10
-        )
-
+        channels = self.context.channel_repository.get_all_channels()
+        self.channel_buttons=[]
+        for channel in channels:
+            channel_id =channel["ChannelID"]
+            channel_name = channel["ChannelName"]
+            btn = tk.Button(tab_frame,text=f"{channel_name} Configuration",
+                            command=lambda cid=channel_id: self.show_instrument(cid),**btn_style)
+            
+            btn.pack(side="left",padx=10,pady=10)
+            
+            self.channel_buttons.append(btn)
         self.user_btn = tk.Button(
             tab_frame,
             text="User Management",
@@ -85,15 +89,26 @@ class ConfigurationPage(tk.Frame):
             padx=10,
             pady=10
         )
+      
+      
 
-    def show_instrument(self):
+    def show_instrument(self, channel_id):
+
+        # print("Selected Channel:", channel_id)
+
+        self.instrument_page.set_channel(channel_id)
 
         self.user_page.pack_forget()
         self.instrument_page.pack(fill="both", expand=True)
 
-        self.instrument_btn.config(bg="#16a34a")
+        # Reset all buttons 
+        for btn in self.channel_buttons:
+            btn.config(bg="#2563eb")
+
         self.user_btn.config(bg="#2563eb")
 
+        # Highlight selected button
+        self.channel_buttons[channel_id - 1].config(bg="#16a34a")
 
     def show_user(self):
 
@@ -101,4 +116,6 @@ class ConfigurationPage(tk.Frame):
         self.user_page.pack(fill="both", expand=True)
 
         self.user_btn.config(bg="#16a34a")
-        self.instrument_btn.config(bg="#2563eb")
+
+        for btn in self.channel_buttons:
+            btn.config(bg="#2563eb")

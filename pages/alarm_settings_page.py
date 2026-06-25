@@ -1,18 +1,33 @@
 import tkinter as tk
-from tkinter import ttk
+
+from widgets.alarm_settings_widget import (
+    AlarmSettingsWidget
+)
+
 
 class AlarmSettingsPage(tk.Frame):
 
     def __init__(self, parent):
-        super().__init__(parent, bg="#f5f5f5")
+        super().__init__(parent, bg="#EEF2F7")
 
+        # TITLE
         title = tk.Label(
             self,
-            text="Alarm Settings pages",
-            font=("Segoe UI", 18, "bold"),
-            bg="#f5f5f5"
+            text="Alarm Settings",
+            font=("Segoe UI", 22, "bold"),
+            bg="#EEF2F7",
+            fg="#0B1B44"
         )
-        title.pack(pady=10)
 
-        container = tk.Frame(self, bg="#f5f5f5")
-        container.pack(fill="both", expand=True, padx=20, pady=10)
+        title.pack(
+            anchor="w",
+            padx=25,
+            pady=(20, 15)
+        )
+
+        AlarmSettingsWidget(
+            self
+        ).pack(
+            fill="x",
+            padx=25
+        )

@@ -1,21 +1,19 @@
 import tkinter as tk
 from widgets.table_config import TableWidget
 from widgets.form_popup import FormPopup
-from database.database_manager import DatabaseManager
 
-from database.repositories.user_repository import UserRepository
 from tkinter import messagebox
 
 
 
 class UserConfig(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,context):
         super().__init__(parent, bg="#eef2f7")
-
+        self.context = context
         self.user_data = []
-        self.db = DatabaseManager()
-        self.user_repository = UserRepository(self.db)
+        self.user_repository = context.user_repository
+     
         self.create_ui()
         self.user_tabel()
         self.load_users()
@@ -81,7 +79,7 @@ class UserConfig(tk.Frame):
 
             self.user_repository.add_user(
                 username,
-             password,
+                password,
                 role
             )
 
@@ -91,17 +89,24 @@ class UserConfig(tk.Frame):
             self,
             "Add User",
             ["Username", "Password", "Role"],
-            save
+            save,
+            dropdowns={
+                "Role": [
+                    "Admin",
+                    "Operator"
+                ]
+            }
         )
-        print("added data succesfully")
-        
+
+        print("added data successfully")
+            
     def load_users(self):
 
         self.table.clear()
 
         rows = self.user_repository.get_all_users()
 
-        print("Rows from DB:", [dict(row) for row in rows])
+        # print("Rows from DB:", [dict(row) for row in rows])
 
         for i, row in enumerate(rows, start=1):
             self.table.insert([
@@ -113,7 +118,8 @@ class UserConfig(tk.Frame):
             ])
             
     def edit_user(self, username):
-        print("Received:", username, type(username))
+
+        # print("Received:", username, type(username))
 
         user = self.user_repository.get_user(username)
 
@@ -123,38 +129,89 @@ class UserConfig(tk.Frame):
 
         prefill = [
             user["username"],
-         
             user["role"]
         ]
 
         def save(values):
 
             self.user_repository.update_user(
-                    username,          # old username
-                    values[0],         # new username
-                    user["Password"],  # existing password
-                    values[1]          # role
+                username,          # old username
+                values[0],         # new username
+                user["Password"],  # existing password
+                values[1]          # role
             )
 
             self.load_users()
 
         FormPopup(
             self,
-            fields=["Username","Role"],
+            title="Edit User Configuration",
+            fields=["Username", "Role"],
             prefill=prefill,
             on_save=save,
-            title="Edit User Configuration"
+            dropdowns={
+                "Role": [
+                    "Admin",
+                    "Operator"
+                ]
+            }
         )
-        
+    # def delete_user(self, username):
+
+    #     confirm = messagebox.askyesno(
+    #     "Delete User",
+    #     f"Are you sure you want to delete user '{username}'?"
+    # )
+
+    #     if not confirm:
+    #         return
+
+    #     self.user_repository.delete_user(username)
+    #     self.load_users()
+    
+    
     def delete_user(self, username):
 
+        user = self.user_repository.get_user(username)
+
+        if not user:
+            messagebox.showerror(
+                "Error",
+                "User not found."
+            )
+            return
+
+        # Logged-in user from app_state
+        current_user = self.context.app_state.current_user
+        current_role = self.context.app_state.current_role
+
+        # print("Current User:", current_user)
+        # print("Current Role:", current_role)
+
+        # Prevent Admin/Root from deleting their own account
+        if (
+            current_user == username and
+            current_role.lower() in ["admin", "root"]
+        ):
+            messagebox.showwarning(
+                "Access Denied",
+                "You cannot delete your own account."
+            )
+            return
+
         confirm = messagebox.askyesno(
-        "Delete User",
-        f"Are you sure you want to delete user '{username}'?"
-    )
+            "Delete User",
+            f"Are you sure you want to delete '{username}'?"
+        )
 
         if not confirm:
             return
 
         self.user_repository.delete_user(username)
+
+        messagebox.showinfo(
+            "Success",
+            "User deleted successfully."
+        )
+
         self.load_users()

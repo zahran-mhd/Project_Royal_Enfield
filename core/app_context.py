@@ -8,6 +8,8 @@ from models.test_session import TestSession
 class AppContext:
 
     def __init__(self):
+        
+        self.current_user = None
 
         # ==================================
         # RUNTIME MODELS

@@ -10,6 +10,9 @@ class TableWidget(tk.Frame):
 
         self.columns = columns
         self.key_column = key_column
+        
+         # ADD THIS
+        self.row_keys = {}
 
         self.tree = ttk.Treeview(self, columns=columns, show="headings")
         self.tree.pack(fill="both", expand=True)
@@ -50,21 +53,24 @@ class TableWidget(tk.Frame):
             self.tree.column(col, anchor="center")
 
     # ---------------- INSERT ----------------
-    def insert(self, row):
+    def insert(self, row, key=None):
+
         row = list(row)
 
-        # Ensure action column exists
         if len(row) == len(self.columns) - 1:
             row.append("Edit | Delete")
 
-        self.tree.insert("", "end", values=row)
+        item_id = self.tree.insert("", "end", values=row)
 
-    # ---------------- CLEAR ----------------
+        self.row_keys[item_id] = key
+        # ---------------- CLEAR ----------------
     def clear(self):
+
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-    # ---------------- HOVER ----------------
+        self.row_keys.clear()
+        # ---------------- HOVER ----------------
     def on_hover(self, event):
         region = self.tree.identify("region", event.x, event.y)
 
@@ -84,7 +90,7 @@ class TableWidget(tk.Frame):
 
         values = self.tree.item(row_id, "values")
 
-        print("Row Values:", values)
+        # print("Row Values:", values)
 
         # Action column
         if column != f"#{len(self.columns)}":
@@ -97,16 +103,16 @@ class TableWidget(tk.Frame):
         x, y, width, height = bbox
         click_x = event.x - x
 
-        # IMPORTANT
-        key = values[self.key_column]
+        # Actual database ID
+        key = self.row_keys.get(row_id)
 
-        print("Selected Key:", key)
+        # print("Selected Instrument ID:", key)
 
         if click_x < width / 2:
-            if hasattr(self, "edit_callback"):
+            if self.edit_callback:
                 self.edit_callback(key)
         else:
-            if hasattr(self, "delete_callback"):
+            if self.delete_callback:
                 self.delete_callback(key)
 
     # ---------------- GET SELECTED ----------------

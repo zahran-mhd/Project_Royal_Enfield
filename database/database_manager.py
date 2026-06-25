@@ -64,14 +64,12 @@ class DatabaseManager:
         # ==========================================
         # INSTRUMENT CONFIGURATION
         # ==========================================
-
+        
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS Instruments
         (
             InstrumentID INTEGER PRIMARY KEY AUTOINCREMENT,
         
-            Sno INTEGER UNIQUE NOT NULL,
-
             InstrumentName TEXT NOT NULL,
 
             Address TEXT,
@@ -278,7 +276,8 @@ class DatabaseManager:
             """,
             [
                 (1, "CHANNEL1"),
-                (2, "CHANNEL2")
+                ( 2, "CHANNEL2"),
+                
             ]
         )
 

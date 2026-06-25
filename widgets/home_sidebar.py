@@ -2,7 +2,7 @@ import tkinter as tk
 
 class HomeSidebar(tk.Frame):
 
-    def __init__(self, parent, app):
+    def __init__(self, parent, context):
 
         super().__init__(
             parent,
@@ -10,7 +10,7 @@ class HomeSidebar(tk.Frame):
             width=250
         )
 
-        self.app = app
+        self.context = context
         self.parent = parent
 
         self.pack_propagate(False)
@@ -59,21 +59,21 @@ class HomeSidebar(tk.Frame):
 
         root = self.winfo_toplevel()
 
-        if not self.app.app_state.logged_in:
+        if not self.context.app_state.logged_in:
 
             from views.login_dialog import LoginDialog
 
             login = LoginDialog(
                 root,
-                self.app
+                self.context
             )
 
             self.wait_window(login)
 
-            if not self.app.app_state.logged_in:
+            if not self.context.app_state.logged_in:
                 return
-
-        self.app.menu_window.tkraise()
+        print(vars(self.context))
+        self.context.menu_window.tkraise()
 
     # def open_menu(self):
 

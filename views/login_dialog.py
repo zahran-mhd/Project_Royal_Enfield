@@ -7,11 +7,11 @@ from tkinter import messagebox
  
 class LoginDialog(tk.Toplevel):
  
-    def __init__(self, parent, app):
+    def __init__(self, parent, context):
  
         super().__init__(parent)
  
-        self.app = app
+        self.context = context
  
         self.title("Login")
  
@@ -38,7 +38,25 @@ class LoginDialog(tk.Toplevel):
             text="Login",
             command=self.on_login
         ).pack()
- 
+    def login(self, username, password):
+
+        user = self.context.user_repository.authenticate(
+            username,
+            password
+        )
+
+        if not user:
+            return False, "Invalid username or password"
+
+        # Store logged-in user
+        self.context.current_user = {
+            "Username": user["Username"],
+            "Role": user["Role"]
+        }
+
+        print("Current User:", self.context.current_user)
+
+        return True, "Login Successful"
     # ------------------------------------
     # LOGIN BUTTON CLICK
     # ------------------------------------
@@ -46,7 +64,7 @@ class LoginDialog(tk.Toplevel):
     def on_login(self):
  
         success, message = (
-            self.app.login_controller.login(
+            self.context.login_controller.login(
                 self.username_var.get(),
                 self.password_var.get()
             )

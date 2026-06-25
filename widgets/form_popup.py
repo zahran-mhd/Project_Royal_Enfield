@@ -1,15 +1,17 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkcalendar import DateEntry
+from tkinter import ttk
 
 
 class FormPopup:
 
-    def __init__(self, parent, title, fields, on_save, prefill=None):
+    def __init__(self, parent, title, fields, on_save, prefill=None, dropdowns=None):
         self.parent = parent
         self.fields = fields
         self.on_save = on_save
         self.prefill = prefill
+        self.dropdowns = dropdowns or {}
 
         self.entries = {}
 
@@ -95,7 +97,19 @@ class FormPopup:
                 pady=8
             )
 
-            if "date" in label.lower():
+            if label in self.dropdowns:
+
+                entry = ttk.Combobox(
+                    form_frame,
+                    values=self.dropdowns[label],
+                    state="readonly",
+                    width=29
+                )
+
+                if self.dropdowns[label]:
+                    entry.current(0)
+
+            elif "date" in label.lower():
 
                 entry = DateEntry(
                     form_frame,
@@ -123,8 +137,13 @@ class FormPopup:
             self.entries[label] = entry
 
             if self.prefill:
+
                 if isinstance(entry, DateEntry):
                     entry.set_date(self.prefill[i])
+
+                elif isinstance(entry, ttk.Combobox):
+                    entry.set(self.prefill[i])
+
                 else:
                     entry.insert(0, self.prefill[i])
 

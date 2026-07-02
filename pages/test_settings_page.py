@@ -46,7 +46,7 @@ class TestSettingsPage(tk.Frame):
             channel_id = channel["ChannelID"]
             channel_name = channel["ChannelName"]
 
-            card = ChannelCard(
+            card = ChannelCard(self.context,
                 content,
                 title=channel_name,
                 channel_name=channel_name,

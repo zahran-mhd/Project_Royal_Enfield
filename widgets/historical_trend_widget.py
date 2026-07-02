@@ -14,6 +14,7 @@ class HistoricalTrendWidget(tk.Frame):
         self.controller = app.historical_trend_controller
 
         self.folder_path = tk.StringVar(value="No file selected")
+        self.current_figure = None
 
         # Folder Section
         top_frame = tk.Frame(self, bg="#E9EDF2")
@@ -86,26 +87,59 @@ class HistoricalTrendWidget(tk.Frame):
             sticky="ew"
         )
 
-        self.parameter = ttk.Combobox(
+        self.upload_btn = tk.Button(
             filter_frame,
-            values=[
-                "Voltage",
-                "Current",
-                "Power",
-                "Efficiency"
-            ],
-            width=40
+            text="Upload CSV",
+            font=("Segoe UI", 10, "bold"),
+            bg="#4F5AE8",
+            fg="white",
+            bd=0,
+            command=self.load_csv_columns
         )
 
-        self.parameter.set("Efficiency")
+        self.upload_btn.grid(
+            row=1,
+            column=2,
+            padx=10,
+            pady=(0, 15)
+        )
+
+
+        # Dropdown
+        self.parameter = ttk.Combobox(
+            filter_frame,
+            state="readonly",
+            width=35
+        )
 
         self.parameter.grid(
             row=1,
-            column=2,
+            column=3,
             padx=10,
             pady=(0, 15),
             sticky="ew"
         )
+
+        # self.parameter = ttk.Combobox(
+        #     filter_frame,
+        #     values=[
+        #         "Voltage",
+        #         "Current",
+        #         "Power",
+        #         "Efficiency"
+        #     ],
+        #     width=40
+        # )
+
+        # self.parameter.set("Efficiency")
+
+        # self.parameter.grid(
+        #     row=1,
+        #     column=2,
+        #     padx=10,
+        #     pady=(0, 15),
+        #     sticky="ew"
+        # )
 
         plot_btn = tk.Button(
             filter_frame,
@@ -123,14 +157,32 @@ class HistoricalTrendWidget(tk.Frame):
 
         plot_btn.grid(
             row=1,
-            column=3,
+            column=4,
+            padx=(10, 20),
+            pady=(0, 15)
+        )
+
+        export_btn = tk.Button(
+            filter_frame,
+            text="Export Graph",
+            font=("Segoe UI", 10, "bold"),
+            bg="#16a34a",
+            fg="white",
+            bd=0,
+            command=self.export_graph
+        )
+
+        export_btn.grid(
+            row=1,
+            column=5,
             padx=(10, 20),
             pady=(0, 15)
         )
 
         filter_frame.grid_columnconfigure(0, weight=1)
         filter_frame.grid_columnconfigure(1, weight=1)
-        filter_frame.grid_columnconfigure(2, weight=2)
+        filter_frame.grid_columnconfigure(2, weight=1)
+        filter_frame.grid_columnconfigure(3, weight=2)
 
         # Graph Preview
         graph_frame = tk.Frame(
@@ -232,6 +284,7 @@ class HistoricalTrendWidget(tk.Frame):
         ax.set_ylabel(parameter)
 
         ax.grid(True)
+        self.current_figure = fig
 
         canvas = FigureCanvasTkAgg(
             fig,
@@ -244,3 +297,53 @@ class HistoricalTrendWidget(tk.Frame):
             fill="both",
             expand=True
         )
+
+    
+    def export_graph(self):
+
+        if self.current_figure is None:
+
+            return
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=[
+                ("PNG Image", "*.png"),
+                ("JPEG Image", "*.jpg"),
+                ("PDF File", "*.pdf")
+            ]
+        )
+
+        if not file_path:
+
+            return
+
+        self.current_figure.savefig(
+            file_path,
+            dpi=300,
+            bbox_inches="tight"
+        )
+
+    def load_csv_columns(self):
+
+        folder = self.folder_path.get()
+
+        try:
+            start_cycle = int(
+                self.from_entry.get()
+            )
+
+        except ValueError:
+            return
+
+        columns = self.controller.get_columns(
+            folder,
+            start_cycle
+        )
+
+        self.parameter["values"] = columns
+
+        if columns:
+            self.parameter.set(columns[0])
+    
+   

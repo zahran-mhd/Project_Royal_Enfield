@@ -5,28 +5,32 @@ from datetime import datetime
 
 class TestController:
 
-    def __init__(self, app):
+    def __init__(self, context):
 
-        self.app = app
+        self.context = context
+        # self.controller = context.test_repository
 
-    def start_test(self):
+    def start_test(self,channel_id,values):
 
         # Already running?
-        if self.app.app_state.test_running:
+        if self.context.app_state.test_running:
             return
 
         # Update state
 
-        self.app.app_state.test_running = True
+        self.context.app_state.test_running = True
 
         # Create test session
 
-        self.app.test_session.start_time = (
+        self.context.test_session.start_time = (
             datetime.now()
         )
 
-        self.app.test_session.status = "Running"
+        self.context.test_session.status = "Running"
 
+        
+        self.context.test_repository.save_settings(channel_id,values)
+        # self.run_test(channel_id)
         # Start instruments
 
         self.app.instrument_manager.start()

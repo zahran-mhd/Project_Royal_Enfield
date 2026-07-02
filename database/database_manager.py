@@ -107,18 +107,110 @@ class DatabaseManager:
         )
         """)
 
+        # ==========================================
+        # PARAMETER SETTINGS - DUT
+        # ==========================================
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS DUT (
+            dut_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            dut_name TEXT NOT NULL UNIQUE,
+            dut_bit_rate INTEGER NOT NULL
+        )
+        """)
+
+        # ==========================================
+        # PARAMETER SETTINGS - DUT DBC FILE
+        # ==========================================
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS DUT_File (
+        file_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        dut_id INTEGER NOT NULL,
+        file_name TEXT,
+        file_path TEXT NOT NULL,
+        upload_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
+        )   
+        """)
+
+        # ==========================================
+        # PARAMETER SETTINGS - DUT ENDURANCE
+        # ==========================================
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Endurance_Settings (
+            dut_id INTEGER PRIMARY KEY,
+            charge_time REAL,
+            discharge_time REAL,
+            rest_time1 REAL,
+            rest_time2 REAL,
+            ac_input_voltage REAL,
+            ac_input_frequency REAL,
+            dc_output_voltage REAL,
+            dc_output_current REAL,
+            char_dc_load_current REAL,
+            dis_dc_load_current REAL,
+
+            FOREIGN KEY (dut_id)
+                REFERENCES DUT(dut_id)
+        )
+        """)
+
+        # ==========================================
+        # PARAMETER SETTINGS - LOAD REGULATION
+        # ==========================================
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS OBC_HV_DC_Current_Settings (
+            dut_id INTEGER NOT NULL,
+            hv_voltage REAL NOT NULL,
+            step_no INTEGER NOT NULL,
+            current_value REAL NOT NULL,
+            PRIMARY KEY (dut_id,hv_voltage, step_no)
+            FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
+        )
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS HPDC_HV_DC_Current_Settings (
+            dut_id INTEGER NOT NULL,
+            hv_voltage REAL NOT NULL,
+            step_no INTEGER NOT NULL,
+            current_value REAL NOT NULL,
+            PRIMARY KEY (dut_id,hv_voltage, step_no),
+            
+            FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
+        )
+        """)
+
+
         # # ==========================================
         # # TEST SETTINGS
         # # ==========================================
 
-        # cursor.execute("""
-        # CREATE TABLE IF NOT EXISTS TestSettings
-        # (
-        #     SettingName TEXT PRIMARY KEY,
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Channel_Test_Settings (
+            channel_id INTEGER PRIMARY KEY,
 
-        #     SettingValue TEXT
-        # )
-        # """)
+            dut_id INTEGER NOT NULL,
+
+            use_dut_a INTEGER DEFAULT 0,
+            use_dut_b INTEGER DEFAULT 0,
+
+            test_type TEXT NOT NULL,
+
+            test_name TEXT,
+
+            dut_a_serial_no TEXT,
+            dut_b_serial_no TEXT,
+
+            no_of_cycles INTEGER,
+            interval_seconds INTEGER,
+
+            FOREIGN KEY (channel_id)
+                REFERENCES Channels(channel_id),
+
+            FOREIGN KEY (dut_id)
+                REFERENCES DUT(dut_id)
+        )
+        """)
 
         # # ==========================================
         # # PARAMETER SETTINGS

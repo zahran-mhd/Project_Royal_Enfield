@@ -7,9 +7,13 @@ from database.database_manager import DatabaseManager
 from database.repositories.user_repository import UserRepository
 from database.repositories.instrument_repository import InstrumentRepository
 from database.repositories.channel_repository import ChannelRepository
+from database.repositories.test_repository import TestRepository
 
 from controllers.login_controller import LoginController
 from controllers.app_controller import AppController
+from controllers.historical_trend_controller import HistoricalTrendController
+from controllers.test_controller import TestController
+from instruments.instrument_manager import InstrumentManager
 
 from views.menu_window import MenuWindow
 from views.home_window import HomeScreen
@@ -51,6 +55,8 @@ def main():
         context.db
     )
 
+    context.test_repository= TestRepository(context.db)
+
     # =====================================
     # CONTROLLERS
     # =====================================
@@ -62,7 +68,12 @@ def main():
     context.app_controller = AppController(
         context
     )
+    context.historical_trend_controller = HistoricalTrendController(context)
 
+    context.instrument_manager = InstrumentManager(
+    context
+)
+    context.test_controller=TestController(context)
     # =====================================
     # SCREENS
     # =====================================

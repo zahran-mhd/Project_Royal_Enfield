@@ -33,7 +33,7 @@ class TestController:
         # self.run_test(channel_id)
         # Start instruments
 
-        self.app.instrument_manager.start()
+        # self.app.instrument_manager.start()
 
         print("Test Started")
     

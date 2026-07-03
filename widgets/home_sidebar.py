@@ -72,7 +72,7 @@ class HomeSidebar(tk.Frame):
 
             if not self.context.app_state.logged_in:
                 return
-        print(vars(self.context))
+        
         self.context.menu_window.tkraise()
 
     # def open_menu(self):

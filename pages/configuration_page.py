@@ -26,7 +26,7 @@ class ConfigurationPage(tk.Frame):
     # Header Tab Bar
         tab_frame = tk.Frame(
             self,
-            # bg="#ffffff",
+            # bg="#ffffff", 
             height=60,
             # bd=1,
             relief="solid"
@@ -57,10 +57,12 @@ class ConfigurationPage(tk.Frame):
         # Style
         btn_style = {
             "font": ("Segoe UI", 10, "bold"),
-            "bg": "#2563eb",
-            "fg": "white",
-            "activebackground": "#1d4ed8",
-            "activeforeground": "white",
+          
+            "bg":"#dce3eb",
+  
+             "fg":"#2c3e50",
+            "activebackground": "#2c3e50",
+            "activeforeground": "#dce3eb",
             "bd": 0,
             "cursor": "hand2",
             "padx": 20,
@@ -91,31 +93,34 @@ class ConfigurationPage(tk.Frame):
         )
       
       
+    def highlight_tab(self, selected_btn):
+        default_bg = "#dce3eb"
+        default_fg = "#2c3e50"
+        active_bg = "#1f6aa5"
+        active_fg = "white"
+     
 
+        # Reset all channel buttons
+        for btn in self.channel_buttons:
+            btn.config(bg=default_bg, fg=default_fg)
+
+        # Reset user button
+        self.user_btn.config(bg=default_bg, fg=default_fg)
+
+        # Highlight selected
+        selected_btn.config(bg=active_bg, fg=active_fg)
     def show_instrument(self, channel_id):
-
-        # print("Selected Channel:", channel_id)
 
         self.instrument_page.set_channel(channel_id)
 
         self.user_page.pack_forget()
         self.instrument_page.pack(fill="both", expand=True)
 
-        # Reset all buttons 
-        for btn in self.channel_buttons:
-            btn.config(bg="#2563eb")
-
-        self.user_btn.config(bg="#2563eb")
-
-        # Highlight selected button
-        self.channel_buttons[channel_id - 1].config(bg="#16a34a")
+        self.highlight_tab(self.channel_buttons[channel_id - 1])
 
     def show_user(self):
 
         self.instrument_page.pack_forget()
         self.user_page.pack(fill="both", expand=True)
 
-        self.user_btn.config(bg="#16a34a")
-
-        for btn in self.channel_buttons:
-            btn.config(bg="#2563eb")
+        self.highlight_tab(self.user_btn)

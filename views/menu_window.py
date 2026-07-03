@@ -43,6 +43,8 @@ class MenuWindow(tk.Frame):
         # ================= Sidebar =================
         self.sidebar = Sidebar(body_frame, self.controller)
         self.sidebar.pack(side="left", fill="y")
+        
+        self.controller.register_sidebar(self.sidebar)
 
         # ================= Right Section =================
         right_frame = tk.Frame(body_frame, bg="#f5f5f5")
@@ -66,7 +68,7 @@ class MenuWindow(tk.Frame):
         configuration_page = ConfigurationPage(self.content,self.context)
         parameter_settings_page = ParameterSettingsPage(self.content)
         alarm_settings_page = AlarmSettingsPage(self.content)
-        live_monitoring_page = LiveMonitoringPage(self.content)
+        live_monitoring_page = LiveMonitoringPage(self.content,self.context)
         line_regulation_page = LineRegulationPage(self.content)
         load_regulation_page = LoadRegulationPage(self.content)
         historical_trend_page = HistoricalTrendPage(self.content, self.context)
@@ -94,7 +96,7 @@ class MenuWindow(tk.Frame):
         )
 
         self.controller.register_page(
-            "Live Monitoring",
+            "Endurance-Live Monitoring",
             live_monitoring_page
         )
 

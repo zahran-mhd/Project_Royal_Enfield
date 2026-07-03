@@ -5,26 +5,37 @@ from tkinter import messagebox
 
 class TableWidget(tk.Frame):
 
-    def __init__(self, parent, columns,key_column=0):
+    def __init__(self, parent, columns, key_column=0,
+                 style_name="LiveTable.Treeview",
+                 height=17):
         super().__init__(parent)
 
         self.columns = columns
         self.key_column = key_column
-        
-         # ADD THIS
         self.row_keys = {}
 
-        self.tree = ttk.Treeview(self, columns=columns, show="headings")
-        self.tree.pack(fill="both", expand=True)
-
-        self.setup_columns()
         self.setup_style()
 
-        # Bind events
+        self.tree = ttk.Treeview(
+            self,
+            columns=self.columns,
+            show="headings",
+            height=height,
+            style=style_name
+        )
+
+        self.tree.pack(fill="both", expand=True)
+        
+          
+        self.tree.tag_configure("even", background="white")
+        self.tree.tag_configure("odd", background="#f2f2f2")
+
+        self.setup_columns()
+
         self.tree.bind("<Button-1>", self.on_click)
         self.tree.bind("<Motion>", self.on_hover)
+      
 
-        # callbacks (set from outside)
         self.edit_callback = None
         self.delete_callback = None
 
@@ -33,26 +44,65 @@ class TableWidget(tk.Frame):
         style = ttk.Style()
         style.theme_use("default")
 
+        # Live Table Style
         style.configure(
-            "Treeview.Heading",
+            "LiveTable.Treeview",
+            rowheight=23,
+          borderwidth=1,
+    relief="solid",
+            font=("Segoe UI", 10)
+        )
+
+        style.configure(
+            "LiveTable.Treeview.Heading",
+            background="#1d4ed8",
+            foreground="white",
+            font=("Segoe UI", 12, "bold")
+        )
+
+        # Config Style
+        style.configure(
+            "Config.Treeview",
+            borderwidth=1,
+    relief="solid",
+            rowheight=35,
+            font=("Segoe UI", 10)
+        )
+
+        style.configure(
+            "Config.Treeview.Heading",
             background="#1d4ed8",
             foreground="white",
             font=("Segoe UI", 11, "bold")
         )
-
-        style.configure(
-            "Treeview",
-            rowheight=35,
-            font=("Segoe UI", 10)
-        )
+        
+  
 
     # ---------------- COLUMNS ----------------
     def setup_columns(self):
         for col in self.columns:
             self.tree.heading(col, text=col)
-            self.tree.column(col, anchor="center")
+            self.tree.column(
+                col,
+                width=75,
+                anchor="center",
+                stretch=True
+            )
 
     # ---------------- INSERT ----------------
+    # def insert(self, row, key=None):
+
+    #     row = list(row)
+
+    #     if len(row) == len(self.columns) - 1:
+    #         row.append("Edit | Delete")
+
+    #     item_id = self.tree.insert("", "end", values=row)
+        
+        
+
+    #     self.row_keys[item_id] = key
+    
     def insert(self, row, key=None):
 
         row = list(row)
@@ -60,7 +110,14 @@ class TableWidget(tk.Frame):
         if len(row) == len(self.columns) - 1:
             row.append("Edit | Delete")
 
-        item_id = self.tree.insert("", "end", values=row)
+        tag = "even" if len(self.tree.get_children()) % 2 == 0 else "odd"
+
+        item_id = self.tree.insert(
+            "",
+            "end",
+            values=row,
+            tags=(tag,)
+        )
 
         self.row_keys[item_id] = key
         # ---------------- CLEAR ----------------

@@ -1,5 +1,5 @@
 import tkinter as tk
-from widgets.table_config import TableWidget
+from widgets.table_widgets import TableWidget
 from widgets.form_popup import FormPopup
 
 from tkinter import messagebox

@@ -369,6 +369,8 @@ class DatabaseManager:
             [
                 (1, "CHANNEL1"),
                 ( 2, "CHANNEL2"),
+              
+                      
                 
             ]
         )

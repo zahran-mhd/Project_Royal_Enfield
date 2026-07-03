@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 
-from widgets.table_config import TableWidget
+from widgets.table_widgets import TableWidget
 from widgets.form_popup import FormPopup
 
 from models.instrument_data import InstrumentData
@@ -63,6 +63,7 @@ class InstrumentConfig(tk.Frame):
         self.table = TableWidget(
             self.card,
             columns,
+         
             key_column=0   # instrument_id is KEY
         )
 

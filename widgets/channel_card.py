@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+from widgets.radioButton import CustomRadioButton
 
 
 class ChannelCard(tk.LabelFrame):
@@ -11,7 +12,9 @@ class ChannelCard(tk.LabelFrame):
         title,
         channel_name,
         dut_list,
-        channel_id=None
+        channel_id=None,
+        dut_callback=None,
+        start_callback=None
     ):
         super().__init__(
             parent,
@@ -25,6 +28,8 @@ class ChannelCard(tk.LabelFrame):
         self.test_controller=context.test_controller
         self.channel_name = channel_name
         self.channel_id = channel_id
+        self.dut_callback = dut_callback
+        self.start_callback = start_callback
         self.dut_list = dut_list
 
         self.create_widgets()
@@ -39,7 +44,8 @@ class ChannelCard(tk.LabelFrame):
         tk.Label(
             self,
             text="Type of DUT",
-            bg="white"
+            bg="white",
+            cursor="hand2"
         ).grid(row=row, column=0, sticky="w", pady=5)
 
         self.supplier_combo = ttk.Combobox(
@@ -56,7 +62,8 @@ class ChannelCard(tk.LabelFrame):
             column=1,
             columnspan=2,
             sticky="ew",
-            pady=5
+            pady=5,
+            
         )
 
         row += 1
@@ -86,7 +93,9 @@ class ChannelCard(tk.LabelFrame):
                 dut_frame,
                 text=dut,
                 variable=var,
-                bg="white"
+                bg="white",
+                cursor="hand2",
+                  command=self.on_checkbox_changed,
             ).pack(side="left", padx=10)
 
         row += 1
@@ -117,22 +126,26 @@ class ChannelCard(tk.LabelFrame):
         )
 
         self.test_vars = {}
-
+        
+        self.selected_test = tk.StringVar(value="")
         tests = [
             "Endurance",
             "Line Regulation",
             "Load Regulation"
         ]
-        self.selected_test = tk.StringVar(value="")
+        
 
+        
         for test in tests:
-            tk.Radiobutton(
+            CustomRadioButton(
                 test_frame,
                 text=test,
                 variable=self.selected_test,
-                value=test,
-                bg="white"
-            ).pack(anchor="w")
+                value=test
+            ).pack(anchor="w", pady=2)
+
+        # Ensure nothing is selected
+        self.selected_test.set("")
 
         row += 1
 
@@ -267,13 +280,15 @@ class ChannelCard(tk.LabelFrame):
         # Start Button
         self.start_btn = tk.Button(
             self,
-            text="▶ Start Test",
+            text="Start Test",
             font=("Segoe UI", 10, "bold"),
             bg="#16a34a",
             fg="white",
             relief="flat",
             cursor="hand2",
-            command=self.on_start_clicked
+             command=self.on_start_clicked
+            
+        
         )
         self.start_btn.grid(
             row=row,
@@ -285,30 +300,78 @@ class ChannelCard(tk.LabelFrame):
 
         self.columnconfigure(1, weight=1)
         self.columnconfigure(2, weight=1)
+        
+    def on_checkbox_changed(self):
 
+        selected = [
+            dut
+            for dut, var in self.dut_vars.items()
+            if var.get()
+        ]
+
+        print("ChannelCard:", selected)  
+
+        if self.dut_callback:
+            self.dut_callback(self.channel_id, self.channel_name, selected)
+            
     def on_start_clicked(self):
+        
+        
+
         values = self.get_settings()
 
+        # Notify parent page if callback exists
+        if self.start_callback:
+            self.start_callback(self)
+            
+      
+        # Start the test
         self.test_controller.start_test(
             self.channel_id,
             values
-    )
-        
+        )
+
+
+    def disable_start_button(self):
+        self.start_btn.config(state="disabled")
+
+
+    def enable_start_button(self):
+        self.start_btn.config(state="normal")
+
+   
     def get_settings(self):
+        
+        selected_duts = [
+        dut
+            for dut, var in self.dut_vars.items()
+            if var.get()
+        ]
+
+        dut_a = self.dut_list[0]
+        dut_b = self.dut_list[1]
+
+        # Use the first selected DUT as dut_id
+        dut_id = int(selected_duts[0].replace("DUT", "")) if selected_duts else None
+        print(dut_id)
         return {
-            "channel_id": self.channel_id,
-            "supplier": self.supplier_combo.get(),
-            "selected_duts": [
-                dut
-                for dut, var in self.dut_vars.items()
-                if var.get()
-            ],
-            "test_type": self.selected_test.get(),
-            "test_name": self.test_name.get(),
-            "serial_numbers": {
-                dut: entry.get()
-                for dut, entry in self.serial_entries.items()
-            },
-            "cycles": self.cycles_entry.get(),
-            "interval": self.time_entry.get()
-        }
+    "channel_id": self.channel_id,
+    "dut_id": dut_id,
+
+    "selected_duts": selected_duts,   # <-- Add this back
+     "dut_a_name": dut_a,
+    "dut_b_name": dut_b,
+
+    "use_dut_a": 1 if dut_a in selected_duts else 0,
+    "use_dut_b": 1 if dut_b in selected_duts else 0,
+
+    "supplier": self.supplier_combo.get(),
+    "test_type": self.selected_test.get(),
+    "test_name": self.test_name.get(),
+
+    "dut_a_serial_no": self.serial_entries[dut_a].get(),
+    "dut_b_serial_no": self.serial_entries[dut_b].get(),
+
+    "no_of_cycles": self.cycles_entry.get(),
+    "interval_seconds": self.time_entry.get()
+}

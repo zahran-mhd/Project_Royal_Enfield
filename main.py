@@ -25,6 +25,8 @@ def main():
 
     root.title("Royal Enfield Dashboard")
     root.geometry("1400x800")
+    
+
 
     # =====================================
     # APP CONTEXT
@@ -105,6 +107,8 @@ def main():
 
     # Show Home Screen first
     context.home_screen.tkraise()
+    
+    # context.menu_window.tkraise()
 
     # =====================================
     # START APPLICATION

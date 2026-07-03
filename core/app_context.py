@@ -10,6 +10,10 @@ class AppContext:
     def __init__(self):
         
         self.current_user = None
+        
+        self.selected_duts = []
+        
+      
 
         # ==================================
         # RUNTIME MODELS

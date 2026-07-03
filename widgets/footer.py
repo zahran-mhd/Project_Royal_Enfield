@@ -2,12 +2,17 @@ import tkinter as tk
 
 class Footer(tk.Frame):
 
-    def __init__(self, parent,app):
-        super().__init__(parent, bg="#173A8F", height=80)
+    def __init__(self, parent,context):
+        super().__init__(parent, bg="#173A8F", height=40,bd=2,relief="solid")
 
         self.pack_propagate(False)
-        self.app=app
-        
+        # tk.Label(
+        #     self,
+        #     text="FOOTER",
+        #     bg="red",
+        #     fg="white"
+        # ).pack(expand=True)
+        self.context=context
 
         center = tk.Frame(self, bg="#173A8F")
         center.pack(side="left", expand=True)
@@ -41,4 +46,4 @@ class Footer(tk.Frame):
 
     def open_home(self):
 
-        self.app.home_screen.tkraise()
+        self.context.home_screen.tkraise()

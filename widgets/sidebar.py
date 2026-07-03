@@ -8,7 +8,7 @@ class Sidebar(tk.Frame):
         self.pack_propagate(False)   # Prevent auto-resizing
         
         self.controller = controller
-
+        self.menu_buttons = {}
         tk.Label(
             self,
             text="MENU",
@@ -20,7 +20,7 @@ class Sidebar(tk.Frame):
         menus = [
             "Test Settings",
             "Configuration",
-            "Live Monitoring",
+            "Endurance-Live Monitoring",
             "Parameter Settings",
             "Line Regulation",
             "Load Regulation",
@@ -30,7 +30,7 @@ class Sidebar(tk.Frame):
         ]
 
         for menu in menus:
-            tk.Button(
+            btn = tk.Button(
                 self,
                 text=menu,
                  bg="#1f2937",
@@ -38,5 +38,30 @@ class Sidebar(tk.Frame):
                 relief="flat",
                 anchor="w",
                 padx=20,
+                cursor="hand2",
                command=lambda m=menu: self.controller.show_page(m)
-            ).pack(fill="x", padx=10, pady=3, ipady=8)
+            )
+            btn.pack(fill="x", padx=10, pady=3, ipady=8)
+            self.menu_buttons[menu] = btn
+            
+            
+        self.highlight_menu("Test Settings")
+        
+    def on_menu_click(self,menu):
+        self.highlight_menu(menu)
+        self.controller.show_page(menu)
+        
+    def highlight_menu(self, selected_menu):
+
+        for menu, btn in self.menu_buttons.items():
+
+            if menu == selected_menu:
+                btn.config(
+                    bg="#2563eb",
+                    fg="white"
+                )
+            else:
+                btn.config(
+                    bg="#1f2937",
+                    fg="white"
+                )

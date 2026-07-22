@@ -448,7 +448,7 @@ def regulation_step(parent, title):
     tk.Label(
         frame,
         text="HV Load (%)",
-        bg="yellow",
+        bg="#DCEEFF",
         font=("Arial",10,"bold"),
         relief="solid",
         bd=1
@@ -457,7 +457,7 @@ def regulation_step(parent, title):
     tk.Label(
         frame,
         text="Set HV\nCurrent (A)",
-        bg="#fff176",
+        bg="#DCEEFF",
         font=("Arial",10,"bold"),
         relief="solid",
         bd=1
@@ -470,7 +470,7 @@ def regulation_step(parent, title):
     tk.Label(
         frame,
         text=title,
-        bg="yellow",
+        bg="#DCEEFF",
         font=("Arial",12),
         justify="center",
         relief="solid",
@@ -488,7 +488,7 @@ def regulation_step(parent, title):
 
     entry_frame = tk.Frame(
         frame,
-        bg="yellow",
+        bg="#DCEEFF",
         relief="solid",
         bd=1
     )
@@ -530,7 +530,7 @@ def regulation_step(parent, title):
         tk.Label(
             frame,
             text=value,
-            bg="yellow",
+            bg="#DCEEFF",
             relief="solid",
             bd=1
         ).grid(
@@ -541,7 +541,7 @@ def regulation_step(parent, title):
 
         eframe = tk.Frame(
             frame,
-            bg="yellow",
+            bg="#DCEEFF",
             relief="solid",
             bd=1
         )

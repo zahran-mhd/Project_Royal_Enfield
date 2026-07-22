@@ -545,8 +545,11 @@ class ParameterSettingsPage(tk.Frame):
         table2 = tk.Frame(right, bg="white")
         table2.grid(row=2, column=0, columnspan=2, pady=(15,0))
 
-        table_header(table2, "HV Voltage(V)", 0, 0)
-        table_header(table2, "", 0, 1)
+        table_header(table2, "HV Voltage (V)", 0, 0)
+        table2.grid_columnconfigure(0, weight=1)
+        table2.grid_columnconfigure(1, weight=1)
+
+        table2.grid_slaves(row=0, column=0)[0].grid(columnspan=2, sticky="ew")
 
         for i in range(3):
 

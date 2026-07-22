@@ -89,19 +89,7 @@ class TableWidget(tk.Frame):
                 stretch=True
             )
 
-    # ---------------- INSERT ----------------
-    # def insert(self, row, key=None):
-
-    #     row = list(row)
-
-    #     if len(row) == len(self.columns) - 1:
-    #         row.append("Edit | Delete")
-
-    #     item_id = self.tree.insert("", "end", values=row)
-        
-        
-
-    #     self.row_keys[item_id] = key
+  
     
     def insert(self, row, key=None):
 
@@ -161,7 +149,7 @@ class TableWidget(tk.Frame):
         click_x = event.x - x
 
         # Actual database ID
-        key = self.row_keys.get(row_id)
+        key = values[self.key_column]
 
         # print("Selected Instrument ID:", key)
 

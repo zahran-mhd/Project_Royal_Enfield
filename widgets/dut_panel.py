@@ -3,7 +3,7 @@ from widgets.status_panel import StatusPanel
 
 
 class DUTPanel(tk.LabelFrame):
-    def __init__(self, parent, dut_name,items=None):
+    def __init__(self, parent, dut_name, items=None):
         super().__init__(
             parent,
             text=dut_name,
@@ -12,13 +12,12 @@ class DUTPanel(tk.LabelFrame):
             pady=5
         )
 
-        # Two equal columns
         self.grid_columnconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
 
         # Charging Panel
-        self.charging = StatusPanel(self, "Charging",items)
-        self.charging.grid(
+        self.charging_panel = StatusPanel(self, "Charging", items)
+        self.charging_panel.grid(
             row=0,
             column=0,
             padx=(0, 5),
@@ -27,14 +26,35 @@ class DUTPanel(tk.LabelFrame):
         )
 
         # Discharging Panel
-        self.discharging = StatusPanel(self, "Discharging",items)
-        self.discharging.grid(
+        self.discharging_panel = StatusPanel(self, "Discharging", items)
+        self.discharging_panel.grid(
             row=0,
             column=1,
             padx=(5, 0),
             pady=5,
             sticky="nsew"
         )
+
+        # Default state
+        self.set_mode("charging")
+
+    def set_mode(self, mode):
+
+        if mode.lower() == "charging":
+            # Charging panel = Green
+            self.charging_panel.set_active("#d4edda")
+
+            # Discharging panel = White
+            self.discharging_panel.set_active("white")
+
+        elif mode.lower() == "discharging":
+            # Charging panel = White
+            self.charging_panel.set_active("white")
+
+            # Discharging panel = Red
+            self.discharging_panel.set_active("#f8d7da")
+
+        
 
     # ---------------- Update Methods ----------------
 
@@ -46,13 +66,6 @@ class DUTPanel(tk.LabelFrame):
     #     self.discharging.max_lbl.config(text=max_temp)
     #     self.discharging.min_lbl.config(text=min_temp)
         
-        
-    def update_charging(self, **kwargs):
-        self.charging.update_values(**kwargs)
-
-    def update_discharging(self, **kwargs):
-        self.discharging.update_values(**kwargs)
-        
-    
+ 
     
     

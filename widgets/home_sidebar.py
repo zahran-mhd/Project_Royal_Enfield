@@ -1,4 +1,5 @@
 import tkinter as tk
+from views.login_dialog import LoginDialog
 
 class HomeSidebar(tk.Frame):
 
@@ -22,6 +23,7 @@ class HomeSidebar(tk.Frame):
             bg="#2563eb",
             fg="white",
             font=("Arial", 12, "bold"),
+            cursor="hand2",
             command=self.open_menu,
             relief="flat"
         )
@@ -44,7 +46,8 @@ class HomeSidebar(tk.Frame):
             bg="#16a34a",
             fg="white",
             font=("Arial", 12, "bold"),
-            command=self.open_menu,
+             cursor="hand2",
+          command=self.login_logout,   # Change this
             relief="flat"
         )
         self.login_btn.pack(
@@ -54,14 +57,73 @@ class HomeSidebar(tk.Frame):
             pady=15,
             ipady=10
         )
+        
+        self.update_login_button()
+    def update_login_button(self):
+        if self.context.app_state.logged_in:
+            self.login_btn.config(
+                text="LOGOUT",
+                bg="#dc2626"
+            )
+        else:
+            self.login_btn.config(
+                text="LOGIN",
+                bg="#16a34a"
+            )
+            
+    def login_logout(self):
 
+        if self.context.app_state.logged_in:
+
+            # Logout
+            self.context.login_controller.logout()
+
+            self.update_login_button()
+
+            # Destroy old MenuWindow
+            if self.context.menu_window:
+
+                self.context.menu_window.destroy()
+
+                self.context.menu_window = None
+
+            # Clear old sidebar reference
+            self.context.app_controller.sidebar = None
+
+            # Clear old registered pages
+            self.context.app_controller.pages.clear()
+
+            # Show HomeScreen
+            self.context.home_screen.tkraise()
+
+        else:
+
+            self.open_menu()
+    # def open_menu(self):
+
+    #     root = self.winfo_toplevel()
+
+    #     if not self.context.app_state.logged_in:
+
+            
+
+    #         login = LoginDialog(
+    #             root,
+    #             self.context
+    #         )
+
+    #         self.wait_window(login)
+
+    #         if not self.context.app_state.logged_in:
+    #             return
+        
+    #     self.context.menu_window.tkraise()
+    
     def open_menu(self):
 
         root = self.winfo_toplevel()
 
         if not self.context.app_state.logged_in:
-
-            from views.login_dialog import LoginDialog
 
             login = LoginDialog(
                 root,
@@ -72,93 +134,15 @@ class HomeSidebar(tk.Frame):
 
             if not self.context.app_state.logged_in:
                 return
-        
-        self.context.menu_window.tkraise()
 
-    # def open_menu(self):
+            self.update_login_button()
 
-    #     root = self.winfo_toplevel()
+            # Create fresh MenuWindow
+            self.context.create_menu_window()
 
-    #     if not self.app.app_state.logged_in:
+        else:
 
-    #         from views.login_dialog import LoginDialog
+            if self.context.menu_window:
 
-    #         login = LoginDialog(root, self.app)
+                self.context.menu_window.tkraise()
 
-    #         self.wait_window(login)
-
-    #         if not self.app.app_state.logged_in:
-    #             return
-    #     print(self.app.menu_window)
-    #     print(self.app.menu_window.winfo_exists())
-    #     self.app.menu_window.tkraise()
-    # def open_menu(self):
-
-    #     root = self.winfo_toplevel()
-
-    #     # Login only once
-    #     if not self.app.app_state.logged_in:
-
-    #         from views.login_dialog import LoginDialog
-
-    #         login = LoginDialog(root, self.app)
-
-    #         self.wait_window(login)
-
-    #         if not self.app.app_state.logged_in:
-    #             return
-
-    #     # Menu already exists?
-    #     if (
-    #             self.app.main_window
-    #             and self.app.main_window.winfo_exists()
-    #         ):
-
-    #         self.app.main_window.tkraise()
-    #         return
-
-    #     from views.menu_window import MenuWindow
-
-    #     self.master.destroy()
-
-    #     self.app.main_window = MenuWindow(
-    #         root,
-    #         self.app
-    #     )
-
-    #     self.app.main_window.pack(
-    #         fill="both",
-    #         expand=True
-    #     )
-        
-    # def open_menu(self):
-
-    #     from views.login_dialog import LoginDialog
-
-    #     root = self.winfo_toplevel()
-
-    #     login = LoginDialog(
-    #         root,
-    #         self.app
-    #     )
-
-    #     self.wait_window(login)
-
-    #     if not self.app.app_state.logged_in:
-    #         return
-
-    #     from views.menu_window import MenuWindow
-
-    #     self.master.destroy()
-
-    #     menu = MenuWindow(
-    #         root,
-    #         self.app
-    #     )
-
-    #     self.app.main_window = menu
-
-    #     menu.pack(
-    #         fill="both",
-    #         expand=True
-    #     )

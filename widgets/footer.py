@@ -26,6 +26,7 @@ class Footer(tk.Frame):
     activebackground="#173A8F",
     activeforeground="white",
     relief="flat",
+     cursor="hand2",
     borderwidth=0,
     command=self.open_home
 ).pack(pady=10)

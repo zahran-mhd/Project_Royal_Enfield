@@ -51,8 +51,9 @@ class MenuWindow(tk.Frame):
         right_frame.pack(side="right", fill="both", expand=True)
 
         # ================= Sub Header =================
-        self.sub_header = SubHeader(right_frame)
+        self.sub_header = SubHeader(right_frame,self.context)
         self.sub_header.pack(side="top", fill="x")
+      
 
         # ================= Footer =================
         self.footer = Footer(right_frame,self.context)

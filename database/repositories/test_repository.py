@@ -46,3 +46,4 @@ class TestRepository:
             no_of_cycles = excluded.no_of_cycles,
             interval_seconds = excluded.interval_seconds
         """, values)
+        print(values)

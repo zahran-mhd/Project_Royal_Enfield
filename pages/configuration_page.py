@@ -1,17 +1,19 @@
 import tkinter as tk
 from config_modules.instrument_config import InstrumentConfig
 from config_modules.user_config import UserConfig
-
+from controllers.configuration_controller import ConfigurationController
 
 class ConfigurationPage(tk.Frame):
 
     def __init__(self, parent,context):
         super().__init__(parent, bg="#f5f5f5")
-        
         self.context = context
+        self.controller = ConfigurationController(self, context)
 
         self.create_header()
         self.create_tabs()
+        
+        # self.channel_buttons = {}
 
     def create_header(self):
         tk.Label(
@@ -70,20 +72,20 @@ class ConfigurationPage(tk.Frame):
         }
 
         channels = self.context.channel_repository.get_all_channels()
-        self.channel_buttons=[]
+        self.channel_buttons={}
         for channel in channels:
             channel_id =channel["ChannelID"]
             channel_name = channel["ChannelName"]
             btn = tk.Button(tab_frame,text=f"{channel_name} Configuration",
-                            command=lambda cid=channel_id: self.show_instrument(cid),**btn_style)
+                            command=lambda cid=channel_id: self.controller.show_instrument(cid),**btn_style)
             
             btn.pack(side="left",padx=10,pady=10)
             
-            self.channel_buttons.append(btn)
+            self.channel_buttons[channel_id] = btn
         self.user_btn = tk.Button(
             tab_frame,
             text="User Management",
-            command=self.show_user,
+            command=self.controller.show_user,
             **btn_style
         )
         self.user_btn.pack(
@@ -92,35 +94,6 @@ class ConfigurationPage(tk.Frame):
             pady=10
         )
       
-      
-    def highlight_tab(self, selected_btn):
-        default_bg = "#dce3eb"
-        default_fg = "#2c3e50"
-        active_bg = "#1f6aa5"
-        active_fg = "white"
-     
-
-        # Reset all channel buttons
-        for btn in self.channel_buttons:
-            btn.config(bg=default_bg, fg=default_fg)
-
-        # Reset user button
-        self.user_btn.config(bg=default_bg, fg=default_fg)
-
-        # Highlight selected
-        selected_btn.config(bg=active_bg, fg=active_fg)
-    def show_instrument(self, channel_id):
-
-        self.instrument_page.set_channel(channel_id)
-
-        self.user_page.pack_forget()
-        self.instrument_page.pack(fill="both", expand=True)
-
-        self.highlight_tab(self.channel_buttons[channel_id - 1])
-
-    def show_user(self):
-
+    def hide_pages(self):
         self.instrument_page.pack_forget()
-        self.user_page.pack(fill="both", expand=True)
-
-        self.highlight_tab(self.user_btn)
+        self.user_page.pack_forget()

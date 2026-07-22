@@ -6,6 +6,8 @@ from pages.live_monitoring.efficiency_trend import EfficiencyTrendFrame
 from pages.live_monitoring.live_table import LiveTableFrame
 from pages.live_monitoring.live_temperature import LiveTemperatureFrame
 
+from controllers.live_monitoring_controller import LiveMonitoringController
+
 
 class LiveMonitoringPage(tk.Frame):
 
@@ -13,6 +15,11 @@ class LiveMonitoringPage(tk.Frame):
         super().__init__(parent, bg="#eef2f7")
 
         self.context = context
+        
+        
+        #create Controller
+        
+        self.controller = LiveMonitoringController(self,self.context)
 
         self.create_ui()
 
@@ -29,7 +36,7 @@ class LiveMonitoringPage(tk.Frame):
 
         self.tabs_widget = LiveTabs(
     self,
-    callback=self.show_tab
+    callback=self.controller.show_tab
         )
         self.tabs_widget.pack(fill="x", padx=10)
 
@@ -52,19 +59,9 @@ class LiveMonitoringPage(tk.Frame):
         # OPEN DEFAULT TAB HERE
         self.tabs_widget.select_tab("trend")
 
-    def show_tab(self, tab_name):
-
-        for frame in self.tabs.values():
-            frame.pack_forget()
-
-        self.tabs[tab_name].pack(fill="both", expand=True)
-
-        # print(f"{tab_name} tab loaded")
-        
+   
     def start_live_plot(self, selected_duts):
-
-        # Switch to the Trend tab
-        self.tabs_widget.select_tab("trend")
-
-        # Start the plot in the EfficiencyTrendFrame
-        self.tabs["trend"].start_live_plot(selected_duts)
+        
+        self.controller.start_live_plot(
+            selected_duts
+        )

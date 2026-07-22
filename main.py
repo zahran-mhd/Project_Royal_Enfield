@@ -13,6 +13,8 @@ from controllers.login_controller import LoginController
 from controllers.app_controller import AppController
 from controllers.historical_trend_controller import HistoricalTrendController
 from controllers.test_controller import TestController
+from controllers.test_settings_controller import TestSettingsController
+
 from instruments.instrument_manager import InstrumentManager
 
 from views.menu_window import MenuWindow
@@ -21,19 +23,26 @@ from views.home_window import HomeScreen
 
 def main():
 
+    # =====================================
+    # ROOT WINDOW
+    # =====================================
+
     root = tk.Tk()
 
     root.title("Royal Enfield Dashboard")
     root.geometry("1400x800")
-    
-
 
     # =====================================
     # APP CONTEXT
     # =====================================
 
     context = AppContext()
+
     context.root = root
+
+    # Important:
+    # MenuWindow will be created only after login
+    context.menu_window = None
 
     # =====================================
     # DATABASE
@@ -57,7 +66,9 @@ def main():
         context.db
     )
 
-    context.test_repository= TestRepository(context.db)
+    context.test_repository = TestRepository(
+        context.db
+    )
 
     # =====================================
     # CONTROLLERS
@@ -70,14 +81,25 @@ def main():
     context.app_controller = AppController(
         context
     )
-    context.historical_trend_controller = HistoricalTrendController(context)
+
+    context.historical_trend_controller = (
+        HistoricalTrendController(context)
+    )
 
     context.instrument_manager = InstrumentManager(
-    context
-)
-    context.test_controller=TestController(context)
+        context
+    )
+
+    context.test_controller = TestController(
+        context
+    )
+
+    context.test_settings_controller = (
+        TestSettingsController(context)
+    )
+
     # =====================================
-    # SCREENS
+    # HOME SCREEN
     # =====================================
 
     context.home_screen = HomeScreen(
@@ -85,12 +107,6 @@ def main():
         context
     )
 
-    context.menu_window = MenuWindow(
-        root,
-        context
-    )
-
-    # Place both screens in same location
     context.home_screen.place(
         relx=0,
         rely=0,
@@ -98,17 +114,45 @@ def main():
         relheight=1
     )
 
-    context.menu_window.place(
-        relx=0,
-        rely=0,
-        relwidth=1,
-        relheight=1
-    )
+    # =====================================
+    # CREATE MENU WINDOW FUNCTION
+    # =====================================
 
-    # Show Home Screen first
+    def create_menu_window():
+
+        # If old MenuWindow exists,
+        # destroy it first
+        if context.menu_window is not None:
+
+            context.menu_window.destroy()
+
+            context.menu_window = None
+
+        # Create completely fresh MenuWindow
+        context.menu_window = MenuWindow(
+            root,
+            context
+        )
+
+        context.menu_window.place(
+            relx=0,
+            rely=0,
+            relwidth=1,
+            relheight=1
+        )
+
+        # Show MenuWindow
+        context.menu_window.tkraise()
+
+    # Make this function accessible
+    # from HomeSidebar / other classes
+    context.create_menu_window = create_menu_window
+
+    # =====================================
+    # SHOW HOME SCREEN FIRST
+    # =====================================
+
     context.home_screen.tkraise()
-    
-    # context.menu_window.tkraise()
 
     # =====================================
     # START APPLICATION
@@ -118,4 +162,5 @@ def main():
 
 
 if __name__ == "__main__":
+
     main()

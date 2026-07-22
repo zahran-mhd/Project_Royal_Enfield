@@ -1,13 +1,18 @@
 import tkinter as tk
 class StatusPanel(tk.LabelFrame):
     def __init__(self, parent, title, items=None):
+        # Set background color based on title
+        bg_color = "#d4edda" if title.lower() == "charging" else "#f8d7da"
         super().__init__(
             parent,
             text=title,
             font=("Segoe UI", 10, "bold"),
             padx=8,
-            pady=8
+            pady=8,
+             bg=bg_color
         )
+        
+   
 
         # Default items (Temperature)
         if items is None:
@@ -33,7 +38,15 @@ class StatusPanel(tk.LabelFrame):
             value_lbl.grid(row=row, column=1, padx=5, pady=3)
 
             self.value_labels[key] = value_lbl
+            
+    def set_active(self, color):
+        self.config(bg=color)
 
+        for child in self.winfo_children():
+            try:
+                child.config(bg=color)
+            except:
+                pass
     # ---------------- Update Methods ----------------
 
     def update_value(self, key, value):

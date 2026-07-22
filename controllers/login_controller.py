@@ -1,9 +1,6 @@
-# controllers/login_controller.py
-
 class LoginController:
 
     def __init__(self, context):
-
         self.context = context
 
     # ------------------------------------
@@ -26,38 +23,42 @@ class LoginController:
         )
 
         if user is None:
-
             return False, "Invalid username or password"
 
-        # ------------------------------------
-        # UPDATE APP STATE
-        # ------------------------------------
-
+        # Update app state
         self.context.app_state.logged_in = True
+        self.context.app_state.current_user = user["Username"]
+        self.context.app_state.current_role = user["Role"]
 
-        self.context.app_state.current_user = (
-            user["Username"]
-        )
-
-        self.context.app_state.current_role = (
-            user["Role"]
-        )
+        # Do not access old sidebar here
+        # MenuWindow will create a fresh sidebar
 
         return True, "Login Successful"
 
     # ------------------------------------
     # LOGOUT
     # ------------------------------------
-
     def logout(self):
 
         self.context.app_state.logged_in = False
-
         self.context.app_state.current_user = ""
-
         self.context.app_state.current_role = ""
-
         self.context.app_state.test_running = False
+
+        # Clear global selected DUTs
+        self.context.selected_duts.clear()
+
+        # Reset all page-specific data
+        self.context.app_controller.reset_pages()
+
+        # Reset sidebar
+        if self.context.app_controller.sidebar:
+            self.context.app_controller.sidebar.reset_sidebar()
+
+        if hasattr(self.context, "sub_header"):
+            self.context.sub_header.update_user()
+
+     
 
     # ------------------------------------
     # ROLE CHECK
@@ -70,26 +71,11 @@ class LoginController:
             == role.lower()
         )
 
-    # ------------------------------------
-    # ROOT
-    # ------------------------------------
-
     def is_root(self):
-
         return self.has_role("root")
 
-    # ------------------------------------
-    # ADMIN
-    # ------------------------------------
-
     def is_admin(self):
-
         return self.has_role("admin")
 
-    # ------------------------------------
-    # OPERATOR
-    # ------------------------------------
-
     def is_operator(self):
-
         return self.has_role("operator")

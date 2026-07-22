@@ -24,6 +24,8 @@ class AppContext:
         self.app_state = AppState()
 
         self.test_session = TestSession()
+        
+        
 
         # ==================================
         # CONFIGURATION MODELS

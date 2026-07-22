@@ -45,7 +45,11 @@ class Sidebar(tk.Frame):
             self.menu_buttons[menu] = btn
             
             
+            
+            
         self.highlight_menu("Test Settings")
+        
+        
         
     def on_menu_click(self,menu):
         self.highlight_menu(menu)
@@ -64,4 +68,41 @@ class Sidebar(tk.Frame):
                 btn.config(
                     bg="#1f2937",
                     fg="white"
+                )
+                
+    def hide_configuration(self):
+        if "Configuration" in self.menu_buttons:
+            self.menu_buttons["Configuration"].pack_forget()
+            
+            
+
+                
+    def reset_sidebar(self):
+
+        # Reset selected menu
+        self.highlight_menu("Test Settings")
+
+        # Reset role-based menu
+        self.update_menu_by_role("")
+        
+    
+    def update_menu_by_role(self, role):
+
+        config_btn = self.menu_buttons["Configuration"]
+
+        if role.lower() == "operator":
+
+            if config_btn.winfo_ismapped():
+                config_btn.pack_forget()
+
+        else:
+
+            if not config_btn.winfo_ismapped():
+
+                config_btn.pack(
+                    fill="x",
+                    padx=10,
+                    pady=3,
+                    ipady=8,
+                    before=self.menu_buttons["Endurance-Live Monitoring"]
                 )

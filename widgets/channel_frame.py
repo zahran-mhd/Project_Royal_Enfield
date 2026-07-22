@@ -62,3 +62,15 @@ class ChannelFrame(tk.LabelFrame):
 
     def set_time_remaining(self, time_text):
         self.time_lbl.config(text=f"Time Remaining : {time_text}")
+        
+    def set_dut1_charging(self):
+        self.dut1.show_charging()
+
+    def set_dut1_discharging(self):
+        self.dut1.show_discharging()
+
+    def set_dut2_charging(self):
+        self.dut2.show_charging()
+
+    def set_dut2_discharging(self):
+        self.dut2.show_discharging()

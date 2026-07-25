@@ -67,7 +67,7 @@ class HistoricalTrendWidget(tk.Frame):
             text="Y-Axis Parameter",
             bg="white",
             font=("Segoe UI", 10, "bold")
-        ).grid(row=0, column=2, padx=(5, 20), pady=(15, 5), sticky="w")
+        ).grid(row=0, column=3, padx=(5, 20), pady=(15, 5), sticky="w")
 
         self.from_entry = ttk.Entry(filter_frame, width=35)
         self.from_entry.grid(
@@ -93,7 +93,11 @@ class HistoricalTrendWidget(tk.Frame):
             font=("Segoe UI", 10, "bold"),
             bg="#4F5AE8",
             fg="white",
+            activebackground="#4F5AE8",
+            activeforeground="white",
             bd=0,
+            width=12,
+            height=2,
             command=self.load_csv_columns
         )
 
@@ -166,9 +170,13 @@ class HistoricalTrendWidget(tk.Frame):
             filter_frame,
             text="Export Graph",
             font=("Segoe UI", 10, "bold"),
-            bg="#16a34a",
+            bg="#4F5AE8",
             fg="white",
+            activebackground="#4F5AE8",
+            activeforeground="white",
             bd=0,
+            width=12,
+            height=2,
             command=self.export_graph
         )
 

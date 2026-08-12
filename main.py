@@ -16,6 +16,7 @@ from controllers.test_controller import TestController
 from controllers.test_settings_controller import TestSettingsController
 
 from instruments.instrument_manager import InstrumentManager
+from instruments.can_manager import CANManager
 
 from views.menu_window import MenuWindow
 from views.home_window import HomeScreen
@@ -88,6 +89,10 @@ def main():
 
     context.instrument_manager = InstrumentManager(
         context
+)
+    
+    context.can_manager = CANManager(
+    context
     )
 
     context.test_controller = TestController(

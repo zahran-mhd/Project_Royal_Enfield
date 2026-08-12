@@ -155,15 +155,89 @@ class DatabaseManager:
         """)
 
         # ==========================================
+        # PARAMETER SETTINGS - LINE REGULATION
+        # ==========================================
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS Line_Common_Settings (
+            dut_id INTEGER PRIMARY KEY,
+            dwell_time INTEGER NOT NULL,
+            FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
+        )
+        """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS OBC_HV_DC_Input_Settings (
+            input_setting_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            dut_id INTEGER NOT NULL,
+            dc_load_current REAL NOT NULL,
+
+            input_voltage REAL NOT NULL,
+            input_frequency REAL NOT NULL,
+
+            FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
+        )
+        """)
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS OBC_HV_DC_Output_Settings (
+            input_setting_id INTEGER NOT NULL,
+
+            step_no INTEGER NOT NULL,
+            hv_voltage REAL NOT NULL,
+            hv_current REAL NOT NULL,
+
+            PRIMARY KEY (input_setting_id, step_no),
+
+            FOREIGN KEY (input_setting_id)
+                REFERENCES OBC_HV_DC_Input_Settings(input_setting_id)
+        )
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS HPDC_HV_DC_Load_Settings (
+            dut_id INTEGER NOT NULL,
+            dc_load_current REAL NOT NULL,
+
+            PRIMARY KEY (dut_id),
+
+            FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
+        )
+        """)
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS HPDC_HV_DC_Load_HV (
+            dut_id INTEGER NOT NULL,
+            step_no INTEGER NOT NULL,
+            hv_voltage REAL NOT NULL,
+
+            PRIMARY KEY (dut_id, step_no),
+
+            FOREIGN KEY (dut_id) REFERENCES HPDC_HV_DC_Load_Settings(dut_id)
+        )
+        """)
+
+
+        # ==========================================
         # PARAMETER SETTINGS - LOAD REGULATION
         # ==========================================
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS HV_DC_Common_Settings (
+            dut_id INTEGER PRIMARY KEY,
+
+            dwell_time INTEGER NOT NULL,
+            input_frequency REAL NOT NULL,
+            input_voltage REAL NOT NULL,
+
+            FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
+        )
+        """)
+
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS OBC_HV_DC_Current_Settings (
             dut_id INTEGER NOT NULL,
             hv_voltage REAL NOT NULL,
             step_no INTEGER NOT NULL,
             current_value REAL NOT NULL,
-            PRIMARY KEY (dut_id,hv_voltage, step_no)
+            PRIMARY KEY (dut_id,hv_voltage, step_no),
             FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
         )
         """)

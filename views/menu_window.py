@@ -15,7 +15,7 @@ from pages.load_regulation_page import LoadRegulationPage
 from pages.historical_trend_page import HistoricalTrendPage
 from pages.report_page import ReportsPage
 
-from controllers.app_controller import AppController
+
 
 
 class MenuWindow(tk.Frame):
@@ -70,8 +70,8 @@ class MenuWindow(tk.Frame):
         parameter_settings_page = ParameterSettingsPage(self.content)
         alarm_settings_page = AlarmSettingsPage(self.content)
         live_monitoring_page = LiveMonitoringPage(self.content,self.context)
-        line_regulation_page = LineRegulationPage(self.content)
-        load_regulation_page = LoadRegulationPage(self.content)
+        line_regulation_page = LineRegulationPage(self.content,self.context)
+        load_regulation_page = LoadRegulationPage(self.content,self.context)
         historical_trend_page = HistoricalTrendPage(self.content, self.context)
         
         report_page = ReportsPage(self.content)

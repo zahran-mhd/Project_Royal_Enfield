@@ -72,7 +72,12 @@ class CTkTableWidget(ctk.CTkFrame):
                 font=("Segoe UI", 14, "bold")
             )
 
-            lbl.grid(row=0, column=i, sticky="nsew", padx=5, pady=8)
+            header.grid_columnconfigure(
+                i,
+                minsize=self.column_widths[i]
+            )
+
+            lbl.grid(row=0, column=i, sticky="nsew", padx=2, pady=8)
 
         if self.action_column:
 
@@ -80,7 +85,7 @@ class CTkTableWidget(ctk.CTkFrame):
                 header,
                 text="Actions",
                 text_color="white",
-                font=("Segoe UI", 14, "bold")
+                font=("Bookman Antigua", 11, "bold")
             )
 
             lbl.grid(
@@ -125,7 +130,7 @@ class CTkTableWidget(ctk.CTkFrame):
                 text=str(value),
     anchor="center",
     justify="center",
-    font=("Segoe UI", 12)
+    font=("Bookman Antiqua", 16)
             )
 
             lbl.grid(

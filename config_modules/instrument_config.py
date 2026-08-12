@@ -1,10 +1,8 @@
 import tkinter as tk
-from tkinter import messagebox
+
 
 from widgets.ctk_table import CTkTableWidget
-from widgets.form_popup import FormPopup
 
-from models.instrument_data import InstrumentData
 import customtkinter as ctk
 
 from controllers.instrument_controller import InstrumentController
@@ -20,7 +18,7 @@ class   InstrumentConfig(tk.Frame):
 
         self.create_ui()
         self.create_table()
-        # self.load_instruments()
+        # self.load_instruments()   
         self.controller.initialize()
 
     # ---------------- UI ----------------
@@ -56,7 +54,7 @@ class   InstrumentConfig(tk.Frame):
             text="+ Add Instrument",
             font=ctk.CTkFont(
                 family="Segoe UI",
-                size=13,
+                size=16,
                 weight="bold"
             ),
             fg_color="#16A34A",

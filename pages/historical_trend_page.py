@@ -14,15 +14,15 @@ class HistoricalTrendPage(tk.Frame):
         title = tk.Label(
             self,
             text="Historical Trend",
-            font=("Segoe UI", 20, "bold"),
-            bg="#E9EDF2",
-            fg="#0B1B44"
+            font=("Segoe UI", 18, "bold"),
+            bg="#f5f5f5",
+          
         )
 
         title.pack(
-            anchor="w",
-            padx=25,
-            pady=(20, 10)
+
+            padx=15,
+           
         )
 
         HistoricalTrendWidget(

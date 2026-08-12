@@ -25,7 +25,7 @@ class TestSettingsPage(tk.Frame):
         title = tk.Label(
             self,
             text="Test Settings",
-            font=("Segoe UI", 18, "bold"),
+            font=("Segoe UI", 15, "bold"),
             bg="#f5f5f5"
         )
         title.pack(pady=15)

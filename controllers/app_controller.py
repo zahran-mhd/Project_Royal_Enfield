@@ -1,3 +1,6 @@
+
+
+from utils.permission import Permissions
 class AppController:
 
     def __init__(self, context):
@@ -17,17 +20,20 @@ class AppController:
 
     def show_page(self, page_name):
 
-        if page_name in self.pages:
+        role = self.app.app_state.current_role
 
-            self.current_page = page_name
+        if not Permissions.can_access(role, page_name):
+            return
 
-            if page_name == "Configuration":
-                self.pages[page_name].user_page.controller.load_users()
+        self.current_page = page_name
 
-            self.pages[page_name].tkraise()
+        if page_name == "Configuration":
+            self.pages[page_name].user_page.controller.load_users()
 
-            if self.sidebar:
-                self.sidebar.highlight_menu(page_name)
+        self.pages[page_name].tkraise()
+
+        if self.sidebar:
+            self.sidebar.highlight_menu(page_name)
 
     def reset_pages(self):
 
@@ -37,5 +43,4 @@ class AppController:
 
             if hasattr(page, "reset_page"):
                 page.reset_page()
-                
-    
+   

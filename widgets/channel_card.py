@@ -50,7 +50,7 @@ class ChannelCard(ctk.CTkFrame):
         self.title_label = ctk.CTkLabel(
             self,
             text=self.channel_name,
-            font=("Segoe UI", 15, "bold"),
+            font=("Bookman Antiqua", 15, "bold"),
             text_color="#1f2937"
         )
 
@@ -72,6 +72,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Type of DUT",
+             font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -110,6 +111,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Select DUT",
+             font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -123,6 +125,7 @@ class ChannelCard(ctk.CTkFrame):
             self,
             fg_color="transparent"
         )
+        
 
         dut_frame.grid(
             row=row,
@@ -168,6 +171,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Test Type",
+             font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -228,6 +232,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Test Name",
+             font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -259,6 +264,7 @@ class ChannelCard(ctk.CTkFrame):
 
         ctk.CTkLabel(
             self,
+             font=("Bookman Antiqua", 15, "bold"),
             text="Serial Numbers",
             text_color="#374151"
         ).grid(
@@ -327,6 +333,7 @@ class ChannelCard(ctk.CTkFrame):
 
         ctk.CTkLabel(
             self,
+             font=("Bookman Antiqua", 15, "bold"),
             text="Cycles",
             text_color="#374151"
         ).grid(
@@ -360,6 +367,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Interval (sec)",
+             font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -392,7 +400,7 @@ class ChannelCard(ctk.CTkFrame):
         self.start_btn = ctk.CTkButton(
             self,
             text="Start Test",
-            font=("Segoe UI", 11, "bold"),
+             font=("Segoe UI", 15, "bold"),
             fg_color="#16a34a",
             hover_color="#15803d",
             cursor="hand2",

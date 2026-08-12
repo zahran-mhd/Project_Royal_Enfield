@@ -25,7 +25,7 @@ class LiveTabs(tk.Frame):
             btn = tk.Label(
                 self.tab_frame,
                 text=text,
-                font=("Segoe UI", 10, "bold"),
+                font=("Bookman Antiqua", 15, "bold"),
                 bg="#dce3eb",
                 fg="#2c3e50",
                 padx=20,
@@ -63,6 +63,7 @@ class LiveTabs(tk.Frame):
             if key == tab_name:
                 btn.config(
                     bg="#1f6aa5",
+                    font=("Bookman Antiqua", 15, "bold"),
                     fg="white",
                     relief="solid",
                     bd=0

@@ -29,6 +29,17 @@ class LoginController:
         self.context.app_state.logged_in = True
         self.context.app_state.current_user = user["Username"]
         self.context.app_state.current_role = user["Role"]
+        
+        
+        # Update existing SubHeader
+        home_screen = getattr(
+            self.context,
+            "home_screen",
+            None
+        )
+
+        if home_screen:
+            home_screen.sub_header.update_user()
 
         # Do not access old sidebar here
         # MenuWindow will create a fresh sidebar
@@ -55,9 +66,15 @@ class LoginController:
         if self.context.app_controller.sidebar:
             self.context.app_controller.sidebar.reset_sidebar()
 
-        if hasattr(self.context, "sub_header"):
-            self.context.sub_header.update_user()
+        # Update existing SubHeader
+        home_screen = getattr(
+            self.context,
+            "home_screen",
+            None
+        )
 
+        if home_screen:
+            home_screen.sub_header.update_user()
      
 
     # ------------------------------------

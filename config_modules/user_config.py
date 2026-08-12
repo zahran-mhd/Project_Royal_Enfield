@@ -55,7 +55,7 @@ class UserConfig(tk.Frame):
             text="+ Add User",
             font=ctk.CTkFont(
                 family="Segoe UI",
-                size=13,
+                size=16,
                 weight="bold"
             ),
             fg_color="#16A34A",
@@ -113,45 +113,45 @@ class UserConfig(tk.Frame):
             )
     
             
-    def edit_user(self, username):
+    # def edit_user(self, username):
 
-        # print("Received:", username, type(username))
+    #     # print("Received:", username, type(username))
 
-        user = self.user_repository.get_user(username)
+    #     user = self.user_repository.get_user(username)
 
-        if not user:
-            print("User not found")
-            return
+    #     if not user:
+    #         print("User not found")
+    #         return
 
-        prefill = [
-            user["username"],
-            user["role"]
-        ]
+    #     prefill = [
+    #         user["username"],
+    #         user["role"]
+    #     ]
 
-        def save(values):
+    #     def save(values):
 
-            self.user_repository.update_user(
-                username,          # old username
-                values[0],         # new username
-                user["Password"],  # existing password
-                values[1]          # role
-            )
+    #         self.user_repository.update_user(
+    #             username,          # old username
+    #             values[0],         # new username
+    #             user["Password"],  # existing password
+    #             values[1]          # role
+    #         )
 
-            self.load_users()
+    #         self.load_users()
 
-        FormPopup(
-            self,
-            title="Edit User Configuration",
-            fields=["Username", "Role"],
-            prefill=prefill,
-            on_save=save,
-            dropdowns={
-                "Role": [
-                    "Admin",
-                    "Operator"
-                ]
-            }
-        )
+    #     FormPopup(
+    #         self,
+    #         title="Edit User Configuration",
+    #         fields=["Username", "Role"],
+    #         prefill=prefill,
+    #         on_save=save,
+    #         dropdowns={
+    #             "Role": [
+    #                 "Admin",
+    #                 "Operator"
+    #             ]
+    #         }
+    #     )
     
     
     

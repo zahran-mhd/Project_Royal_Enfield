@@ -22,7 +22,7 @@ class HomeSidebar(tk.Frame):
             text="MENU",
             bg="#2563eb",
             fg="white",
-            font=("Arial", 12, "bold"),
+            font=("Bookman Antiqua", 12, "bold"),
             cursor="hand2",
             command=self.open_menu,
             relief="flat"
@@ -45,7 +45,7 @@ class HomeSidebar(tk.Frame):
             text="LOGIN",
             bg="#16a34a",
             fg="white",
-            font=("Arial", 12, "bold"),
+            font=("Bookman Antiqua", 12, "bold"),
              cursor="hand2",
           command=self.login_logout,   # Change this
             relief="flat"

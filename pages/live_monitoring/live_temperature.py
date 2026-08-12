@@ -23,7 +23,7 @@ class LiveTemperatureFrame(tk.Frame):
             self.context
         )
 
-        # --------------------------------
+        # -------------------------------- 
         # Grid Configuration
         # --------------------------------
         self.grid_columnconfigure(0, weight=1)
@@ -137,7 +137,7 @@ class LiveTemperatureFrame(tk.Frame):
         # --------------------------------
         canvas = tk.Canvas(
             card,
-            width=1400,
+            width=1200,
             height=150,
             bg="white",
             highlightthickness=0
@@ -174,9 +174,10 @@ class LiveTemperatureFrame(tk.Frame):
         # Create Temperature Labels
         # --------------------------------
         self.controller.create_temp_labels(
-            canvas,
-            self.controller.temp_labels[name]
-        )
+    canvas,
+    self.controller.temp_labels[name],
+    img_x
+)
 
     # =====================================================
     # Create Channel Section

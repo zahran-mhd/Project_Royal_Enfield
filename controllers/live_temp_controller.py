@@ -11,10 +11,10 @@ class LiveTempController:
         self.view = view
         self.context = context
 
-        self.img_x = 65
-        self.img_y = 25
+        self.img_x = 95
+        self.img_y = 30
 
-        self.img_w = 620
+        self.img_w = 520
         self.img_h = 100
 
         self.canvases = {}
@@ -49,65 +49,30 @@ class LiveTempController:
     def create_temp_labels(
         self,
         canvas,
-        label_list
+        label_list,
+        img_x
     ):
 
         positions = [
 
-            # Top
-            (
-                self.img_x + 100,
-                self.img_y - 12
-            ),
+    # Top
+    (img_x + self.img_w * 0.15, self.img_y - 15),
+    (img_x + self.img_w * 0.50, self.img_y - 15),
+    (img_x + self.img_w * 0.85, self.img_y - 15),
 
-            (
-                self.img_x + 310,
-                self.img_y - 12
-            ),
+    # Right
+    (img_x + self.img_w + 50, self.img_y + 30),
+    (img_x + self.img_w + 50, self.img_y + 70),
 
-            (
-                self.img_x + 520,
-                self.img_y - 12
-            ),
+    # Bottom
+    (img_x + self.img_w * 0.15, self.img_y + self.img_h + 15),
+    (img_x + self.img_w * 0.50, self.img_y + self.img_h + 15),
+    (img_x + self.img_w * 0.85, self.img_y + self.img_h + 15),
 
-            # Right
-            (
-                self.img_x + self.img_w + 35,
-                self.img_y + 25
-            ),
-
-            (
-                self.img_x + self.img_w + 35,
-                self.img_y + 75
-            ),
-
-            # Bottom
-            (
-                self.img_x + 100,
-                self.img_y + self.img_h + 15
-            ),
-
-            (
-                self.img_x + 310,
-                self.img_y + self.img_h + 15
-            ),
-
-            (
-                self.img_x + 520,
-                self.img_y + self.img_h + 15
-            ),
-
-            # Left
-            (
-                self.img_x - 35,
-                self.img_y + 25
-            ),
-
-            (
-                self.img_x - 30,
-                self.img_y + 65
-            )
-        ]
+    # Left
+    (img_x - 45, self.img_y + 30),
+    (img_x - 45, self.img_y + 70),
+]
 
         for i, (x, y) in enumerate(positions):
 
@@ -115,7 +80,7 @@ class LiveTempController:
                 x,
                 y,
                 text=f"T{i + 1}: 0°C",
-                font=("Arial", 10, "bold"),
+                font=("Arial", 8, "bold"),
                 fill="blue"
             )
 

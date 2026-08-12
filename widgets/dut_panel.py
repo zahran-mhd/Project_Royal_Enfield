@@ -24,7 +24,7 @@ class DUTPanel(tk.LabelFrame):
             pady=5,
             sticky="nsew"
         )
-
+ 
         # Discharging Panel
         self.discharging_panel = StatusPanel(self, "Discharging", items)
         self.discharging_panel.grid(

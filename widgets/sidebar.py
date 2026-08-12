@@ -1,5 +1,7 @@
 import tkinter as tk
 
+from utils.permission import Permissions
+
 class Sidebar(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -14,8 +16,10 @@ class Sidebar(tk.Frame):
             text="MENU",
             bg="#1f2937",
             fg="white",
-            font=("Arial", 18, "bold")
+            font=("Bookman Antiqua", 20, "bold")
         ).pack(pady=20)
+        
+        role = self.controller.app.app_state.current_role
 
         menus = [
             "Test Settings",
@@ -30,26 +34,40 @@ class Sidebar(tk.Frame):
         ]
 
         for menu in menus:
+
+            if not Permissions.can_access(role, menu):
+                continue
+
             btn = tk.Button(
                 self,
                 text=menu,
-                 bg="#1f2937",
+                bg="#1f2937",
+                 font=("Bookman Antiqua",12),
                 fg="white",
                 relief="flat",
                 anchor="w",
                 padx=20,
                 cursor="hand2",
-               command=lambda m=menu: self.controller.show_page(m)
+                command=lambda m=menu: self.controller.show_page(m)
             )
-            btn.pack(fill="x", padx=10, pady=3, ipady=8)
+
+            btn.pack(
+                fill="x",
+                padx=10,
+                pady=3,
+                ipady=8
+            )
+
             self.menu_buttons[menu] = btn
+
+        self.highlight_menu("Test Settings") 
+                    
             
             
-            
-            
-        self.highlight_menu("Test Settings")
+       
         
-        
+
+       
         
     def on_menu_click(self,menu):
         self.highlight_menu(menu)
@@ -69,10 +87,7 @@ class Sidebar(tk.Frame):
                     bg="#1f2937",
                     fg="white"
                 )
-                
-    def hide_configuration(self):
-        if "Configuration" in self.menu_buttons:
-            self.menu_buttons["Configuration"].pack_forget()
+
             
             
 
@@ -82,27 +97,4 @@ class Sidebar(tk.Frame):
         # Reset selected menu
         self.highlight_menu("Test Settings")
 
-        # Reset role-based menu
-        self.update_menu_by_role("")
         
-    
-    def update_menu_by_role(self, role):
-
-        config_btn = self.menu_buttons["Configuration"]
-
-        if role.lower() == "operator":
-
-            if config_btn.winfo_ismapped():
-                config_btn.pack_forget()
-
-        else:
-
-            if not config_btn.winfo_ismapped():
-
-                config_btn.pack(
-                    fill="x",
-                    padx=10,
-                    pady=3,
-                    ipady=8,
-                    before=self.menu_buttons["Endurance-Live Monitoring"]
-                )

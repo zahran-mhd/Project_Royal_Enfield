@@ -67,7 +67,7 @@ class MenuWindow(tk.Frame):
 
         test_settings_page = TestSettingsPage(self.content, self.context)
         configuration_page = ConfigurationPage(self.content,self.context)
-        parameter_settings_page = ParameterSettingsPage(self.content)
+        parameter_settings_page = ParameterSettingsPage(self.content,self.context)
         alarm_settings_page = AlarmSettingsPage(self.content)
         live_monitoring_page = LiveMonitoringPage(self.content,self.context)
         line_regulation_page = LineRegulationPage(self.content,self.context)

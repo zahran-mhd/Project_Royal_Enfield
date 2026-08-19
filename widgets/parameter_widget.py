@@ -204,7 +204,7 @@ def create_table(parent, columns, rows=3):
                 pady=1
             )
 
-def create_bottom_button(parent, text, color):
+def create_bottom_button(parent, text, color,command_action=None):
 
     btn = tk.Button(
         parent,
@@ -212,6 +212,7 @@ def create_bottom_button(parent, text, color):
         bg=color,
         fg="white",
         relief="flat",
+        command=command_action,
         font=("Arial", 11, "bold"),
         padx=20,
         pady=8

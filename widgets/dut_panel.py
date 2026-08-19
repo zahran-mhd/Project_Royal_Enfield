@@ -3,7 +3,8 @@ from widgets.status_panel import StatusPanel
 
 
 class DUTPanel(tk.LabelFrame):
-    def __init__(self, parent, dut_name, items=None):
+
+    def __init__(self, parent, dut_name, items=None,value_width=13):
         super().__init__(
             parent,
             text=dut_name,
@@ -16,7 +17,13 @@ class DUTPanel(tk.LabelFrame):
         self.grid_columnconfigure(1, weight=1)
 
         # Charging Panel
-        self.charging_panel = StatusPanel(self, "Charging", items)
+        self.charging_panel = StatusPanel(
+            self,
+            "Charging",
+            items,
+            value_width=value_width
+        )
+
         self.charging_panel.grid(
             row=0,
             column=0,
@@ -26,7 +33,13 @@ class DUTPanel(tk.LabelFrame):
         )
  
         # Discharging Panel
-        self.discharging_panel = StatusPanel(self, "Discharging", items)
+        self.discharging_panel = StatusPanel(
+            self,
+            "Discharging",
+            items,
+            value_width=value_width
+        )
+
         self.discharging_panel.grid(
             row=0,
             column=1,
@@ -38,34 +51,43 @@ class DUTPanel(tk.LabelFrame):
         # Default state
         self.set_mode("charging")
 
+    # -------------------------------------------------
+    # Mode
+    # -------------------------------------------------
+
     def set_mode(self, mode):
 
         if mode.lower() == "charging":
-            # Charging panel = Green
-            self.charging_panel.set_active("#d4edda")
 
-            # Discharging panel = White
+            self.charging_panel.set_active("#d4edda")
             self.discharging_panel.set_active("white")
 
         elif mode.lower() == "discharging":
-            # Charging panel = White
-            self.charging_panel.set_active("white")
 
-            # Discharging panel = Red
+            self.charging_panel.set_active("white")
             self.discharging_panel.set_active("#f8d7da")
 
-        
+    # -------------------------------------------------
+    # Update values
+    # -------------------------------------------------
 
-    # ---------------- Update Methods ----------------
+    def set_value(self, panel, item_key, value):
 
-    # def update_charging(self, max_temp, min_temp):
-    #     self.charging.max_lbl.config(text=max_temp)
-    #     self.charging.min_lbl.config(text=min_temp)
+        """
+        panel : 'charging' or 'discharging'
+        item_key : max / min / avg
+        """
 
-    # def update_discharging(self, max_temp, min_temp):
-    #     self.discharging.max_lbl.config(text=max_temp)
-    #     self.discharging.min_lbl.config(text=min_temp)
-        
- 
-    
-    
+        if panel.lower() == "charging":
+
+            self.charging_panel.set_value(
+                item_key,
+                value
+            )
+
+        elif panel.lower() == "discharging":
+
+            self.discharging_panel.set_value(
+                item_key,
+                value
+            )

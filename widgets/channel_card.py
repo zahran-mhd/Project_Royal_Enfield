@@ -12,6 +12,7 @@ class ChannelCard(ctk.CTkFrame):
         dut_list,
         channel_id=None,
         dut_callback=None,
+        dut_type_callback=None,
         start_callback=None
     ):
 
@@ -24,13 +25,14 @@ class ChannelCard(ctk.CTkFrame):
         )
 
         self.context = context
-        self.test_controller = context.test_controller
+        self.test_settings_controller = context.test_settings_controller
 
         self.channel_name = channel_name
         self.channel_id = channel_id
         self.dut_callback = dut_callback
         self.start_callback = start_callback
         self.dut_list = dut_list
+        self.dut_type_callback = dut_type_callback
 
         self.create_widgets()
 
@@ -82,16 +84,16 @@ class ChannelCard(ctk.CTkFrame):
             pady=5
         )
 
+        rows = self.test_settings_controller.get_all_duts()
+        self.dut_map = {row["dut_name"]: row["dut_id"] for row in rows}
+
         self.supplier_combo = ctk.CTkComboBox(
             self,
-            values=[
-                "Supplier A",
-                "Supplier B",
-                "Supplier C"
-            ],
+            values=list(self.dut_map.keys()),
             state="readonly",
-            width=250
-        )
+            width=250,
+            command=self.on_dut_type_changed
+            )
 
         self.supplier_combo.grid(
             row=row,
@@ -456,6 +458,7 @@ class ChannelCard(ctk.CTkFrame):
             if var.get()
         ]
 
+
         print("ChannelCard:", selected)
 
         if self.dut_callback:
@@ -470,11 +473,11 @@ class ChannelCard(ctk.CTkFrame):
     # START TEST
     # =====================================================
 
-    def on_start_clicked(self):
+    # def on_start_clicked(self):
 
-        if self.start_callback:
+    #     if self.start_callback:
 
-            self.start_callback(self)
+    #         self.start_callback(self)
 
     # =====================================================
     # DISABLE START BUTTON
@@ -528,49 +531,38 @@ class ChannelCard(ctk.CTkFrame):
 
     def get_settings(self):
 
+        # selected_duts = [
+        #     dut
+        #     for dut, var in self.dut_vars.items()
+        #     if var.get()
+        # ]
+
         selected_duts = [
-            dut
+            int(dut.replace("DUT", ""))
             for dut, var in self.dut_vars.items()
             if var.get()
         ]
 
-        dut_a = self.dut_list[0]
-        dut_b = self.dut_list[1]
+        dut_a = self.dut_list[0]      # "DUT1"
+        dut_b = self.dut_list[1]      # "DUT2"
 
-        # First selected DUT
-        dut_id = (
-            int(selected_duts[0].replace("DUT", ""))
-            if selected_duts
-            else None
-        )
+        dut_a_no = int(dut_a.replace("DUT", ""))
+        dut_b_no = int(dut_b.replace("DUT", ""))
 
-        print(dut_id)
+        dut_id = selected_duts[0] if selected_duts else None
 
         return {
-
             "channel_id": self.channel_id,
-
             "dut_id": dut_id,
-
             "selected_duts": selected_duts,
 
             "dut_a_name": dut_a,
-
             "dut_b_name": dut_b,
 
-            "use_dut_a": (
-                1
-                if dut_a in selected_duts
-                else 0
-            ),
+            "use_dut_a": 1 if dut_a_no in selected_duts else 0,
+            "use_dut_b": 1 if dut_b_no in selected_duts else 0,
 
-            "use_dut_b": (
-                1
-                if dut_b in selected_duts
-                else 0
-            ),
-
-            "supplier": self.supplier_combo.get(),
+            "dut_type": self.supplier_combo.get(),
 
             "test_type": self.selected_test.get(),
 
@@ -592,3 +584,50 @@ class ChannelCard(ctk.CTkFrame):
                 self.time_entry.get()
             )
         }
+
+    # def on_dut_type_changed(self, dut_type):
+
+    #     dut_id = self.dut_map[dut_type]
+
+    #     if self.dut_callback:
+    #         self.dut_callback(
+    #             channel_id=self.channel_id,
+    #             channel_name=self.channel_name,
+    #             dut_id=dut_id,
+    #             dut_type=dut_type
+    #         )
+
+    def on_dut_type_changed(self, dut_name):
+
+        if self.dut_type_callback:
+            self.dut_type_callback(
+                self.channel_id,
+                dut_name
+            )
+
+    # def get_data(self):
+    #     return {
+    #         "channel_id": self.channel_id,
+    #         "dut_id": self.selected_dut_id,      # Set when DUT is selected
+    #         "use_dut_a": 1 if self.use_dut_a_var.get() else 0,
+    #         "use_dut_b": 1 if self.use_dut_b_var.get() else 0,
+    #         "test_type": self.test_type_combo.get(),
+    #         "test_name": self.test_name_entry.get().strip(),
+    #         "dut_a_serial_no": self.dut_a_serial_entry.get().strip(),
+    #         "dut_b_serial_no": self.dut_b_serial_entry.get().strip(),
+    #         "no_of_cycles": int(self.cycles_entry.get() or 0),
+    #         "interval_seconds": int(self.interval_entry.get() or 0)
+    #     }
+
+    # def on_start_clicked(self):
+
+    #     if self.start_callback:
+    #         self.start_callback(self.get_settings())
+
+    def on_start_clicked(self):
+
+        if self.start_callback:
+            self.start_callback(
+                self,
+                self.get_settings()
+            )

@@ -6,6 +6,7 @@ from database.database_manager import DatabaseManager
 
 from database.repositories.user_repository import UserRepository
 from database.repositories.instrument_repository import InstrumentRepository
+from database.repositories.parameter_repository import ParameterRepository
 from database.repositories.channel_repository import ChannelRepository
 from database.repositories.test_repository import TestRepository
 
@@ -14,9 +15,13 @@ from controllers.app_controller import AppController
 from controllers.historical_trend_controller import HistoricalTrendController
 from controllers.test_controller import TestController
 from controllers.test_settings_controller import TestSettingsController
+from controllers.parameter_settings_controller import ParameterSettingsController
+from controllers.efficiency_trend_controller import EfficiencyTrendController
+from instruments.workers.alarm_monitor import AlarmMonitor
 
 from instruments.instrument_manager import InstrumentManager
 from instruments.can_manager import CANManager
+from instruments.dbc_decoder import DBCDecoder
 
 from views.menu_window import MenuWindow
 from views.home_window import HomeScreen
@@ -51,6 +56,7 @@ def main():
 
     context.db = DatabaseManager()
 
+    context.decoder = DBCDecoder()
     # =====================================
     # REPOSITORIES
     # =====================================
@@ -58,10 +64,14 @@ def main():
     context.user_repository = UserRepository(
         context.db
     )
-
+ 
     context.instrument_repository = InstrumentRepository(
         context.db
     )
+
+    context.parameter_repository = ParameterRepository(
+            context.db
+        )
 
     context.channel_repository = ChannelRepository(
         context.db
@@ -87,9 +97,11 @@ def main():
         HistoricalTrendController(context)
     )
 
+
     context.instrument_manager = InstrumentManager(
         context
 )
+    context.instrument_manager.connect_all()
     
     context.can_manager = CANManager(
     context
@@ -103,6 +115,14 @@ def main():
         TestSettingsController(context)
     )
 
+    context.parameter_settings_controller = (
+            ParameterSettingsController(context,context.db)
+    )
+
+    
+    # context.efficiency_trend_controller = (
+    #     EfficiencyTrendController(context)
+    # )
     # =====================================
     # HOME SCREEN
     # =====================================
@@ -119,6 +139,9 @@ def main():
         relheight=1
     )
 
+
+    context.alarm_monitor = AlarmMonitor(context)
+    context.alarm_monitor.start()
     # =====================================
     # CREATE MENU WINDOW FUNCTION
     # =====================================
@@ -164,6 +187,24 @@ def main():
     # =====================================
 
     root.mainloop()
+
+
+    def on_close():
+
+        context.instrument_manager.disconnect_all()
+
+        if context.can_manager:
+            context.can_manager.disconnect_all()
+
+        root.destroy()
+
+
+    root.protocol(
+        "WM_DELETE_WINDOW",
+        on_close
+    )
+
+
 
 
 if __name__ == "__main__":

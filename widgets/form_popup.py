@@ -6,13 +6,13 @@ from tkinter import ttk
 
 class FormPopup:
 
-    def __init__(self, parent, title, fields, on_save, prefill=None, dropdowns=None):
+    def __init__(self, parent, title, fields, on_save, prefill=None, dropdowns=None,readonly_fields=None):
         self.parent = parent
         self.fields = fields
         self.on_save = on_save
         self.prefill = prefill
         self.dropdowns = dropdowns or {}
-
+        self.readonly_fields = readonly_fields or []
         self.entries = {}
 
         # Create popup hidden
@@ -126,6 +126,7 @@ class FormPopup:
                     font=("Segoe UI", 10)
                 )
 
+
             entry.grid(
                 row=i,
                 column=1,
@@ -134,6 +135,16 @@ class FormPopup:
                 sticky="w"
             )
 
+            if label in self.readonly_fields:
+
+                if isinstance(entry, ttk.Combobox):
+
+                    entry.configure(state="disabled")
+
+                else:
+
+                    entry.configure(state="readonly")
+                    
             self.entries[label] = entry
 
             if self.prefill:

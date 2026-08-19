@@ -56,8 +56,10 @@ class LiveMonitoringPage(tk.Frame):
     "table": LiveTableFrame(self.content_frame, self.context),
     "temperature": LiveTemperatureFrame(self.content_frame,self.context)
 }
-        # OPEN DEFAULT TAB HERE
-        self.tabs_widget.select_tab("trend")
+
+        self.context.live_table = self.tabs["table"]
+         # OPEN DEFAULT TAB HERE
+        self.tabs_widget.select_tab("table")
 
    
     def start_live_plot(self, selected_duts):
@@ -65,3 +67,26 @@ class LiveMonitoringPage(tk.Frame):
         self.controller.start_live_plot(
             selected_duts
         )
+
+    def reset(self, selected_duts):
+
+        if not selected_duts:
+            return
+
+        first_dut = selected_duts[0]
+
+        if first_dut in (1, 2):
+            channel_id = 1
+        else:
+            channel_id = 2
+
+        self.tabs["trend"].reset(channel_id)
+        self.tabs["table"].reset(channel_id)
+        self.tabs["temperature"].reset(channel_id)
+
+    # def reset(self, selected_duts):
+
+    #     self.tabs["trend"].reset(selected_duts)
+    #     self.tabs["table"].reset(selected_duts)
+    #     self.tabs["temperature"].reset(selected_duts)
+

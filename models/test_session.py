@@ -7,6 +7,7 @@ from datetime import datetime
 @dataclass
 class TestSession:
 
+
     # -----------------------------
     # TEST INFORMATION
     # -----------------------------
@@ -34,6 +35,10 @@ class TestSession:
     total_steps: int = 0
 
     completed_steps: int = 0
+
+    # Current endurance mode
+    # Charge / Discharge / Rest
+    mode: str = "Rest"
 
     # -----------------------------
     # RESULT

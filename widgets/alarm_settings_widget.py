@@ -20,18 +20,21 @@ class AlarmSettingsWidget(tk.Frame):
         # Column Sizes
         table_frame.grid_columnconfigure(0, weight=1, minsize=100)
         table_frame.grid_columnconfigure(1, weight=3, minsize=320)
-        table_frame.grid_columnconfigure(2, weight=2, minsize=180)
-        table_frame.grid_columnconfigure(3, weight=2, minsize=180)
-        table_frame.grid_columnconfigure(4, weight=2, minsize=180)
+        # table_frame.grid_columnconfigure(2, weight=2, minsize=180)
+        # table_frame.grid_columnconfigure(3, weight=2, minsize=180)
+        # table_frame.grid_columnconfigure(4, weight=2, minsize=180)
 
         # HEADERS
-        headers = ["Enable", "Name", "Min", "Max", "Type"]
+        headers = ["Enable", "Name"]
+
+        #  # HEADERS
+        #         headers = ["Enable", "Name", "Min", "Max", "Type"]
 
         for col, header in enumerate(headers):
             tk.Label(
                 table_frame,
                 text=header,
-                font=("Segoe UI", 11, "bold"),
+                font=("Segoe UI", 18, "bold"),
                 bg="#1976F3",
                 fg="white",
                 pady=10
@@ -84,7 +87,7 @@ class AlarmSettingsWidget(tk.Frame):
                 text=alarm_name,
                 bg="white",
                 fg="#1E3A5F",
-                font=("Segoe UI", 10),
+                font=("Segoe UI", 16),
                 anchor="w"
             ).grid(
                 row=row,
@@ -94,57 +97,57 @@ class AlarmSettingsWidget(tk.Frame):
                 pady=8
             )
 
-            min_entry = ttk.Entry(
-                table_frame,
-                font=("Segoe UI", 10)
-            )
+            # min_entry = ttk.Entry(
+            #     table_frame,
+            #     font=("Segoe UI", 10)
+            # )
 
-            min_entry.grid(
-                row=row,
-                column=2,
-                sticky="ew",
-                padx=15,
-                pady=8,
-                ipady=2
-            )
+            # min_entry.grid(
+            #     row=row,
+            #     column=2,
+            #     sticky="ew",
+            #     padx=15,
+            #     pady=8,
+            #     ipady=2
+            # )
 
-            max_entry = ttk.Entry(
-                table_frame,
-                font=("Segoe UI", 10)
-            )
+            # max_entry = ttk.Entry(
+            #     table_frame,
+            #     font=("Segoe UI", 10)
+            # )
 
-            max_entry.grid(
-                row=row,
-                column=3,
-                sticky="ew",
-                padx=15,
-                pady=8,
-                ipady=2
-            )
+            # max_entry.grid(
+            #     row=row,
+            #     column=3,
+            #     sticky="ew",
+            #     padx=15,
+            #     pady=8,
+            #     ipady=2
+            # )
 
-            type_combo = ttk.Combobox(
-                table_frame,
-                values=["Warning", "Critical", "Fault"],
-                state="readonly",
-                font=("Segoe UI", 10)
-            )
+            # type_combo = ttk.Combobox(
+            #     table_frame,
+            #     values=["Warning", "Critical", "Fault"],
+            #     state="readonly",
+            #     font=("Segoe UI", 10)
+            # )
 
-            type_combo.set("Warning")
+            # type_combo.set("Warning")
 
-            type_combo.grid(
-                row=row,
-                column=4,
-                sticky="ew",
-                padx=15,
-                pady=8
-            )
+            # type_combo.grid(
+            #     row=row,
+            #     column=4,
+            #     sticky="ew",
+            #     padx=15,
+            #     pady=8
+            # )
 
             self.alarm_rows.append({
                 "enable": enable_var,
-                "name": alarm_name,
-                "min": min_entry,
-                "max": max_entry,
-                "type": type_combo
+                "name": alarm_name
+                # "min": min_entry,
+                # "max": max_entry,
+                # "type": type_combo
             })
 
         # SAVE BUTTON

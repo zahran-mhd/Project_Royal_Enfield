@@ -13,9 +13,8 @@ class TestSettingsPage(tk.Frame):
 
         self.context = context
         
-        self.channel_cards = {}   # Store ChannelCard objects
-        
-      
+        self.channel_cards = {}   # Store ChannelCard objects  
+        self.context.channel_cards = {}  
 
         self.create_ui()
       
@@ -53,14 +52,16 @@ class TestSettingsPage(tk.Frame):
                 title=channel_name,
                 channel_name=channel_name,
                 dut_list = [
-    f"DUT{2 * int(channel_id) - 1}",
-    f"DUT{2 * int(channel_id)}"
-],
+                        f"DUT{2 * int(channel_id) - 1}",
+                        f"DUT{2 * int(channel_id)}"
+                    ],
                 channel_id=channel_id,
                 dut_callback=self.context.test_settings_controller.on_dut_selected,
-                 start_callback=self.context.test_settings_controller.start_test
-            )
+                dut_type_callback=self.context.test_settings_controller.on_dut_type_selected,
+                start_callback=self.context.test_settings_controller.start_test
+                )
             self.channel_cards[channel_name] = card    # <-- Save reference
+            self.context.channel_cards[channel_id] = card
             card.grid(
                 row=0,
                 column=col,
@@ -70,4 +71,18 @@ class TestSettingsPage(tk.Frame):
             )
 
             content.columnconfigure(col, weight=1)
-   
+
+
+    def get_channel_settings(self):
+        settings = []
+
+        for card in self.channel_cards.values():
+            settings.append(card.get_data())
+
+        return settings
+
+    def save_settings(self):
+
+        settings = self.get_channel_settings()
+
+        self.context.test_settings_controller.save_channel_settings(settings)

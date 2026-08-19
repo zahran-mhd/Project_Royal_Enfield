@@ -19,8 +19,11 @@ class DatabaseManager:
         self.create_tables()
         self.create_default_users()
         self.create_default_channels()
+        self.create_default_instrument_types()
         # self.create_default_alarms()
 
+    def get_connection(self):
+        return self.conn
     # --------------------------------------------------
     # CREATE TABLES
     # --------------------------------------------------
@@ -65,12 +68,33 @@ class DatabaseManager:
         # INSTRUMENT CONFIGURATION
         # ==========================================
         
+        # cursor.execute("""
+        # CREATE TABLE IF NOT EXISTS Instruments
+        # (
+        #     InstrumentID INTEGER PRIMARY KEY AUTOINCREMENT,
+        
+        #     InstrumentName TEXT NOT NULL,
+
+        #     Address TEXT,
+
+        #     InstrumentSNo TEXT,
+
+        #     CalibrationDueDate TEXT,
+
+        #     Status INTEGER,
+
+        #     IsLocked INTEGER DEFAULT 0
+        # )
+        # """)
+
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS Instruments
         (
             InstrumentID INTEGER PRIMARY KEY AUTOINCREMENT,
-        
+
             InstrumentName TEXT NOT NULL,
+
+            InstrumentTypeID INTEGER NOT NULL,
 
             Address TEXT,
 
@@ -78,9 +102,28 @@ class DatabaseManager:
 
             CalibrationDueDate TEXT,
 
-            Status INTEGER,
+            ConnectionStatus INTEGER DEFAULT 0,
 
-            IsLocked INTEGER DEFAULT 0
+            IsLocked INTEGER DEFAULT 0,
+
+            FOREIGN KEY (InstrumentTypeID)
+                REFERENCES InstrumentType(InstrumentTypeID)
+        )
+        """)
+        # ==========================================
+        # INSTRUMENT TYPES
+        # ==========================================
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS InstrumentType
+        (
+            InstrumentTypeID INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            TypeName TEXT NOT NULL UNIQUE,
+
+            DriverClass TEXT NOT NULL,
+
+            WorkerClass TEXT NOT NULL
         )
         """)
 
@@ -107,6 +150,41 @@ class DatabaseManager:
         )
         """)
 
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS DAQChannel
+        (
+            DAQChannelID INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            ChannelID INTEGER NOT NULL,
+
+            InstrumentID INTEGER NOT NULL,
+
+            Slot INTEGER NOT NULL,
+
+            DAQChannel TEXT NOT NULL,
+
+            ParameterName TEXT,
+
+            MeasurementType TEXT,
+
+            ThermocoupleType TEXT,
+
+            IsEnabled INTEGER DEFAULT 1,
+
+            FOREIGN KEY (ChannelID)
+                REFERENCES Channel(ChannelID),
+
+            FOREIGN KEY (InstrumentID)
+                REFERENCES Instruments(InstrumentID),
+
+            UNIQUE(
+                InstrumentID,
+                Slot,
+                DAQChannel
+            )
+        )
+        """)
+        
         # ==========================================
         # PARAMETER SETTINGS - DUT
         # ==========================================
@@ -164,33 +242,66 @@ class DatabaseManager:
             FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
         )
         """)
+        # cursor.execute("""
+        # CREATE TABLE IF NOT EXISTS OBC_HV_DC_Input_Settings (
+        #     input_setting_id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        #     dut_id INTEGER NOT NULL,
+        #     dc_load_current REAL NOT NULL,
+
+        #     input_voltage REAL NOT NULL,
+        #     input_frequency REAL NOT NULL,
+
+        #     FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
+        # )
+        # """)
+
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS OBC_HV_DC_Input_Settings (
-            input_setting_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                CREATE TABLE IF NOT EXISTS OBC_HV_DC_Input_Settings (
+                input_setting_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-            dut_id INTEGER NOT NULL,
-            dc_load_current REAL NOT NULL,
+                dut_id INTEGER NOT NULL,
 
-            input_voltage REAL NOT NULL,
-            input_frequency REAL NOT NULL,
+                step_no INTEGER NOT NULL,
 
-            FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
-        )
-        """)
+                dc_load_current REAL NOT NULL,
+
+                input_voltage REAL NOT NULL,
+                input_frequency REAL NOT NULL,
+
+                FOREIGN KEY (dut_id)
+                    REFERENCES DUT(dut_id)
+                )
+                """)
+        
+        # cursor.execute("""
+        # CREATE TABLE IF NOT EXISTS OBC_HV_DC_Output_Settings (
+        #     input_setting_id INTEGER NOT NULL,
+
+        #     step_no INTEGER NOT NULL,
+        #     hv_voltage REAL NOT NULL,
+        #     hv_current REAL NOT NULL,
+
+        #     PRIMARY KEY (input_setting_id, step_no),
+
+        #     FOREIGN KEY (input_setting_id)
+        #         REFERENCES OBC_HV_DC_Input_Settings(input_setting_id)
+        # )
+        # """)
+
         cursor.execute("""
-        CREATE TABLE IF NOT EXISTS OBC_HV_DC_Output_Settings (
-            input_setting_id INTEGER NOT NULL,
+                CREATE TABLE IF NOT EXISTS OBC_HV_DC_Output_Settings (
+                dut_id INTEGER NOT NULL,
+                step_no INTEGER NOT NULL,
+                hv_voltage REAL NOT NULL,
+                hv_current REAL NOT NULL,
 
-            step_no INTEGER NOT NULL,
-            hv_voltage REAL NOT NULL,
-            hv_current REAL NOT NULL,
+                PRIMARY KEY (dut_id, step_no),
 
-            PRIMARY KEY (input_setting_id, step_no),
-
-            FOREIGN KEY (input_setting_id)
-                REFERENCES OBC_HV_DC_Input_Settings(input_setting_id)
-        )
-        """)
+                FOREIGN KEY (dut_id)
+                    REFERENCES DUT(dut_id)
+            )
+                """)
 
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS HPDC_HV_DC_Load_Settings (
@@ -236,8 +347,9 @@ class DatabaseManager:
             dut_id INTEGER NOT NULL,
             hv_voltage REAL NOT NULL,
             step_no INTEGER NOT NULL,
+            load_percent INTEGER NOT NULL,
             current_value REAL NOT NULL,
-            PRIMARY KEY (dut_id,hv_voltage, step_no),
+            PRIMARY KEY (dut_id,hv_voltage, step_no,load_percent),
             FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
         )
         """)
@@ -247,8 +359,9 @@ class DatabaseManager:
             dut_id INTEGER NOT NULL,
             hv_voltage REAL NOT NULL,
             step_no INTEGER NOT NULL,
+            load_percent INTEGER NOT NULL,
             current_value REAL NOT NULL,
-            PRIMARY KEY (dut_id,hv_voltage, step_no),
+            PRIMARY KEY (dut_id,hv_voltage, step_no,load_percent),
             
             FOREIGN KEY (dut_id) REFERENCES DUT(dut_id)
         )
@@ -479,4 +592,67 @@ class DatabaseManager:
         ('HP DCDC Short Current Protection')
             ]
         )
+        self.conn.commit()
+
+
+    def create_default_instrument_types(self):
+
+        cursor = self.conn.cursor()
+
+        instrument_types = [
+
+            (
+                "PW3337",
+                "PW3337Driver",
+                "PW3337Worker"
+            ),
+
+            (
+                "ASR3400",
+                "ASR3400Driver",
+                "ASR3400Worker"
+            ),
+
+            (
+                "DAQ970A",
+                "DAQ970ADriver",
+                "DAQ970AWorker"
+            ),
+
+            (
+                "RP5935A",
+                "RP5935ADriver",
+                "RP5935AWorker"
+            ),
+
+            (
+                "EL4935A",
+                "EL4935ADriver",
+                "EL4935AWorker"
+            ),
+            
+            (
+                "EL34143A",
+                "EL34143ADriver",
+                "EL34143AWorker"
+            )
+
+        ]
+
+        cursor.executemany(
+            """
+            INSERT OR IGNORE INTO InstrumentType
+            (
+                TypeName,
+                DriverClass,
+                WorkerClass
+            )
+            VALUES
+            (
+                ?, ?, ?
+            )
+            """,
+            instrument_types
+        )
+
         self.conn.commit()

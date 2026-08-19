@@ -22,23 +22,44 @@ class TestSettingsController():
         print("Selected DUTs :", self.context.selected_duts)
         print("Selected Channels :", self.context.selected_channels)
         
-    def start_test(self, card):
+    def start_test(self, card, values):
 
-        values = card.get_settings()
+        # print(values)
 
         if not self.validate_settings(values):
             return
 
         card.disable_start_button()
 
+        conn = self.context.database_manager.get_connection()
+
+        self.context.test_repository.save_channel_setting(
+            conn,
+            values
+        )
+
         self.context.test_controller.start_test(
             values["channel_id"],
             values
         )
 
+        if values['test_type']=="Endurance":
+            self.context.live_table.start_channel_refresh(
+                values["channel_id"]
+                )
+
+        # self.context.can_manager.connect_channel(
+        #             channel_id=channel_id,
+        #             bitrate=bitrate
+        #         )
+
         page = self.context.app_controller.pages[
             "Endurance-Live Monitoring"
         ]
+
+        page.reset(values["selected_duts"])
+
+        page.start_live_plot(values["selected_duts"])
 
         page.start_live_plot(values["selected_duts"])
     
@@ -80,7 +101,7 @@ class TestSettingsController():
 }
     def validate_settings(self, values):
 
-        if not values["supplier"]:
+        if not values["dut_type"]:
             messagebox.showerror(
                 "Validation Error",
                 "Please select a DUT Type."
@@ -160,33 +181,61 @@ class TestSettingsController():
                 )
                 return False
         # Validate cycles
-        try:
-            cycles = int(values["no_of_cycles"])
+        if values['test_type'] == "Endurance":
+            try:
+                cycles = int(values["no_of_cycles"])
 
-            if cycles <= 0:
+                if cycles <= 0:
+                    messagebox.showerror(
+                        "Validation Error",
+                        "Cycles must be greater than 0."
+                    )
+                    return False
+
+            except (ValueError, TypeError):
                 messagebox.showerror(
                     "Validation Error",
-                    "Cycles must be greater than 0."
+                    "Please enter a valid positive integer for Cycles."
                 )
                 return False
 
-        except (ValueError, TypeError):
-            messagebox.showerror(
-                "Validation Error",
-                "Please enter a valid positive integer for Cycles."
-            )
-            return False
-
-        # Validate interval
-        try:
-            interval = float(values["interval_seconds"])
-            if interval <= 0:
-                raise ValueError
-        except ValueError:
-            messagebox.showerror(
-                "Validation Error",
-                "Please enter a valid Interval."
-            )
-            return False
+            # Validate interval
+            try:
+                interval = float(values["interval_seconds"])
+                if interval <= 0:
+                    raise ValueError
+            except ValueError:
+                messagebox.showerror(
+                    "Validation Error",
+                    "Please enter a valid Interval."
+                )
+                return False
 
         return True
+
+    def get_all_duts(self):
+            conn = self.context.database_manager.get_connection()
+            return self.context.parameter_repository.get_all_duts(conn)
+
+    # def on_dut_type_selected(self, channel_id, dut_name):
+
+    #     dut = self.context.parameter_repository.get_by_name(dut_name)
+
+    #     bitrate = dut["dut_bit_rate"]
+
+    #     # self.context.can_manager.connect_channel(
+    #     #     channel_id=channel_id,
+    #     #     bitrate=bitrate
+    #     # )
+
+    def on_dut_type_selected(self, channel_id, dut_name):
+
+        self.context.selected_dut_types[channel_id] = dut_name
+
+    # def save_channel_settings(self, settings):
+
+    #     for setting in settings:
+    #         self.repository.save_channel_setting(
+    #             self.db.conn,
+    #             setting
+    #         )

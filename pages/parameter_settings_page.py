@@ -1,13 +1,20 @@
 import tkinter as tk
 from tkinter import ttk
 from widgets.parameter_widget import *
+from widgets.form_popup import FormPopup
+from widgets.delete_popup import DeleteDutPopup
+from tkinter import filedialog
+import os
+from tkinter import messagebox
 
 
 class ParameterSettingsPage(tk.Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,context):
 
         super().__init__(parent, bg="#f5f5f5")
+        self.context = context
+        self.controller = self.context.parameter_settings_controller
 
         scrollbar = ttk.Scrollbar(
             self,
@@ -112,15 +119,37 @@ class ParameterSettingsPage(tk.Frame):
 
         # ---------------- Labels ----------------
         create_label(supplier, "DUT Type", 0, 0)
-        create_label(supplier, "Bits Rate", 0, 2)
+        create_label(supplier, "Bit Rate", 0, 1)
         create_label(supplier, "DBC File", 0, 3)
+
+        # self.dut_map = {
+        #     "Supplier A": 1,
+        #     "Supplier B": 2,
+        #     "Supplier C": 3
+        # }
+        rows = self.controller.get_all_duts()
+        self.dut_map = {row["dut_name"]: row["dut_id"] for row in rows}
+
+        # self.dut_type["values"] = list(self.dut_map.keys())
 
         # DUT Type Combobox
         self.dut_type = create_combobox(
             supplier,
             1,
             0,
-            ["Supplier A", "Supplier B", "Supplier C"]
+            list(self.dut_map.keys())
+        )
+
+        self.dut_type.bind(
+            "<<ComboboxSelected>>",
+            self.on_dut_selected
+        )
+
+        # Bits Rate
+        self.entries["bits_rate"] = create_entry(
+            supplier,
+            1,
+            1
         )
 
         # Edit button
@@ -130,16 +159,16 @@ class ParameterSettingsPage(tk.Frame):
             "#007bff",
             "white",
             1,
-            1,
+            2,
             command=self.edit_supplier
         )
 
-        # Bits Rate
-        self.entries["bits_rate"] = create_entry(
-            supplier,
-            1,
-            2
-        )
+        # # Bits Rate
+        # self.entries["bits_rate"] = create_entry(
+        #     supplier,
+        #     1,
+        #     2
+        # )
 
         self.entries["dbc_file"] = create_entry(
             supplier,
@@ -163,7 +192,8 @@ class ParameterSettingsPage(tk.Frame):
             "#28a745",
             "white",
             0,
-            0
+            0,
+            command=self.upload_dbc
         )
 
         create_button(
@@ -172,7 +202,8 @@ class ParameterSettingsPage(tk.Frame):
             "#dc3545",
             "white",
             0,
-            1
+            1,
+            command=self.remove_dbc
         )
 
         # =================================================
@@ -355,7 +386,7 @@ class ParameterSettingsPage(tk.Frame):
 
         create_label(top, "Dwell Time", 0, 0)
 
-        self.entries["dwell_time"] = create_entry(
+        self.entries["line_dwell_time"] = create_entry(
             top,
             0,
             1,
@@ -402,7 +433,7 @@ class ParameterSettingsPage(tk.Frame):
 
         create_label(left, "DC-DC Load Current", 1, 0)
 
-        self.entries["obc_load_current"] = create_entry(
+        self.entries["line_obc_load_current"] = create_entry(
             left,
             1,
             1,
@@ -616,35 +647,35 @@ class ParameterSettingsPage(tk.Frame):
 
         # ---------------- Left Panel ----------------
 
-        obc = load_regulation_panel(
+        self.obc_panel = load_regulation_panel(
             body,
             "OBC Load Regulation"
         )
 
-        obc["panel"].grid(
+        self.obc_panel["panel"].grid(
             row=0,
             column=0,
             padx=40,
             sticky="n"
         )
 
-        self.entries["obc_steps"] = obc["steps"]
+        self.entries["obc_steps"] = self.obc_panel["steps"]
 
         # ---------------- Right Panel ----------------
 
-        hp = load_regulation_panel(
+        self.hp_panel = load_regulation_panel(
             body,
             "HP DCDC Load Regulation"
         )
 
-        hp["panel"].grid(
+        self.hp_panel["panel"].grid(
             row=0,
             column=1,
             padx=40,
             sticky="n"
         )
 
-        self.entries["hp_steps"] = hp["steps"]
+        self.entries["hp_steps"] = self.hp_panel["steps"]
 
         # =================================================
         # Buttons
@@ -660,30 +691,811 @@ class ParameterSettingsPage(tk.Frame):
             pady=20
         )
 
-        create_bottom_button(
-            button_frame,
-            "Add New",
-            "#18b56b"
-        ).pack(side="left", padx=10)
+        # create_bottom_button(
+        #     button_frame,
+        #     "Add New",
+        #     "#18b56b"
+        # ).pack(side="left", padx=10)
 
-        create_bottom_button(
-            button_frame,
-            "Delete Existing",
-            "#ef4444"
-        ).pack(side="left", padx=10)
+        add_btn = tk.Button(
+                        button_frame,
+                        text="Add New",
+                        bg="#2d6cdf",
+                        fg="white",
+                        relief="flat",
+                        command=self.add_new_dut,
+                        font=("Arial", 11, "bold"),
+                        padx=20,
+                        pady=8
+                    )
+        
+        add_btn.pack(side="left", padx=10)
 
-        create_bottom_button(
-            button_frame,
-            "Save Settings",
-            "#2d6cdf"
-        ).pack(side="left", padx=10)
+        delete_btn = tk.Button(
+                        button_frame,
+                        text="Delete Existing",
+                        bg="#ef4444",
+                        fg="white",
+                        relief="flat",
+                        command=self.delete_dut,
+                        font=("Arial", 11, "bold"),
+                        padx=20,
+                        pady=8
+                    )
+        
+        delete_btn.pack(side="left", padx=10)
+
+        # create_bottom_button(
+        #     button_frame,
+        #     "Delete Existing",
+        #     "#ef4444"
+        # ).pack(side="left", padx=10)
+
+        # create_bottom_button(
+        #     button_frame,
+        #     "Save Settings",
+        #     "#2d6cdf"
+        # ).pack(side="left", padx=10)
+
+       
+
+        btn = tk.Button(
+                button_frame,
+                text="Save Settings",
+                bg="#2d6cdf",
+                fg="white",
+                relief="flat",
+                command=self.save_all_settings,
+                font=("Arial", 11, "bold"),
+                padx=20,
+                pady=8
+            )
+
+        btn.pack(side="left", padx=10)
             
+    # def on_dut_selected(self, event):
+    #     dut_name = self.dut_type.get()
+    #     dut_id = self.dut_map[dut_name]
+
+    #     settings = self.controller.get_all_settings(dut_id)
+
+    #     self.load_settings(settings)
+
+    def on_dut_selected(self, event):
+
+        dut_name = self.dut_type.get()
+
+        dut_id = self.dut_map[dut_name]
+
+        settings = self.controller.get_all_settings(dut_id)
+
+        self.load_dut(settings["dut"])
+
+        self.load_endurance(settings["endurance"])
+
+        self.load_line_common(settings["line_common"])
+
+        self.load_obc_inputs(settings["obc_line_inputs"])
+
+        # self.load_hpdc_line_current(settings["hpdc_line_current"])
+
+        self.load_hpdc_line(settings["hpdc_line_setting"])
+
+        self.load_load_common(settings["load_common"])
+
+        self.load_obc_regulation(settings["obc_load_settings"])
+
+        self.load_hpdc_regulation(settings["hpdc_load_settings"])
+
+        self.load_dbc_file(dut_id)
+
+        # self.load_hpdc_regulation(settings["hpdc_load_regulation"])
+
+    def load_dut(self, dut):
     
+        if not dut:
+            return
+
+        self.set_entry("bits_rate", dut["dut_bit_rate"])
+
+
+    def load_endurance(self, endurance):
+
+        if not endurance:
+            return
+
+        self.set_entry("cycle_charging", endurance["charge_time"])
+        self.set_entry("cycle_discharging", endurance["discharge_time"])
+
+        self.set_entry("cycle_rest1", endurance["rest_time1"])
+        self.set_entry("cycle_rest2", endurance["rest_time2"])
+
+        self.set_entry("ac_input_voltage", endurance["ac_input_voltage"])
+        self.set_entry("input_frequency", endurance["ac_input_frequency"])
+
+        self.set_entry("obc_output_voltage", endurance["dc_output_voltage"])
+        self.set_entry("obc_output_current", endurance["dc_output_current"])
+
+        self.set_entry("charging_hp_load_current", endurance["char_dc_load_current"])
+        self.set_entry("discharging_hp_load_current", endurance["dis_dc_load_current"])
+
+    def load_line_common(self, common):
+
+        if not common:
+            return
+
+        self.set_entry(
+            "line_dwell_time",
+            common["dwell_time"]
+        )
+
+    # def load_obc_inputs(self, inputs):
+
+    #     if not inputs:
+    #         return
+
+    #     self.set_entry(
+    #         "line_obc_load_current",
+    #         inputs[0]["dc_load_current"]
+    #     )
+
+    #     for i, row in enumerate(inputs, start=1):
+
+    #         self.set_entry(
+    #             f"voltage_{i}",
+    #             row["input_voltage"]
+    #         )
+
+    #         self.set_entry(
+    #             f"frequency_{i}",
+    #             row["input_frequency"]
+    #         )
+
+    # def load_obc_outputs(self, outputs):
+    
+    #         if not outputs:
+    #             return
+    
+    #         # self.set_entry(
+    #         #     "line_obc_load_current",
+    #         #     outputs[0]["dc_load_current"]
+    #         # )
+    
+    #         for i, row in enumerate(outputs, start=1):
+    
+    #             self.set_entry(
+    #                 f"voltage_{i}",
+    #                 row["input_voltage"]
+    #             )
+    
+    #             self.set_entry(
+    #                 f"frequency_{i}",
+    #                 row["input_frequency"]
+    #             )
+
+    def load_obc_inputs(self, inputs):
+
+        if not inputs:
+            return
+
+        self.set_entry(
+            "line_obc_load_current",
+            inputs[0]["dc_load_current"]
+        )
+
+        for i, item in enumerate(inputs, start=1):
+
+            self.set_entry(
+                f"voltage_{i}",
+                item["input_voltage"]
+            )
+
+            self.set_entry(
+                f"frequency_{i}",
+                item["input_frequency"]
+            )
+
+            for output in item["outputs"]:
+
+                step = output["step_no"]
+
+                self.set_entry(
+                    f"step{step}_hv_voltage",
+                    output["hv_voltage"]
+                )
+
+                self.set_entry(
+                    f"step{step}_hv_current",
+                    output["hv_current"]
+                )
+
+    # def load_hpdc_line_current(self, common):
+    
+    #     if not common:
+    #         return
+
+    #     self.set_entry(
+    #         "hp_dcdc_load_current",
+    #         common["dc_load_current"]
+    #     )
+
+    # def load_hpdc_line(self, hpdc):
+
+    #     if not hpdc:
+    #         return
+
+    #     print(hpdc)
+
+    #     for step in hpdc["step_no"]:
+
+    #         self.set_entry(
+    #             f"hp_voltage_{step['step_no']}",
+    #             step["hv_voltage"]
+    #         )
+
+    def load_hpdc_line(self, hpdc):
+
+        if not hpdc:
+            return
+
+        self.set_entry(
+            "hp_dcdc_load_current",
+            hpdc["dc_load_current"]
+        )
+
+        for step in hpdc["hv_steps"]:
+
+            self.set_entry(
+                f"hp_voltage_{step['step_no']}",
+                step["hv_voltage"]
+            )
+
+    def load_load_common(self, common):
+        if not common:
+            return
+
+        self.set_entry(
+            "load_dwell_time",
+            common["dwell_time"]
+        )
+
+        self.set_entry(
+            "load_input_frequency",
+            common["input_frequency"]
+        )
+
+        self.set_entry(
+            "load_input_voltage",
+            common["input_voltage"]
+        )
+
+    def load_obc_regulation(self, regulation):
+
+        if not regulation:
+            return
+
+        for step in regulation:
+
+            widget = self.obc_panel["steps"][
+                f"step{step['step_no']}"
+            ]
+
+            self.set_widget_entry(
+                widget["step_voltage"],
+                step["hv_voltage"]
+            )
+
+            for load, current in step["loads"].items():
+
+                self.set_widget_entry(
+                    widget["load_entries"][load],
+                    current
+                )
+
+    def load_hpdc_regulation(self, regulation):
+    
+            if not regulation:
+                return
+    
+            for step in regulation:
+    
+                widget = self.hp_panel["steps"][
+                    f"step{step['step_no']}"
+                ]
+    
+                self.set_widget_entry(
+                    widget["step_voltage"],
+                    step["hv_voltage"]
+                )
+    
+                for load, current in step["loads"].items():
+    
+                    self.set_widget_entry(
+                        widget["load_entries"][load],
+                        current
+                    )
+    
+
+    # def load_settings(self, settings):
+
+    #     dut =settings["dut"]
+
+    #     if dut:
+        
+    #         self.entries["bits_rate"].delete(0, "end")
+    #         self.entries["bits_rate"].insert(
+    #             0,
+    #             dut["dut_bit_rate"]
+    #         )
+
+    #     endurance = settings["endurance"]
+
+    #     if endurance:
+
+    #         self.entries["cycle_charging"].delete(0, "end")
+    #         self.entries["cycle_charging"].insert(
+    #             0,
+    #             endurance["charge_time"]
+    #         )
+
+    #         self.entries["cycle_discharging"].delete(0, "end")
+    #         self.entries["cycle_discharging"].insert(
+    #             0,
+    #             endurance["discharge_time"]
+    #         )
+
+    #         self.entries["cycle_rest1"].delete(0, "end")
+    #         self.entries["cycle_rest1"].insert(
+    #             0,
+    #             endurance["rest_time1"]
+    #         )
+
+    #         self.entries["cycle_rest2"].delete(0, "end")
+    #         self.entries["cycle_rest2"].insert(
+    #             0,
+    #             endurance["rest_time2"]
+    #         )
+
+    #         self.entries["ac_input_voltage"].delete(0, "end")
+    #         self.entries["ac_input_voltage"].insert(
+    #             0,
+    #             endurance["ac_input_voltage"]
+    #         )
+
+    #         self.entries["input_frequency"].delete(0, "end")
+    #         self.entries["input_frequency"].insert(
+    #             0,
+    #             endurance["ac_input_frequency"]
+    #         )
+
+    #         self.entries["obc_output_voltage"].delete(0, "end")
+    #         self.entries["obc_output_voltage"].insert(
+    #             0,
+    #             endurance["dc_output_voltage"]
+    #         )
+
+    #         self.entries["obc_output_current"].delete(0, "end")
+    #         self.entries["obc_output_current"].insert(
+    #             0,
+    #             endurance["dc_output_current"]
+    #         )
+
+    #         self.entries["charging_hp_load_current"].delete(0, "end")
+    #         self.entries["charging_hp_load_current"].insert(
+    #             0,
+    #             endurance["char_dc_load_current"]
+    #         )
+
+    #         self.entries["discharging_hp_load_current"].delete(0, "end")
+    #         self.entries["discharging_hp_load_current"].insert(
+    #             0,
+    #             endurance["dis_dc_load_current"]
+    #         )
+            
+    #     line_common = settings["line_common"]
+
+    #     if line_common:
+    #         self.entries["line_dwell_time"].delete(0, "end")
+    #         self.entries["line_dwell_time"].insert(
+    #             0,
+    #             line_common["dwell_time"]
+    #         )
+
+    #     line_obc_input = settings["line_obc_input"]
+        
+    #     if line_obc_input:
+    #         self.entries["line_dwell_time"].delete(0, "end")
+    #         self.entries["line_dwell_time"].insert(
+    #             0,
+    #             line_common["dwell_time"]
+    #         )
+    #         self.entries["line_dwell_time"].delete(0, "end")
+    #         self.entries["line_dwell_time"].insert(
+    #             0,
+    #             line_common["dwell_time"]
+    #         )
+    #         self.entries["line_dwell_time"].delete(0, "end")
+    #         self.entries["line_dwell_time"].insert(
+    #             0,
+    #             line_common["dwell_time"]
+    #         )
+    #         self.entries["line_dwell_time"].delete(0, "end")
+    #         self.entries["line_dwell_time"].insert(
+    #             0,
+    #             line_common["dwell_time"]
+    #         )
+    #         self.entries["line_dwell_time"].delete(0, "end")
+    #         self.entries["line_dwell_time"].insert(
+    #             0,
+    #             line_common["dwell_time"]
+    #         )
+    #         self.entries["line_dwell_time"].delete(0, "end")
+    #         self.entries["line_dwell_time"].insert(
+    #             0,
+    #             line_common["dwell_time"]
+    #         )
+    #         self.entries["line_dwell_time"].delete(0, "end")
+    #         self.entries["line_dwell_time"].insert(
+    #             0,
+    #             line_common["dwell_time"]
+    #         )
+    #         pass
+
+    #     line_obc_output = settings["line_obc_output"]
+        
+    #     if line_obc_output:
+    #         pass
+
+    #     line_hpdc_input = settings["line_hpdc_input"]
+        
+    #     if line_hpdc_input:
+    #         pass
+
+    #     line_hpdc_output = settings["line_hpdc_output"]
+        
+    #     if line_hpdc_output:
+    #         pass
+
+
+
+
     def edit_supplier(self):
-        print("Selected Supplier:", self.dut_type.get())
+
+        dut_name = self.dut_type.get()
+
+        if not dut_name:
+            return
+
+        dut_id = self.dut_map[dut_name]
+
+        print("Selected Supplier:", dut_name)
+        print("DUT ID:", dut_id)
+
+        def save(values):
+
+            # values = [dut_name, bit_rate]
+
+            values.insert(0, dut_id)      # [dut_id, dut_name, bit_rate]
+
+            self.controller.edit_dut(values)
+
+            rows = self.controller.get_all_duts()
+
+            self.dut_map = {
+                row["dut_name"]: row["dut_id"]
+                for row in rows
+            }
+
+            self.dut_type["values"] = list(self.dut_map.keys())
+
+        FormPopup(
+            self,
+            "Edit DUT",
+            [
+                "DUT Name",
+                "Bit Rate [kbits/s]"
+            ],
+            save
+        )
+
+    def save_all_settings(self):
+        data = self.collect_all_settings()
+        self.controller.save_settings(data)
+
+    def add_new_dut(self):
+        print("clicked add new")
+        def save(values):
+            self.controller.add_dut(values)
+            rows = self.controller.get_all_duts()
+            self.dut_map = {row["dut_name"]: row["dut_id"] for row in rows}
+    
+            self.dut_type["values"] = list(self.dut_map.keys())
+            
+        FormPopup(
+            self,
+            "Add New Dut",
+            [
+                "DUT Name",
+                "Bit Rate [kbits/s]"
+            ],
+            save
+        )
+        # self.controller.add_dut()
+
+    # def delete_dut(self):
+    #         print("clicked delete")
+    #         def save(values):
+    #             self.controller.delete_dut(values)
+    #             rows = self.controller.get_all_duts()
+    #             self.dut_map = {row["dut_name"]: row["dut_id"] for row in rows}
+        
+    #             self.dut_type["values"] = list(self.dut_map.keys())
+                
+    #         FormPopup(
+    #             self,
+    #             "Delete Dut",
+    #             [
+    #                 "DUT Name",
+    #                 "Bit Rate [kbits/s]"
+    #             ],
+    #             save
+    #         )
+    
+    def delete_dut(self):
+
+        rows = self.controller.get_all_duts()
+
+        DeleteDutPopup(
+            self,
+            rows,
+            self.delete_selected_duts
+        )
+
+    def delete_selected_duts(self, dut_ids):
+
+        self.controller.delete_duts(dut_ids)
+
+        rows = self.controller.get_all_duts()
+
+        self.dut_map = {
+            row["dut_name"]: row["dut_id"]
+            for row in rows
+        }
+
+        self.dut_type["values"] = list(self.dut_map.keys())
+
+        if self.dut_map:
+            self.dut_type.current(0)
+        else:
+            self.dut_type.set("")
+
+
+
+    def collect_all_settings(self):
+        dut_name = self.dut_type.get()
+        return {
+            
+            "dut_id": self.dut_map[dut_name],
+
+            "endurance": {
+
+                "charge_time": self.get_float("cycle_charging"),
+                "discharge_time": self.get_float("cycle_discharging"),
+                "rest_time1": self.get_float("cycle_rest1"),
+                "rest_time2": self.get_float("cycle_rest2"),
+
+                "ac_input_voltage": self.get_float("ac_input_voltage"),
+                "ac_input_frequency": self.get_float("input_frequency"),
+
+                "dc_output_voltage": self.get_float("obc_output_voltage"),
+                "dc_output_current": self.get_float("obc_output_current"),
+
+                "char_dc_load_current": self.get_float("charging_hp_load_current"),
+                "dis_dc_load_current": self.get_float("discharging_hp_load_current"),
+            },
+
+            "line_common": {
+
+                "line_dwell_time": self.get_float("line_dwell_time")
+
+            },
+
+            "obc_line_inputs":[
+
+                {
+                    "dc_load_current": self.get_float("line_obc_load_current"),
+                    "input_voltage":self.get_float("voltage_1"),
+                    "input_frequency":self.get_float("frequency_1"),
+
+                    "outputs":[
+                        {"step_no":1,"hv_voltage":self.get_float("step1_hv_voltage"),"hv_current":self.get_float("step1_hv_current")},
+                        {"step_no":2,"hv_voltage":self.get_float("step2_hv_voltage"),"hv_current":self.get_float("step2_hv_current")},
+                        {"step_no":3,"hv_voltage":self.get_float("step3_hv_voltage"),"hv_current":self.get_float("step3_hv_current")}
+                    ]
+                },
+
+                {
+                    "dc_load_current": self.get_float("line_obc_load_current"),
+                    "input_voltage":self.get_float("voltage_2"),
+                    "input_frequency":self.get_float("frequency_2"),
+
+                    "outputs":[
+                        {"step_no":1,"hv_voltage":self.get_float("step1_hv_voltage"),"hv_current":self.get_float("step1_hv_current")},
+                        {"step_no":2,"hv_voltage":self.get_float("step2_hv_voltage"),"hv_current":self.get_float("step2_hv_current")},
+                        {"step_no":3,"hv_voltage":self.get_float("step3_hv_voltage"),"hv_current":self.get_float("step3_hv_current")}
+                    ]
+                },
+
+                {
+                    "dc_load_current": self.get_float("line_obc_load_current"),
+                    "input_voltage":self.get_float("voltage_3"),
+                    "input_frequency":self.get_float("frequency_3"),
+
+                    "outputs":[
+                        {"step_no":1,"hv_voltage":self.get_float("step1_hv_voltage"),"hv_current":self.get_float("step1_hv_current")},
+                        {"step_no":2,"hv_voltage":self.get_float("step2_hv_voltage"),"hv_current":self.get_float("step2_hv_current")},
+                        {"step_no":3,"hv_voltage":self.get_float("step3_hv_voltage"),"hv_current":self.get_float("step3_hv_current")}
+                    ]
+                }
+            ],
+
+            "hpdc_line":{
+
+                "dc_load_current":self.get_float("hp_dcdc_load_current"),
+
+                "hv_steps":[
+                    {"step_no":1,"hv_voltage":self.get_float("hp_voltage_1")},
+                    {"step_no":2,"hv_voltage":self.get_float("hp_voltage_2")},
+                    {"step_no":3,"hv_voltage":self.get_float("hp_voltage_3")}
+                ]
+
+            },
+
+            "load_common": {
+            
+                            "load_dwell_time": self.get_float("load_dwell_time"),
+                            "load_input_voltage": self.get_float("load_input_voltage"),
+                            "load_input_frequency": self.get_float("load_input_frequency")
+                        },
+
+            "obc_load_regulation": self.collect_obc_regulation(),
+
+            "hpdc_load_regulation": self.collect_hpdc_regulation()
+
+        }
+
+    def collect_obc_regulation(self):
+
+        regulation_data = []
+
+        for step_name, step in self.obc_panel["steps"].items():
+
+            regulation_data.append({
+
+                "step_no": int(step_name.replace("step", "")),
+
+                "hv_voltage": self.get_float_entry(step["step_voltage"]),
+
+                "loads": {
+                    load: self.get_float_entry(entry)
+                    for load, entry in step["load_entries"].items()
+                }
+
+            })
+
+        return regulation_data
+
+    def collect_hpdc_regulation(self):
+    
+            hp_regulation_data = []
+    
+            for step_name, step in self.hp_panel["steps"].items():
+    
+                hp_regulation_data.append({
+    
+                    "step_no": int(step_name.replace("step", "")),
+    
+                    "hv_voltage": self.get_float_entry(step["step_voltage"]),
+    
+                    "loads": {
+                        load: self.get_float_entry(entry)
+                        for load, entry in step["load_entries"].items()
+                    }
+    
+                })
+    
+            return hp_regulation_data
+
+    def get_float_entry(self, entry):
+
+        value = entry.get().strip()
+
+        if value == "":
+            return None
+
+        return float(value)
+
+    def get_float(self, key):
+        entry = self.entries[key]
+        text = entry.get().strip()
+
+        try:
+            return float(text) if text else 0.0
+        except ValueError:
+            return 0.0
 
         
+    # def set_entry(self, key, value):
 
+    #     entry = self.entries[key]
+
+    #     entry.delete(0, "end")
+
+    #     if value is not None:
+    #         entry.insert(0, value)
+
+    def set_entry(self, key, value):
+
+        self.entries[key].delete(0, "end")
+
+        if value is not None:
+            self.entries[key].insert(0, value)
+
+    def set_widget_entry(self, entry, value):
+
+        entry.delete(0, "end")
+
+        if value is not None:
+            entry.insert(0, str(value))
+
+   
+
+    def upload_dbc(self):
+
+        if not self.dut_type.get():
+            messagebox.showwarning("Warning", "Please select a DUT first.")
+            return
+
+        file_path = filedialog.askopenfilename(
+            title="Select DBC File",
+            filetypes=[("DBC Files", "*.dbc")]
+        )
+
+        if not file_path:
+            return
+
+        dut_id = self.dut_map[self.dut_type.get()]
+
+        self.controller.save_dbc_file(
+            dut_id,
+            file_path
+        )
+
+        self.entries["dbc_file"].delete(0, "end")
+        self.entries["dbc_file"].insert(
+            0,
+            os.path.basename(file_path)
+        )
+
+    def remove_dbc(self):
+
+        if not self.dut_type.get():
+            return
+
+        dut_id = self.dut_map[self.dut_type.get()]
+
+        self.controller.remove_dbc_file(dut_id)
+
+        self.entries["dbc_file"].delete(0, "end")
+
+    def load_dbc_file(self, dut_id):
+
+        self.entries["dbc_file"].delete(0, "end")
+
+        dbc = self.controller.get_dbc_file(dut_id)
+
+        if dbc:
+            self.entries["dbc_file"].insert(0, dbc["file_name"])
 
 
 

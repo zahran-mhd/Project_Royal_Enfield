@@ -108,6 +108,7 @@ class TableWidget(tk.Frame):
         )
 
         self.row_keys[item_id] = key
+        return item_id
         # ---------------- CLEAR ----------------
     def clear(self):
 

@@ -23,7 +23,8 @@ class LiveTemperatureFrame(tk.Frame):
             self.context
         )
 
-        # -------------------------------- 
+        self.context.live_temp_controller = self.controller
+        # --------------------------------
         # Grid Configuration
         # --------------------------------
         self.grid_columnconfigure(0, weight=1)
@@ -197,14 +198,27 @@ class LiveTemperatureFrame(tk.Frame):
         for index, channel in enumerate(channels):
 
             channel_id = channel["ChannelID"]
+            channel_name = channel["ChannelName"]
+            dut_names = [
+                        f"DUT{2 * channel_id - 1}",
+                        f"DUT{2 * channel_id}"
+                    ]
+
+            # channel_frame = ChannelFrame(
+            #     self,
+            #     channel_name=channel["ChannelName"],
+            #     dut_names=[
+            #         f"DUT{2 * channel_id - 1}",
+            #         f"DUT{2 * channel_id}"
+            #     ]
+            # )
 
             channel_frame = ChannelFrame(
                 self,
-                channel_name=channel["ChannelName"],
-                dut_names=[
-                    f"DUT{2 * channel_id - 1}",
-                    f"DUT{2 * channel_id}"
-                ]
+                channel_name=channel_name,
+                dut_names=dut_names,
+                stop_callback=lambda ch=channel_id:
+                    self.context.test_controller.stop_test(ch)
             )
 
             channel_frame.grid(
@@ -222,3 +236,69 @@ class LiveTemperatureFrame(tk.Frame):
             self.channel_map[channel_id] = (
                 channel_frame
             )
+
+    def get_channel_frame(self, channel_id):
+        return self.channel_map[channel_id]
+
+    def reset_channel_frame(self, selected_duts):
+        self.controller.reset(selected_duts)
+
+    def reset_display(self, selected_duts):
+
+        for dut in selected_duts:
+
+            if dut in (1, 2):
+                channel_id = 1
+                dut_index = dut - 1
+            else:
+                channel_id = 2
+                dut_index = dut - 3
+
+            channel_frame = self.channel_map[channel_id]
+
+            for mode in ("charging", "discharging"):
+
+                channel_frame.set_value(
+                    dut_index,
+                    mode,
+                    "max",
+                    "-- °C"
+                )
+
+                channel_frame.set_value(
+                    dut_index,
+                    mode,
+                    "min",
+                    "-- °C"
+                )
+    def reset(self, channel_id):
+
+        if channel_id == 1:
+            duts = [1, 2]
+        else:
+            duts = [3, 4]
+
+        self.controller.reset(duts)
+
+    def reset_display(self, selected_duts):
+
+        for dut in selected_duts:
+            if isinstance(dut, str):
+                dut_no = int(dut.replace("DUT", ""))
+            else:
+                dut_no = dut
+
+            canvas = self.controller.canvases.get(f"DUT{dut_no}")
+
+            if canvas is None:
+                continue
+
+            labels = self.controller.temp_labels.get(f"DUT{dut_no}", [])
+
+            for i, label_id in enumerate(labels):
+
+                canvas.itemconfig(
+                    label_id,
+                    text=f"T{i+1}: --°C",
+                    fill="black"
+                )

@@ -100,7 +100,7 @@ class   InstrumentConfig(tk.Frame):
         self.table.clear()
 
         for index, ins in enumerate(instruments, start=1):
-
+            status = "Connected" if ins.status == 1 else "Disconnected"
             self.table.insert(
                 [
                     index,
@@ -108,8 +108,8 @@ class   InstrumentConfig(tk.Frame):
                     ins.address,
                     ins.instrument_sno,
                     ins.calibration_due_date,
-                    ins.status
+                    status
                 ],
-                key=ins.instrument_id
+                key=(ins.instrument_id, ins.channel_id)
             )
     

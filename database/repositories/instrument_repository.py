@@ -34,21 +34,22 @@ class InstrumentRepository:
                 INSERT INTO Instruments
                 (
                     InstrumentName,
+                    InstrumentTypeID,
                     Address,
                     InstrumentSNo,
-                    CalibrationDueDate,
-                    Status,
-                    IsLocked
+                    CalibrationDueDate
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES
+                (
+                    ?, ?, ?, ?, ?
+                )
                 """,
                 (
                     instrument.instrument_name,
+                    instrument.instrument_type_id,
                     instrument.address,
                     instrument.instrument_sno,
-                    instrument.calibration_due_date,
-                    instrument.status,
-                    instrument.is_locked
+                    instrument.calibration_due_date
                 )
             )
 
@@ -168,7 +169,6 @@ class InstrumentRepository:
                 Address=?,
                 InstrumentSNo=?,
                 CalibrationDueDate=?,
-                Status=?,
                 IsLocked=?
             WHERE InstrumentID=?
             """,
@@ -177,7 +177,7 @@ class InstrumentRepository:
                 instrument.address,
                 instrument.instrument_sno,
                 instrument.calibration_due_date,
-                instrument.status,
+                # instrument.status,
                 instrument.is_locked,
                 instrument.instrument_id
             )
@@ -357,18 +357,28 @@ class InstrumentRepository:
         cursor.execute(
             """
             SELECT
+
                 I.InstrumentID,
                 I.InstrumentName,
                 I.Address,
                 I.InstrumentSNo,
                 I.CalibrationDueDate,
-                I.Status,
+                I.ConnectionStatus,
                 I.IsLocked,
+
+                T.InstrumentTypeID,
+                T.TypeName,
+                T.DriverClass,
+                T.WorkerClass,
 
                 CI.ChannelID,
                 CI.IsShared
 
             FROM Instruments I
+
+            INNER JOIN InstrumentType T
+                ON I.InstrumentTypeID = T.InstrumentTypeID
+
             LEFT JOIN ChannelInstrument CI
                 ON I.InstrumentID = CI.InstrumentID
             """
@@ -377,20 +387,39 @@ class InstrumentRepository:
         rows = cursor.fetchall()
 
         return [
+
             InstrumentData(
+
                 instrument_id=row["InstrumentID"],
+
                 instrument_name=row["InstrumentName"],
+
+                instrument_type_id=row["InstrumentTypeID"],
+
+                instrument_type=row["TypeName"],
+
+                driver_class=row["DriverClass"],
+
+                worker_class=row["WorkerClass"],
+
                 address=row["Address"],
+
                 instrument_sno=row["InstrumentSNo"],
+
                 calibration_due_date=row["CalibrationDueDate"],
-                status=row["Status"],
+
+                status=row["ConnectionStatus"],
+
                 is_locked=row["IsLocked"],
+
                 channel_id=row["ChannelID"],
+
                 is_shared=row["IsShared"] if row["IsShared"] else 0
+
             )
+
             for row in rows
         ]
-
     # ------------------------------------------------
     # GET BY ID
     # ------------------------------------------------
@@ -401,40 +430,69 @@ class InstrumentRepository:
         cursor.execute(
             """
             SELECT
+
                 I.InstrumentID,
                 I.InstrumentName,
                 I.Address,
                 I.InstrumentSNo,
                 I.CalibrationDueDate,
-                I.Status,
+                I.ConnectionStatus,
                 I.IsLocked,
+
+                T.InstrumentTypeID,
+                T.TypeName,
+                T.DriverClass,
+                T.WorkerClass,
 
                 CI.ChannelID,
                 CI.IsShared
 
             FROM Instruments I
+
+            INNER JOIN InstrumentType T
+                ON I.InstrumentTypeID = T.InstrumentTypeID
+
             LEFT JOIN ChannelInstrument CI
                 ON I.InstrumentID = CI.InstrumentID
-            WHERE I.InstrumentID = ?
+
+            WHERE I.InstrumentID=?
             """,
             (instrument_id,)
         )
 
         row = cursor.fetchone()
 
-        if not row:
+        if row is None:
             return None
 
         return InstrumentData(
+
             instrument_id=row["InstrumentID"],
+
             instrument_name=row["InstrumentName"],
+
+            instrument_type_id=row["InstrumentTypeID"],
+
+            instrument_type=row["TypeName"],
+
+            driver_class=row["DriverClass"],
+
+            worker_class=row["WorkerClass"],
+
             address=row["Address"],
+
             instrument_sno=row["InstrumentSNo"],
+
             calibration_due_date=row["CalibrationDueDate"],
-            status=row["Status"],
+
+            status=row["ConnectionStatus"],
+
             is_locked=row["IsLocked"],
+
             channel_id=row["ChannelID"],
+
             is_shared=row["IsShared"] if row["IsShared"] else 0
+
         )
 
     # ------------------------------------------------
@@ -447,21 +505,32 @@ class InstrumentRepository:
         cursor.execute(
             """
             SELECT
+
                 I.InstrumentID,
                 I.InstrumentName,
                 I.Address,
                 I.InstrumentSNo,
                 I.CalibrationDueDate,
-                I.Status,
+                I.ConnectionStatus,
                 I.IsLocked,
+
+                T.InstrumentTypeID,
+                T.TypeName,
+                T.DriverClass,
+                T.WorkerClass,
 
                 CI.ChannelID,
                 CI.IsShared
 
             FROM Instruments I
+
+            INNER JOIN InstrumentType T
+                ON I.InstrumentTypeID = T.InstrumentTypeID
+
             INNER JOIN ChannelInstrument CI
                 ON I.InstrumentID = CI.InstrumentID
-            WHERE CI.ChannelID = ?
+
+            WHERE CI.ChannelID=?
             """,
             (channel_id,)
         )
@@ -469,16 +538,146 @@ class InstrumentRepository:
         rows = cursor.fetchall()
 
         return [
+
             InstrumentData(
+
                 instrument_id=row["InstrumentID"],
+
                 instrument_name=row["InstrumentName"],
+
+                instrument_type_id=row["InstrumentTypeID"],
+
+                instrument_type=row["TypeName"],
+
+                driver_class=row["DriverClass"],
+
+                worker_class=row["WorkerClass"],
+
                 address=row["Address"],
+
                 instrument_sno=row["InstrumentSNo"],
+
                 calibration_due_date=row["CalibrationDueDate"],
-                status=row["Status"],
+
+                status=row["ConnectionStatus"],
+
                 is_locked=row["IsLocked"],
+
                 channel_id=row["ChannelID"],
+
                 is_shared=row["IsShared"] if row["IsShared"] else 0
+
             )
+
             for row in rows
         ]
+
+    def update_connection_status(self, instrument_id, status):
+
+        cursor = self.db.conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE Instruments
+            SET ConnectionStatus=?
+            WHERE InstrumentID=?
+            """,
+            (status, instrument_id)
+        )
+
+        self.db.conn.commit()
+
+    def get_instrument_types(self):
+
+        cursor = self.db.conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT
+                InstrumentTypeID,
+                TypeName
+            FROM InstrumentType
+            ORDER BY TypeName
+            """
+        )
+
+        return cursor.fetchall()
+
+    def get_daq_channels(
+        self,
+        channel_id,
+        instrument_id
+    ):
+        
+        cursor = self.db.conn.cursor()
+
+        query = """
+            SELECT
+                DAQChannel,
+                Slot,
+                ParameterName,
+                MeasurementType,
+                ThermocoupleType
+            FROM DAQChannel
+            WHERE ChannelID = ?
+            AND InstrumentID = ?
+            AND IsEnabled = 1
+            ORDER BY Slot, DAQChannel
+        """
+
+        rows = cursor.execute(
+            query,
+            (
+                channel_id,
+                instrument_id
+            )
+        ).fetchall()
+
+        return rows
+
+    def get_daq_configuration(
+        self,
+        channel_id,
+        instrument_id
+    ):
+        cursor = self.db.conn.cursor()
+        query = """
+            SELECT
+                DAQChannelID,
+                ChannelID,
+                InstrumentID,
+                Slot,
+                DAQChannel,
+                ParameterName,
+                MeasurementType,
+                ThermocoupleType
+            FROM DAQChannel
+            WHERE ChannelID = ?
+            AND InstrumentID = ?
+            AND IsEnabled = 1
+            ORDER BY Slot, DAQChannel
+        """
+
+        rows = cursor.execute(
+            query,
+            (
+                channel_id,
+                instrument_id
+            )
+        ).fetchall()
+
+        return [
+            {
+                "daq_channel_id": row["DAQChannelID"],
+                "channel_id": row["ChannelID"],
+                "instrument_id": row["InstrumentID"],
+                "slot": row["Slot"],
+                "daq_channel": str(row["DAQChannel"]),
+                "parameter_name": row["ParameterName"],
+                "measurement_type": row["MeasurementType"],
+                "thermocouple_type": row["ThermocoupleType"]
+            }
+            for row in rows
+        ]
+
+    

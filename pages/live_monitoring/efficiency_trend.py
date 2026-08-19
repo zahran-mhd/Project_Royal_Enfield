@@ -24,6 +24,8 @@ class EfficiencyTrendFrame(tk.Frame):
             self,
             self.context
         )
+
+        self.context.efficiency_trend_controller = self.controller
         
         self.grid_rowconfigure(0,weight=1)
         self.grid_rowconfigure(1,weight=0)
@@ -133,11 +135,10 @@ class EfficiencyTrendFrame(tk.Frame):
 
         # Canvas map
         self.canvas_map = {
-
-            "DUT1": self.canvas1,
-            "DUT2": self.canvas2,
-            "DUT3": self.canvas3,
-            "DUT4": self.canvas4
+            1: self.canvas1,
+            2: self.canvas2,
+            3: self.canvas3,
+            4: self.canvas4,
         }
 
     # =====================================
@@ -206,17 +207,16 @@ class EfficiencyTrendFrame(tk.Frame):
             channel_name = channel["ChannelName"]
 
             channel_frame = ChannelFrame(
-
                 self.bottom_frame,
-
                 channel_name=channel_name,
-
                 dut_names=[
                     f"DUT{2 * channel_id - 1}",
                     f"DUT{2 * channel_id}"
                 ],
-
-                items=efficiency_items
+                items=efficiency_items,
+                value_width=11,
+                stop_callback=lambda ch=channel_id:
+                    self.context.test_controller.stop_test(ch)
             )
 
             channel_frame.grid(
@@ -244,3 +244,162 @@ class EfficiencyTrendFrame(tk.Frame):
         self.controller.start_live_plot(
             selected_duts
         )
+
+    def update_efficiency_summary(self, dut, statistics):
+
+        # Determine channel and DUT index
+        if dut in (1, 2):
+            channel_id = 1
+            dut_index = dut - 1      # DUT1->0, DUT2->1
+        else:
+            channel_id = 2
+            dut_index = dut - 3      # DUT3->0, DUT4->1
+
+        channel_frame = self.channel_map[channel_id]
+
+        charging = statistics["charging"]
+
+        print(dut_index)
+        print(charging)
+        print("\n========== EFFICIENCY SUMMARY ==========")
+        print("DUT:", dut)
+        print("Charging statistics:", charging)
+        print("Charging MAX:", charging["max"]["value"])
+        print("Charging MIN:", charging["min"]["value"])
+        print("Charging AVG:", charging["avg"])
+
+        channel_frame.set_value(
+            dut_index,
+            "charging",
+            "max",
+            f'{charging["max"]["value"]:.2f}% (C{charging["max"]["cycle"]})'
+        )
+
+        channel_frame.set_value(
+            dut_index,
+            "charging",
+            "min",
+            f'{charging["min"]["value"]:.2f}% (C{charging["min"]["cycle"]})'
+        )
+
+        channel_frame.set_value(
+            dut_index,
+            "charging",
+            "avg",
+            f'{charging["avg"]:.2f}%'
+        )
+
+        discharging = statistics["discharging"]
+
+        
+        print(dut_index)
+        print(discharging)
+        channel_frame.set_value(
+            dut_index,
+            "discharging",
+            "max",
+            f'{discharging["max"]["value"]:.2f}% (C{discharging["max"]["cycle"]})'
+        )
+
+        channel_frame.set_value(
+            dut_index,
+            "discharging",
+            "min",
+            f'{discharging["min"]["value"]:.2f}% (C{discharging["min"]["cycle"]})'
+        )
+
+        channel_frame.set_value(
+            dut_index,
+            "discharging",
+            "avg",
+            f'{discharging["avg"]:.2f}%'
+        )
+
+
+    def get_channel_frame(self, channel_id):
+        return self.channel_map[channel_id]
+
+    def reset(self, channel_id):
+
+        if channel_id == 1:
+            duts = [1, 2]
+        else:
+            duts = [3, 4]
+
+        self.controller.reset(duts)
+
+    def reset_display(self, selected_duts):
+
+        for dut in selected_duts:
+
+            if isinstance(dut, str):
+                dut_no = int(dut.replace("DUT", ""))
+            else:
+                dut_no = dut
+
+            # Reset graph
+            canvas = self.canvas_map[dut_no]
+
+            canvas.charging_points.clear()
+            canvas.discharging_points.clear()
+            canvas.draw_graph()
+
+            # Reset summary
+            if dut in (1, 2):
+                channel_id = 1
+                dut_index = dut - 1
+            else:
+                channel_id = 2
+                dut_index = dut - 3
+
+            channel_frame = self.channel_map[channel_id]
+
+            for mode in ("charging", "discharging"):
+
+                channel_frame.set_value(
+                    dut_index,
+                    mode,
+                    "max",
+                    "-- %"
+                )
+
+                channel_frame.set_value(
+                    dut_index,
+                    mode,
+                    "min",
+                    "-- %"
+                )
+
+                channel_frame.set_value(
+                    dut_index,
+                    mode,
+                    "avg",
+                    "-- %"
+                )
+
+    # def reset_display(self, selected_duts):
+
+    #     # Reset controller data
+    #     self.controller.reset(selected_duts)
+
+    #     # Reset graphs
+    #     for dut in selected_duts:
+
+    #         self.canvas_map[f"DUT{dut}"].reset()
+
+    #     # Reset statistics panel
+    #     for dut in selected_duts:
+
+    #         if dut in (1, 2):
+    #             channel_id = 1
+    #             dut_index = dut - 1
+    #         else:
+    #             channel_id = 2
+    #             dut_index = dut - 3
+
+    #         frame = self.channel_map[channel_id]
+
+    #         for mode in ("charging", "discharging"):
+    #             frame.set_value(dut_index, mode, "max", "-- %")
+    #             frame.set_value(dut_index, mode, "min", "-- %")
+    #             frame.set_value(dut_index, mode, "avg", "-- %")

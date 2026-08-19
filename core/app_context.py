@@ -3,8 +3,9 @@
 from models.data_model import DataModel
 from models.app_state import AppState
 from models.test_session import TestSession
-
-
+from instruments.dbc_decoder import DBCDecoder
+from pages.live_monitoring.live_table import LiveTableFrame
+from services.data_logger import EnduranceDataLogger
 class AppContext:
 
     def __init__(self):
@@ -25,7 +26,8 @@ class AppContext:
 
         self.test_session = TestSession()
         
-        
+        self.dbc_decoder = DBCDecoder()
+
 
         # ==================================
         # CONFIGURATION MODELS
@@ -58,6 +60,8 @@ class AppContext:
         self.threshold_repo = None
 
         self.result_repo = None
+
+        self.parameter_repository = None
 
         # ==================================
         # SERVICES
@@ -118,3 +122,30 @@ class AppContext:
         self.graph_window = None
 
         self.settings_window = None
+
+
+        self.selected_dut_types = {}
+
+        self.can_values = {}
+
+        self.can_values = {
+            1: {      # Channel 1
+                "PCAN_USBBUS1": {},
+                "PCAN_USBBUS2": {}
+            },
+            2: {      # Channel 2
+                "PCAN_USBBUS3": {},
+                "PCAN_USBBUS4": {}
+            }
+        }
+
+        self.hardware_values = {
+            1: {},
+            2: {},
+            3: {},
+            4: {}
+            }
+        self.data_logger = EnduranceDataLogger(
+            base_folder="CSV_Logs",
+            report_folder="Report"
+        )

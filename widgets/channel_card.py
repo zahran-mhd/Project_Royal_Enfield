@@ -87,6 +87,9 @@ class ChannelCard(ctk.CTkFrame):
         rows = self.test_settings_controller.get_all_duts()
         self.dut_map = {row["dut_name"]: row["dut_id"] for row in rows}
 
+        print("DUT DATABASE ROWS:", rows)
+        print("DUT MAP:", self.dut_map)
+
         self.supplier_combo = ctk.CTkComboBox(
             self,
             values=list(self.dut_map.keys()),
@@ -529,61 +532,61 @@ class ChannelCard(ctk.CTkFrame):
     # GET SETTINGS
     # =====================================================
 
-    def get_settings(self):
+    # def get_settings(self):
 
-        # selected_duts = [
-        #     dut
-        #     for dut, var in self.dut_vars.items()
-        #     if var.get()
-        # ]
+    #     # selected_duts = [
+    #     #     dut
+    #     #     for dut, var in self.dut_vars.items()
+    #     #     if var.get()
+    #     # ]
 
-        selected_duts = [
-            int(dut.replace("DUT", ""))
-            for dut, var in self.dut_vars.items()
-            if var.get()
-        ]
+    #     selected_duts = [
+    #         int(dut.replace("DUT", ""))
+    #         for dut, var in self.dut_vars.items()
+    #         if var.get()
+    #     ]
 
-        dut_a = self.dut_list[0]      # "DUT1"
-        dut_b = self.dut_list[1]      # "DUT2"
+    #     dut_a = self.dut_list[0]      # "DUT1"
+    #     dut_b = self.dut_list[1]      # "DUT2"
 
-        dut_a_no = int(dut_a.replace("DUT", ""))
-        dut_b_no = int(dut_b.replace("DUT", ""))
+    #     dut_a_no = int(dut_a.replace("DUT", ""))
+    #     dut_b_no = int(dut_b.replace("DUT", ""))
 
-        dut_id = selected_duts[0] if selected_duts else None
+    #     dut_id = selected_duts[0] if selected_duts else None
 
-        return {
-            "channel_id": self.channel_id,
-            "dut_id": dut_id,
-            "selected_duts": selected_duts,
+    #     return {
+    #         "channel_id": self.channel_id,
+    #         "dut_id": dut_id,
+    #         "selected_duts": selected_duts,
 
-            "dut_a_name": dut_a,
-            "dut_b_name": dut_b,
+    #         "dut_a_name": dut_a,
+    #         "dut_b_name": dut_b,
 
-            "use_dut_a": 1 if dut_a_no in selected_duts else 0,
-            "use_dut_b": 1 if dut_b_no in selected_duts else 0,
+    #         "use_dut_a": 1 if dut_a_no in selected_duts else 0,
+    #         "use_dut_b": 1 if dut_b_no in selected_duts else 0,
 
-            "dut_type": self.supplier_combo.get(),
+    #         "dut_type": self.supplier_combo.get(),
 
-            "test_type": self.selected_test.get(),
+    #         "test_type": self.selected_test.get(),
 
-            "test_name": self.test_name.get(),
+    #         "test_name": self.test_name.get(),
 
-            "dut_a_serial_no": (
-                self.serial_entries[dut_a].get()
-            ),
+    #         "dut_a_serial_no": (
+    #             self.serial_entries[dut_a].get()
+    #         ),
 
-            "dut_b_serial_no": (
-                self.serial_entries[dut_b].get()
-            ),
+    #         "dut_b_serial_no": (
+    #             self.serial_entries[dut_b].get()
+    #         ),
 
-            "no_of_cycles": (
-                self.cycles_entry.get()
-            ),
+    #         "no_of_cycles": (
+    #             self.cycles_entry.get()
+    #         ),
 
-            "interval_seconds": (
-                self.time_entry.get()
-            )
-        }
+    #         "interval_seconds": (
+    #             self.time_entry.get()
+    #         )
+    #     }
 
     # def on_dut_type_changed(self, dut_type):
 
@@ -597,6 +600,291 @@ class ChannelCard(ctk.CTkFrame):
     #             dut_type=dut_type
     #         )
 
+    # def get_settings(self):
+
+    # # =====================================================
+    # # SELECTED DUT NAMES
+    # # =====================================================
+
+    #     selected_duts = [
+    #         dut
+    #         for dut, var in self.dut_vars.items()
+    #         if var.get()
+    #     ]
+
+    #     print("Selected DUT names:", selected_duts)
+
+    #     # =====================================================
+    #     # SELECTED DATABASE DUT IDs
+    #     # =====================================================
+
+    #     selected_dut_ids = [
+    #         self.dut_map[dut]
+    #         for dut in selected_duts
+    #         if dut in self.dut_map
+    #     ]
+
+    #     print("Selected DUT DB IDs:", selected_dut_ids)
+
+    #     # =====================================================
+    #     # DUT A / DUT B
+    #     # =====================================================
+
+    #     dut_a = self.dut_list[0] if len(self.dut_list) > 0 else None
+    #     dut_b = self.dut_list[1] if len(self.dut_list) > 1 else None
+
+    #     # =====================================================
+    #     # DUT A INFORMATION
+    #     # =====================================================
+
+    #     dut_a_id = (
+    #         self.dut_map.get(dut_a)
+    #         if dut_a
+    #         else None
+    #     )
+
+    #     print("DUT_A_id: ",dut_a_id)
+
+    #     use_dut_a = (
+    #         1
+    #         if dut_a in selected_duts
+    #         else 0
+    #     )
+
+    #     # =====================================================
+    #     # DUT B INFORMATION
+    #     # =====================================================
+
+    #     dut_b_id = (
+    #         self.dut_map.get(dut_b)
+    #         if dut_b
+    #         else None
+    #     )
+
+    #     print("DUT_B_id: ",dut_b_id)
+
+    #     use_dut_b = (
+    #         1
+    #         if dut_b in selected_duts
+    #         else 0
+    #     )
+
+    #     # =====================================================
+    #     # PRIMARY DUT ID
+    #     # =====================================================
+
+    #     dut_id = (
+    #         selected_dut_ids[0]
+    #         if selected_dut_ids
+    #         else None
+    #     )
+
+    #     print("Primary DUT DB ID:", dut_id)
+
+    #     # =====================================================
+    #     # SERIAL NUMBERS
+    #     # =====================================================
+
+    #     dut_a_serial_no = ""
+
+    #     if dut_a and dut_a in self.serial_entries:
+    #         dut_a_serial_no = (
+    #             self.serial_entries[dut_a].get().strip()
+    #         )
+
+    #     dut_b_serial_no = ""
+
+    #     if dut_b and dut_b in self.serial_entries:
+    #         dut_b_serial_no = (
+    #             self.serial_entries[dut_b].get().strip()
+    #         )
+
+    #     # =====================================================
+    #     # RETURN
+    #     # =====================================================
+
+    #     return {
+
+    #         "channel_id": self.channel_id,
+
+    #         # Actual database DUT ID
+    #         "dut_id": dut_id,
+
+    #         # All selected database IDs
+    #         "selected_dut_ids": selected_dut_ids,
+
+    #         # Selected DUT names
+    #         "selected_duts": selected_duts,
+
+    #         # ---------------------------------------------
+    #         # DUT A
+    #         # ---------------------------------------------
+
+    #         "dut_a_name": dut_a,
+    #         "dut_a_id": dut_a_id,
+    #         "use_dut_a": use_dut_a,
+    #         "dut_a_serial_no": dut_a_serial_no,
+
+    #         # ---------------------------------------------
+    #         # DUT B
+    #         # ---------------------------------------------
+
+    #         "dut_b_name": dut_b,
+    #         "dut_b_id": dut_b_id,
+    #         "use_dut_b": use_dut_b,
+    #         "dut_b_serial_no": dut_b_serial_no,
+
+    #         # ---------------------------------------------
+    #         # TEST
+    #         # ---------------------------------------------
+
+    #         "dut_type": self.supplier_combo.get(),
+
+    #         "test_type": self.selected_test.get(),
+
+    #         "test_name": self.test_name.get().strip(),
+
+    #         # ---------------------------------------------
+    #         # ENDURANCE
+    #         # ---------------------------------------------
+
+    #         "no_of_cycles": self.cycles_entry.get(),
+
+    #         "interval_seconds": self.time_entry.get()
+    #     }
+    
+
+    def get_settings(self):
+
+        # =====================================================
+        # SELECTED PHYSICAL DUTS
+        # =====================================================
+
+        selected_duts = [
+            dut
+            # int(dut.replace("DUT", ""))
+            for dut, var in self.dut_vars.items()
+            if var.get()
+        ]
+
+        print("Selected DUT names:", selected_duts)
+
+        # =====================================================
+        # DUT TYPE
+        # =====================================================
+
+        dut_type = self.supplier_combo.get()
+
+        # =====================================================
+        # DATABASE DUT ID
+        # =====================================================
+
+        dut_id = self.dut_map.get(dut_type)
+
+        print("Selected DUT Type:", dut_type)
+        print("Selected DUT DB ID:", dut_id)
+
+        # =====================================================
+        # DUT A / DUT B
+        # =====================================================
+
+        dut_a = (
+            self.dut_list[0]
+            if len(self.dut_list) > 0
+            else None
+        )
+
+        dut_b = (
+            self.dut_list[1]
+            if len(self.dut_list) > 1
+            else None
+        )
+
+        # =====================================================
+        # DUT A
+        # =====================================================
+
+        use_dut_a = (
+            1
+            if dut_a in selected_duts
+            else 0
+        )
+
+        # =====================================================
+        # DUT B
+        # =====================================================
+
+        use_dut_b = (
+            1
+            if dut_b in selected_duts
+            else 0
+        )
+
+        # =====================================================
+        # SERIAL NUMBERS
+        # =====================================================
+
+        dut_a_serial_no = ""
+
+        if dut_a and dut_a in self.serial_entries:
+            dut_a_serial_no = (
+                self.serial_entries[dut_a]
+                .get()
+                .strip()
+            )
+
+        dut_b_serial_no = ""
+
+        if dut_b and dut_b in self.serial_entries:
+            dut_b_serial_no = (
+                self.serial_entries[dut_b]
+                .get()
+                .strip()
+            )
+
+        # =====================================================
+        # RETURN
+        # =====================================================
+
+        return {
+
+            "channel_id": self.channel_id,
+
+            # Database DUT type ID
+            "dut_id": dut_id,
+
+            # Physical DUTs selected on this channel
+            "selected_duts": selected_duts,
+
+            # Physical DUT names
+            "dut_a_name": dut_a,
+            "dut_b_name": dut_b,
+
+            "use_dut_a": use_dut_a,
+            "use_dut_b": use_dut_b,
+
+            # DUT type
+            "dut_type": dut_type,
+
+            "test_type": self.selected_test.get(),
+
+            "test_name": (
+                self.test_name.get().strip()
+            ),
+
+            "dut_a_serial_no": dut_a_serial_no,
+
+            "dut_b_serial_no": dut_b_serial_no,
+
+            "no_of_cycles": (
+                self.cycles_entry.get()
+            ),
+
+            "interval_seconds": (
+                self.time_entry.get()
+            )
+        }
+    
     def on_dut_type_changed(self, dut_name):
 
         if self.dut_type_callback:

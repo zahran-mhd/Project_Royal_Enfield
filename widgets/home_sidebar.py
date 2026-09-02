@@ -71,34 +71,34 @@ class HomeSidebar(tk.Frame):
                 bg="#16a34a"
             )
             
-    def login_logout(self):
+    # def login_logout(self):
 
-        if self.context.app_state.logged_in:
+    #     if self.context.app_state.logged_in:
 
-            # Logout
-            self.context.login_controller.logout()
+    #         # Logout
+    #         self.context.login_controller.logout()
 
-            self.update_login_button()
+    #         self.update_login_button()
 
-            # Destroy old MenuWindow
-            if self.context.menu_window:
+    #         # Destroy old MenuWindow
+    #         if self.context.menu_window:
 
-                self.context.menu_window.destroy()
+    #             self.context.menu_window.destroy()
 
-                self.context.menu_window = None
+    #             self.context.menu_window = None
 
-            # Clear old sidebar reference
-            self.context.app_controller.sidebar = None
+    #         # Clear old sidebar reference
+    #         self.context.app_controller.sidebar = None
 
-            # Clear old registered pages
-            self.context.app_controller.pages.clear()
+    #         # Clear old registered pages
+    #         self.context.app_controller.pages.clear()
 
-            # Show HomeScreen
-            self.context.home_screen.tkraise()
+    #         # Show HomeScreen
+    #         self.context.home_screen.tkraise()
 
-        else:
+    #     else:
 
-            self.open_menu()
+    #         self.open_menu()
     # def open_menu(self):
 
     #     root = self.winfo_toplevel()
@@ -119,6 +119,80 @@ class HomeSidebar(tk.Frame):
         
     #     self.context.menu_window.tkraise()
     
+    # def login_logout(self):
+
+    #     if self.context.app_state.logged_in:
+
+    #         # ==============================
+    #         # LOGOUT
+    #         # ==============================
+
+    #         self.context.login_controller.logout()
+
+    #         self.update_login_button()
+
+    #         if self.context.menu_window:
+
+    #             self.context.menu_window.place_forget()
+
+    #         self.context.home_screen.tkraise()
+
+    #     else:
+
+    #         # ==============================
+    #         # LOGIN
+    #         # ==============================
+
+    #         self.open_menu()
+
+    def login_logout(self):
+
+        if self.context.app_state.logged_in:
+
+            # ==============================
+            # LOGOUT
+            # ==============================
+
+            self.context.login_controller.logout()
+
+            self.update_login_button()
+
+            # Hide MenuWindow but DO NOT destroy it
+            if self.context.menu_window:
+                self.context.menu_window.place_forget()
+
+            # Show Home
+            self.context.home_screen.tkraise()
+
+        else:
+
+            # ==============================
+            # LOGIN
+            # ==============================
+
+            self.open_menu()
+
+
+    # def open_menu(self):
+
+    #     root = self.winfo_toplevel()
+
+    #     if not self.context.app_state.logged_in:
+
+    #         login = LoginDialog(
+    #             root,
+    #             self.context
+    #         )
+
+    #         self.wait_window(login)
+
+    #         if not self.context.app_state.logged_in:
+    #             return
+
+    #         self.update_login_button()
+
+    #     self.context.create_menu_window()
+
     def open_menu(self):
 
         root = self.winfo_toplevel()
@@ -137,12 +211,33 @@ class HomeSidebar(tk.Frame):
 
             self.update_login_button()
 
-            # Create fresh MenuWindow
-            self.context.create_menu_window()
+        # Show MenuWindow
+        self.context.create_menu_window()
 
-        else:
+    # def open_menu(self):
 
-            if self.context.menu_window:
+    #     root = self.winfo_toplevel()
 
-                self.context.menu_window.tkraise()
+    #     if not self.context.app_state.logged_in:
+
+    #         login = LoginDialog(
+    #             root,
+    #             self.context
+    #         )
+
+    #         self.wait_window(login)
+
+    #         if not self.context.app_state.logged_in:
+    #             return
+
+    #         self.update_login_button()
+
+    #         # Create fresh MenuWindow
+    #         self.context.create_menu_window()
+
+    #     else:
+
+    #         if self.context.menu_window:
+
+    #             self.context.menu_window.tkraise()
 

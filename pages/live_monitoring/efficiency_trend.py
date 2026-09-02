@@ -323,38 +323,68 @@ class EfficiencyTrendFrame(tk.Frame):
 
         if channel_id == 1:
             duts = [1, 2]
-        else:
+
+        elif channel_id == 2:
             duts = [3, 4]
 
-        self.controller.reset(duts)
+        else:
+            return
 
+        self.controller.reset(duts)
+        
     def reset_display(self, selected_duts):
+
+        print("\n========== RESET EFFICIENCY TREND ==========")
+        print("Resetting DUTs:", selected_duts)
 
         for dut in selected_duts:
 
-            if isinstance(dut, str):
-                dut_no = int(dut.replace("DUT", ""))
-            else:
-                dut_no = dut
+            # -----------------------------------------
+            # Normalize DUT number
+            # -----------------------------------------
 
+            if isinstance(dut, str):
+                dut_no = int(
+                    dut.replace("DUT", "")
+                )
+            else:
+                dut_no = int(dut)
+
+            # -----------------------------------------
             # Reset graph
+            # -----------------------------------------
+
             canvas = self.canvas_map[dut_no]
 
             canvas.charging_points.clear()
             canvas.discharging_points.clear()
+
             canvas.draw_graph()
 
-            # Reset summary
-            if dut in (1, 2):
+            # -----------------------------------------
+            # Determine channel
+            # -----------------------------------------
+
+            if dut_no in (1, 2):
+
                 channel_id = 1
-                dut_index = dut - 1
+                dut_index = dut_no - 1
+
             else:
+
                 channel_id = 2
-                dut_index = dut - 3
+                dut_index = dut_no - 3
+
+            # -----------------------------------------
+            # Reset summary
+            # -----------------------------------------
 
             channel_frame = self.channel_map[channel_id]
 
-            for mode in ("charging", "discharging"):
+            for mode in (
+                "charging",
+                "discharging"
+            ):
 
                 channel_frame.set_value(
                     dut_index,
@@ -376,6 +406,138 @@ class EfficiencyTrendFrame(tk.Frame):
                     "avg",
                     "-- %"
                 )
+    # def reset_display(self, selected_duts):
+
+    #     print("\n========== RESET EFFICIENCY TREND ==========")
+    #     print("Selected DUTs:", selected_duts)
+
+    #     normalized_duts = []
+
+    #     for dut in selected_duts:
+
+    #         if isinstance(dut, str):
+    #             dut_no = int(dut.replace("DUT", ""))
+    #         else:
+    #             dut_no = int(dut)
+
+    #         normalized_duts.append(dut_no)
+
+    #     # ==========================================
+    #     # RESET CONTROLLER DATA FIRST
+    #     # ==========================================
+
+    #     self.controller.reset(normalized_duts)
+
+    #     # ==========================================
+    #     # RESET EACH SELECTED DUT
+    #     # ==========================================
+
+    #     for dut_no in normalized_duts:
+
+    #         # --------------------------------------
+    #         # RESET GRAPH
+    #         # --------------------------------------
+
+    #         canvas = self.canvas_map[dut_no]
+
+    #         canvas.charging_points.clear()
+    #         canvas.discharging_points.clear()
+
+    #         canvas.draw_graph()
+
+    #         # --------------------------------------
+    #         # DETERMINE CHANNEL / DUT INDEX
+    #         # --------------------------------------
+
+    #         if dut_no in (1, 2):
+
+    #             channel_id = 1
+    #             dut_index = dut_no - 1
+
+    #         else:
+
+    #             channel_id = 2
+    #             dut_index = dut_no - 3
+
+    #         # --------------------------------------
+    #         # RESET SUMMARY
+    #         # --------------------------------------
+
+    #         channel_frame = self.channel_map[channel_id]
+
+    #         for mode in ("charging", "discharging"):
+
+    #             channel_frame.set_value(
+    #                 dut_index,
+    #                 mode,
+    #                 "max",
+    #                 "-- %"
+    #             )
+
+    #             channel_frame.set_value(
+    #                 dut_index,
+    #                 mode,
+    #                 "min",
+    #                 "-- %"
+    #             )
+
+    #             channel_frame.set_value(
+    #                 dut_index,
+    #                 mode,
+    #                 "avg",
+    #                 "-- %"
+    #             )
+
+    #     print("Efficiency Trend reset completed.")
+
+    # def reset_display(self, selected_duts):
+
+    #     for dut in selected_duts:
+
+    #         if isinstance(dut, str):
+    #             dut_no = int(dut.replace("DUT", ""))
+    #         else:
+    #             dut_no = dut
+
+    #         # Reset graph
+    #         canvas = self.canvas_map[dut_no]
+
+    #         canvas.charging_points.clear()
+    #         canvas.discharging_points.clear()
+    #         canvas.draw_graph()
+
+    #         # Reset summary
+    #         if dut in (1, 2):
+    #             channel_id = 1
+    #             dut_index = dut - 1
+    #         else:
+    #             channel_id = 2
+    #             dut_index = dut - 3
+
+    #         channel_frame = self.channel_map[channel_id]
+
+    #         for mode in ("charging", "discharging"):
+
+    #             channel_frame.set_value(
+    #                 dut_index,
+    #                 mode,
+    #                 "max",
+    #                 "-- %"
+    #             )
+
+    #             channel_frame.set_value(
+    #                 dut_index,
+    #                 mode,
+    #                 "min",
+    #                 "-- %"
+    #             )
+
+    #             channel_frame.set_value(
+    #                 dut_index,
+    #                 mode,
+    #                 "avg",
+    #                 "-- %"
+    #             )
 
     # def reset_display(self, selected_duts):
 

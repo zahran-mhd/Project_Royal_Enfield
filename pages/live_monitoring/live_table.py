@@ -2,6 +2,7 @@ import tkinter as tk
 from widgets.channel_frame import ChannelFrame
 from widgets.table_widgets import TableWidget
 from controllers.live_table_controller import LiveTableController
+import time
 
 
 PORT_TO_DUT = {
@@ -92,6 +93,7 @@ class LiveTableFrame(tk.Frame):
             self.context
         )
         self.context.live_table_controller = self.controller
+        self.context.live_table_frame = self
         # self.channel_id=None
         # Create card first
         self.card = tk.Frame(
@@ -139,9 +141,9 @@ class LiveTableFrame(tk.Frame):
             channel_id = channel["ChannelID"]
             channel_name = channel["ChannelName"]
             dut_names = [
-        f"DUT{2 * channel_id - 1}",
-        f"DUT{2 * channel_id}"
-    ]
+                f"DUT{2 * channel_id - 1}",
+                f"DUT{2 * channel_id}"
+            ]
 
 
             channel_frame = ChannelFrame(
@@ -162,6 +164,20 @@ class LiveTableFrame(tk.Frame):
 
             self.channel_frames.append(channel_frame)
             self.channel_map[channel["ChannelID"]] = channel_frame
+            # ======================================================
+            # RESTORE RUNNING TEST STATE
+            # ======================================================
+
+            # Restore current test progress if a test is already running
+            # self.after(
+            #     100,
+            #     self.restore_test_progress
+            # )
+            self.after(
+                100,
+                self.update_test_timer
+            )
+            # self.restore_channel_progress()
             
             
     def create_table(self):
@@ -857,6 +873,401 @@ class LiveTableFrame(tk.Frame):
                     "min",
                     "-- °C"
                 )
+
+
+    # def restore_channel_progress(self):
+
+    #     progress = (
+    #         self.context.test_controller.channel_progress
+    #     )
+
+    #     for channel_id, state in progress.items():
+
+    #         if not state.get("running", False):
+    #             continue
+
+    #         if channel_id not in self.channel_map:
+    #             continue
+
+    #         frame = self.channel_map[channel_id]
+
+    #         frame.set_cycle(
+    #             state.get("current_cycle", 0),
+    #             state.get("total_cycles", 0)
+    #         )
+
+    #         remaining_seconds = state.get(
+    #             "remaining_seconds",
+    #             0
+    #         )
+
+    #         hrs = remaining_seconds // 3600
+
+    #         mins = (
+    #             remaining_seconds % 3600
+    #         ) // 60
+
+    #         secs = remaining_seconds % 60
+
+    #         frame.set_time_remaining(
+    #             f"{hrs:02}:{mins:02}:{secs:02}"
+    #         )
+
+    # def restore_test_progress(self):
+
+    #     test_controller = self.context.test_controller
+
+    #     for channel_id in self.channel_map:
+
+    #         progress = test_controller.channel_progress.get(
+    #             channel_id
+    #         )
+
+    #         if not progress:
+    #             continue
+
+    #         if not progress.get("running"):
+    #             continue
+
+    #         # -----------------------------
+    #         # Restore cycle
+    #         # -----------------------------
+
+    #         current_cycle = progress.get(
+    #             "current_cycle",
+    #             0
+    #         )
+
+    #         total_cycles = progress.get(
+    #             "total_cycles",
+    #             0
+    #         )
+
+    #         # -----------------------------
+    #         # Restore timer
+    #         # -----------------------------
+
+    #         remaining_seconds = progress.get(
+    #             "remaining_seconds",
+    #             0
+    #         )
+
+    #         hours = remaining_seconds // 3600
+
+    #         minutes = (
+    #             remaining_seconds % 3600
+    #         ) // 60
+
+    #         seconds = (
+    #             remaining_seconds % 60
+    #         )
+
+    #         time_text = (
+    #             f"{hours:02}:"
+    #             f"{minutes:02}:"
+    #             f"{seconds:02}"
+    #         )
+
+    #         # -----------------------------
+    #         # Update current channel frame
+    #         # -----------------------------
+
+    #         channel_frame = self.channel_map.get(
+    #             channel_id
+    #         )
+
+    #         if channel_frame is None:
+    #             continue
+
+    #         channel_frame.set_cycle(
+    #             current_cycle,
+    #             total_cycles
+    #         )
+
+    #         channel_frame.set_time_remaining(
+    #             time_text
+    #         )
+
+    #     # Continue syncing while test is running
+    #     self.after(
+    #         1000,
+    #         self.restore_test_progress
+    #     )
+
+    def update_test_timer(self):
+
+        try:
+
+            test_controller = self.context.test_controller
+
+            for channel_id, progress in (
+                test_controller.channel_progress.items()
+            ):
+
+                if not progress.get("running"):
+                    continue
+
+                current_cycle = progress.get(
+                    "current_cycle",
+                    0
+                )
+
+                total_cycles = progress.get(
+                    "total_cycles",
+                    0
+                )
+
+                remaining = progress.get(
+                    "remaining_seconds",
+                    0
+                )
+
+                # -----------------------------------------
+                # FORMAT TIME
+                # -----------------------------------------
+
+                hours = remaining // 3600
+
+                minutes = (
+                    remaining % 3600
+                ) // 60
+
+                seconds = (
+                    remaining % 60
+                )
+
+                text = (
+                    f"{hours:02}:"
+                    f"{minutes:02}:"
+                    f"{seconds:02}"
+                )
+
+                # -----------------------------------------
+                # UPDATE CHANNEL FRAME
+                # -----------------------------------------
+
+                frame = self.channel_map.get(
+                    channel_id
+                )
+
+                if frame is None:
+                    continue
+
+                if not frame.winfo_exists():
+                    continue
+
+                frame.set_cycle(
+                    current_cycle,
+                    total_cycles
+                )
+
+                frame.set_time_remaining(
+                    text
+                )
+
+        except Exception as e:
+
+            print(
+                f"Live timer update error: {e}"
+            )
+
+        # -----------------------------------------
+        # RUN AGAIN
+        # -----------------------------------------
+
+        try:
+
+            if self.winfo_exists():
+
+                self.after(
+                    1000,
+                    self.update_test_timer
+                )
+
+        except tk.TclError:
+
+            pass
+
+
+
+    # def update_test_timer(self):
+
+    #     try:
+
+    #         test_controller = self.context.test_controller
+
+    #         for channel_id, progress in (
+    #             test_controller.channel_progress.items()
+    #         ):
+
+    #             if not progress.get("running"):
+    #                 continue
+
+    #             # -----------------------------------------
+    #             # CURRENT CYCLE
+    #             # -----------------------------------------
+
+    #             current_cycle = progress.get(
+    #                 "current_cycle",
+    #                 0
+    #             )
+
+    #             total_cycles = progress.get(
+    #                 "total_cycles",
+    #                 0
+    #             )
+
+    #             # -----------------------------------------
+    #             # REMAINING TIME
+    #             # -----------------------------------------
+
+    #             end_time = progress.get(
+    #                 "end_time"
+    #             )
+
+    #             if end_time is not None:
+
+    #                 remaining = max(
+    #                     0,
+    #                     int(end_time - time.time())
+    #                 )
+
+    #             else:
+
+    #                 remaining = progress.get(
+    #                     "remaining_seconds",
+    #                     0
+    #                 )
+
+    #             # Keep controller state updated
+    #             progress["remaining_seconds"] = remaining
+
+    #             # -----------------------------------------
+    #             # FORMAT TIME
+    #             # -----------------------------------------
+
+    #             hours = remaining // 3600
+
+    #             minutes = (
+    #                 remaining % 3600
+    #             ) // 60
+
+    #             seconds = remaining % 60
+
+    #             text = (
+    #                 f"{hours:02}:"
+    #                 f"{minutes:02}:"
+    #                 f"{seconds:02}"
+    #             )
+
+    #             # -----------------------------------------
+    #             # CURRENT CHANNEL FRAME
+    #             # -----------------------------------------
+
+    #             frame = self.channel_map.get(
+    #                 channel_id
+    #             )
+
+    #             if frame is None:
+    #                 continue
+
+    #             if not frame.winfo_exists():
+    #                 continue
+
+    #             frame.set_cycle(
+    #                 current_cycle,
+    #                 total_cycles
+    #             )
+
+    #             frame.set_time_remaining(
+    #                 text
+    #             )
+
+    #     except Exception as e:
+
+    #         print(
+    #             f"Live timer update error: {e}"
+    #         )
+
+    #     # ---------------------------------------------
+    #     # CONTINUE FOREVER WHILE THIS VIEW EXISTS
+    #     # ---------------------------------------------
+
+    #     try:
+
+    #         if self.winfo_exists():
+
+    #             self.after(
+    #                 1000,
+    #                 self.update_test_timer
+    #             )
+
+    #     except tk.TclError:
+
+    #         pass
+    # def restore_channel_progress(self):
+
+    #     progress = (
+    #         self.context.test_controller.channel_progress
+    #     )
+
+    #     for channel_id, state in progress.items():
+
+    #         if not state.get("running", False):
+    #             continue
+
+    #         if channel_id not in self.channel_map:
+    #             continue
+
+    #         frame = self.channel_map[channel_id]
+
+    #         current_cycle = state.get(
+    #             "current_cycle",
+    #             0
+    #         )
+
+    #         total_cycles = state.get(
+    #             "total_cycles",
+    #             0
+    #         )
+
+    #         remaining_seconds = state.get(
+    #             "remaining_seconds",
+    #             0
+    #         )
+
+    #         # ==============================================
+    #         # RESTORE CYCLE
+    #         # ==============================================
+
+    #         frame.set_cycle(
+    #             current_cycle,
+    #             total_cycles
+    #         )
+
+    #         # ==============================================
+    #         # RESTORE TIME
+    #         # ==============================================
+
+    #         hrs = remaining_seconds // 3600
+
+    #         mins = (
+    #             remaining_seconds % 3600
+    #         ) // 60
+
+    #         secs = (
+    #             remaining_seconds % 60
+    #         )
+
+    #         text = (
+    #             f"{hrs:02}:"
+    #             f"{mins:02}:"
+    #             f"{secs:02}"
+    #         )
+
+    #         frame.set_time_remaining(
+    #             text
+    #         )
 
     # def refresh_table(self):
     

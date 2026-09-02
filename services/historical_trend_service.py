@@ -53,7 +53,6 @@ class HistoricalTrendService:
                 print(ex)
 
         return x_values, y_values
-    
 
     def get_columns(
         self,
@@ -71,12 +70,50 @@ class HistoricalTrendService:
 
         try:
 
-            df = pd.read_csv(file_path)
+            df = pd.read_csv(
+                file_path
+            )
 
-            return list(df.columns)
+            excluded_columns = {
+                "Timestamp",
+                "Mode",
+                "Time_sec"
+            }
+
+            return [
+                column
+                for column in df.columns
+                if column not in excluded_columns
+            ]
 
         except Exception as ex:
 
             print(ex)
 
             return []
+
+    # def get_columns(
+    #     self,
+    #     folder,
+    #     cycle_no
+    # ):
+
+    #     file_path = os.path.join(
+    #         folder,
+    #         f"Cycle_{cycle_no}.csv"
+    #     )
+
+    #     if not os.path.exists(file_path):
+    #         return []
+
+    #     try:
+
+    #         df = pd.read_csv(file_path)
+
+    #         return list(df.columns)
+
+    #     except Exception as ex:
+
+    #         print(ex)
+
+    #         return []

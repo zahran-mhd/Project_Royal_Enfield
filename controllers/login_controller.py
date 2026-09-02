@@ -49,17 +49,49 @@ class LoginController:
     # ------------------------------------
     # LOGOUT
     # ------------------------------------
+    # def logout(self):
+
+    #     # self.context.app_state.logged_in = False
+    #     self.context.app_state.current_user = ""
+    #     self.context.app_state.current_role = ""
+    #     # self.context.app_state.test_running = False
+
+    #     # Clear global selected DUTs
+    #     self.context.selected_duts.clear()
+
+    #     # Reset all page-specific data
+    #     self.context.app_controller.reset_pages()
+
+    #     # Reset sidebar
+    #     if self.context.app_controller.sidebar:
+    #         self.context.app_controller.sidebar.reset_sidebar()
+
+    #     # Update existing SubHeader
+    #     home_screen = getattr(
+    #         self.context,
+    #         "home_screen",
+    #         None
+    #     )
+
+    #     if home_screen:
+    #         home_screen.sub_header.update_user()
+     
+
     def logout(self):
 
         self.context.app_state.logged_in = False
         self.context.app_state.current_user = ""
         self.context.app_state.current_role = ""
-        self.context.app_state.test_running = False
 
-        # Clear global selected DUTs
+        # IMPORTANT:
+        # Do NOT stop a running test here.
+        #
+        # self.context.app_state.test_running = False  <-- REMOVE
+
+        # Clear login-specific selections
         self.context.selected_duts.clear()
 
-        # Reset all page-specific data
+        # Reset page-specific GUI state
         self.context.app_controller.reset_pages()
 
         # Reset sidebar
@@ -75,8 +107,6 @@ class LoginController:
 
         if home_screen:
             home_screen.sub_header.update_user()
-     
-
     # ------------------------------------
     # ROLE CHECK
     # ------------------------------------

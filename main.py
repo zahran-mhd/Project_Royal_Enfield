@@ -146,22 +146,43 @@ def main():
     # CREATE MENU WINDOW FUNCTION
     # =====================================
 
+    # def create_menu_window():
+
+    #     # If old MenuWindow exists,
+    #     # destroy it first
+    #     if context.menu_window is not None:
+
+    #         context.menu_window.destroy()
+
+    #         context.menu_window = None
+
+    #     # Create completely fresh MenuWindow
+    #     context.menu_window = MenuWindow(
+    #         root,
+    #         context
+    #     )
+
+    #     context.menu_window.place(
+    #         relx=0,
+    #         rely=0,
+    #         relwidth=1,
+    #         relheight=1
+    #     )
+
+    #     # Show MenuWindow
+    #     context.menu_window.tkraise()
+
     def create_menu_window():
 
-        # If old MenuWindow exists,
-        # destroy it first
-        if context.menu_window is not None:
+        if context.menu_window is None:
 
-            context.menu_window.destroy()
+            context.menu_window = MenuWindow(
+                root,
+                context
+            )
 
-            context.menu_window = None
-
-        # Create completely fresh MenuWindow
-        context.menu_window = MenuWindow(
-            root,
-            context
-        )
-
+        # IMPORTANT:
+        # Show the MenuWindow again if it was hidden
         context.menu_window.place(
             relx=0,
             rely=0,
@@ -169,33 +190,54 @@ def main():
             relheight=1
         )
 
-        # Show MenuWindow
-        context.menu_window.tkraise()
+        context.menu_window.tkraise()    
 
-    # Make this function accessible
-    # from HomeSidebar / other classes
+    # def create_menu_window():
+
+    #     if context.menu_window is None:
+
+    #         context.menu_window = MenuWindow(
+    #             root,
+    #             context
+    #         )
+
+    #         context.menu_window.place(
+    #             relx=0,
+    #             rely=0,
+    #             relwidth=1,
+    #             relheight=1
+    #         )
+
+    #     context.menu_window.tkraise()
+    # # Make this function accessible
+    # # from HomeSidebar / other classes
     context.create_menu_window = create_menu_window
 
-    # =====================================
-    # SHOW HOME SCREEN FIRST
-    # =====================================
+    # # =====================================
+    # # SHOW HOME SCREEN FIRST
+    # # =====================================
 
-    context.home_screen.tkraise()
+    # context.home_screen.tkraise()
 
     # =====================================
     # START APPLICATION
     # =====================================
 
-    root.mainloop()
+    # root.mainloop()
 
 
     def on_close():
 
-        context.instrument_manager.disconnect_all()
+        if context.alarm_monitor:
+            context.alarm_monitor.stop()
+
+        if context.instrument_manager:
+            context.instrument_manager.disconnect_all()
 
         if context.can_manager:
             context.can_manager.disconnect_all()
 
+        context.live_table_frame = None
         root.destroy()
 
 
@@ -203,6 +245,8 @@ def main():
         "WM_DELETE_WINDOW",
         on_close
     )
+
+    root.mainloop()
 
 
 

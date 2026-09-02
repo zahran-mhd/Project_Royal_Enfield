@@ -61,7 +61,7 @@ class TestSettingsController():
 
         page.start_live_plot(values["selected_duts"])
 
-        page.start_live_plot(values["selected_duts"])
+        # page.start_live_plot(values["selected_duts"])
     
     def get_settings(self):
         

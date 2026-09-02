@@ -20,113 +20,116 @@ class EfficiencyTrendController:
                 "cycles": [],
                 "statistics": {}
             }
-    def start_live_plot(self, selected_duts):
+    # def start_live_plot(self, selected_duts):
 
-        # Add newly started DUTs
-        for dut in selected_duts:
+    #     # Add newly started DUTs
+    #     for dut in selected_duts:
+    #         if isinstance(dut, str):
+    #             dut = int(dut.replace("DUT", ""))
+    #         print("Starting live plot for DUT:", dut)
 
-            if dut not in self.running_duts:
-                self.running_duts.append(dut)
+    #         if dut not in self.running_duts:
+    #             self.running_duts.append(dut)
 
-        selected_duts = self.running_duts
+    #     selected_duts = self.running_duts
 
-        # Hide all canvases
-        for canvas in self.view.canvas_map.values():
-            canvas.grid_forget()
+    #     # Hide all canvases
+    #     for canvas in self.view.canvas_map.values():
+    #         canvas.grid_forget()
 
-        count = len(selected_duts)
+    #     count = len(selected_duts)
 
-        if count == 0:
-            return
+    #     if count == 0:
+    #         return
 
-        # Reset grid configuration
-        for row in range(2):
-            self.view.plot_frame.grid_rowconfigure(
-                row,
-                weight=1
-            )
+    #     # Reset grid configuration
+    #     for row in range(2):
+    #         self.view.plot_frame.grid_rowconfigure(
+    #             row,
+    #             weight=1
+    #         )
 
-        for column in range(2):
-            self.view.plot_frame.grid_columnconfigure(
-                column,
-                weight=1
-            )
+    #     for column in range(2):
+    #         self.view.plot_frame.grid_columnconfigure(
+    #             column,
+    #             weight=1
+    #         )
 
-        # =========================
-        # DUT POSITIONS
-        # =========================
+    #     # =========================
+    #     # DUT POSITIONS
+    #     # =========================
 
-        if count == 1:
+    #     if count == 1:
 
-            positions = [
-                (0, 0)
-            ]
+    #         positions = [
+    #             (0, 0)
+    #         ]
 
-            self.view.plot_frame.grid_columnconfigure(
-                1,
-                weight=0
-            )
+    #         self.view.plot_frame.grid_columnconfigure(
+    #             1,
+    #             weight=0
+    #         )
 
-        elif count == 2:
+    #     elif count == 2:
 
-            positions = [
-                (0, 0),
-                (1, 0)
-            ]
+    #         positions = [
+    #             (0, 0),
+    #             (1, 0)
+    #         ]
 
-            self.view.plot_frame.grid_columnconfigure(
-                1,
-                weight=0
-            )
+    #         self.view.plot_frame.grid_columnconfigure(
+    #             1,
+    #             weight=0
+    #         )
 
-        elif count == 3:
+    #     elif count == 3:
 
-            positions = [
-                (0, 0),
-                (1, 0),
-                (0, 1)
-            ]
+    #         positions = [
+    #             (0, 0),
+    #             (1, 0),
+    #             (0, 1)
+    #         ]
 
-        else:
+    #     else:
 
-            positions = [
-                (0, 0),
-                (1, 0),
-                (0, 1),
-                (1, 1)
-            ]
+    #         positions = [
+    #             (0, 0),
+    #             (1, 0),
+    #             (0, 1),
+    #             (1, 1)
+    #         ]
 
-        # =========================
-        # PLACE CANVASES
-        # =========================
+    #     # =========================
+    #     # PLACE CANVASES
+    #     # =========================
 
-        for dut, (row, column) in zip(
-            selected_duts,
-            positions
-        ):
+    #     for dut, (row, column) in zip(
+    #         selected_duts,
+    #         positions
+    #     ):
 
-            canvas = self.view.canvas_map[dut]
+    #         canvas = self.view.canvas_map[dut]
 
-            canvas.grid(
-                row=row,
-                column=column,
-                padx=10,
-                pady=10,
-                sticky="nsew"
-            )
+    #         canvas.grid(
+    #             row=row,
+    #             column=column,
+    #             padx=10,
+    #             pady=10,
+    #             sticky="nsew"
+    #         )
 
-            # Update title
-            canvas.delete("title")
+    #         # Update title
+    #         canvas.delete("title")
 
-            canvas.create_text(
-                10,
-                10,
-                text=f"{dut}",
-                anchor="nw",
-                font=("Segoe UI", 12, "bold"),
-                fill="black",
-                tags="title"
-            )
+    #         canvas.create_text(
+    #             10,
+    #             10,
+    #             text=f"{dut}",
+    #             anchor="nw",
+    #             font=("Segoe UI", 12, "bold"),
+    #             fill="black",
+    #             tags="title"
+    #         )
 
             # Test data
             # canvas.add_charging_points(88.2)
@@ -145,6 +148,35 @@ class EfficiencyTrendController:
     #     else:
     #         self.cycle_data[dut]["discharging_samples"].append(efficiency)
 
+    def start_live_plot(self, selected_duts):
+
+        normalized_duts = []
+
+        for dut in selected_duts:
+
+            if isinstance(dut, str):
+                dut_no = int(
+                    dut.replace("DUT", "")
+                )
+            else:
+                dut_no = int(dut)
+
+            normalized_duts.append(
+                dut_no
+            )
+
+        print(
+            "Starting efficiency trend for:",
+            normalized_duts
+        )
+
+        # Reset previous test data/display
+        self.reset(
+            normalized_duts
+        )
+
+        # Continue with your existing
+        # live plotting logic here
     
     def add_efficiency_sample(self, dut, mode, efficiency):
 
@@ -367,13 +399,59 @@ class EfficiencyTrendController:
 
     def reset(self, selected_duts):
 
+        print(
+            "EfficiencyTrendController.reset:",
+            selected_duts
+        )
+
         for dut in selected_duts:
 
-            self.cycle_data[dut] = {
+            dut_no = int(dut)
+
+            # Reset controller data
+            self.cycle_data[dut_no] = {
                 "charging_samples": [],
                 "discharging_samples": [],
                 "cycles": [],
-                "statistics": {}
+                "statistics": {
+                    "charging": {
+                        "max": {
+                            "value": 0,
+                            "cycle": 0
+                        },
+                        "min": {
+                            "value": 0,
+                            "cycle": 0
+                        },
+                        "avg": 0
+                    },
+                    "discharging": {
+                        "max": {
+                            "value": 0,
+                            "cycle": 0
+                        },
+                        "min": {
+                            "value": 0,
+                            "cycle": 0
+                        },
+                        "avg": 0
+                    }
+                }
             }
 
-        self.view.reset_display(selected_duts)
+        # Tell VIEW to clear graph and display
+        self.view.reset_display(
+            selected_duts
+        )
+    # def reset(self, selected_duts):
+
+    #     for dut in selected_duts:
+
+    #         self.cycle_data[dut] = {
+    #             "charging_samples": [],
+    #             "discharging_samples": [],
+    #             "cycles": [],
+    #             "statistics": {}
+    #         }
+
+    #     self.view.reset_display(selected_duts)

@@ -6,7 +6,7 @@ from instruments.drivers.rp5935a_driver import RP5935ADriver
 from instruments.drivers.el4935a_driver import EL4935ADriver
 from instruments.drivers.el34143a_driver import EL34143ADriver
 from instruments.drivers.daq970a_driver import (DAQ970ADriver)
-
+from instruments.drivers.adam6052_driver import Adam6052Driver
 
 from instruments.workers.asr3400_worker import ASR3400Worker
 from instruments.workers.pw3337_worker import PW3337Worker
@@ -23,7 +23,8 @@ DRIVER_MAP = {
     "RP5935ADriver": RP5935ADriver,
     "EL4935ADriver": EL4935ADriver,
     "EL34143ADriver": EL34143ADriver,
-    "DAQ970ADriver": DAQ970ADriver
+    "DAQ970ADriver": DAQ970ADriver,
+    "Adam6052Driver": Adam6052Driver,
 }
 
 WORKER_MAP = {
@@ -153,14 +154,18 @@ class InstrumentManager:
 
         configs = self.context.instrument_repository.get_all()
 
+        print("Inside connect_all")
+
         for config in configs:
 
             instrument_id = config.instrument_id
+            print("Instrument ID : ", instrument_id)
 
             try:
 
                 # Skip if already connected
                 if instrument_id in self.drivers:
+                    print("Already Connected")
                     continue
 
                 # Get driver class from registry
@@ -168,6 +173,7 @@ class InstrumentManager:
                     config.driver_class
                 )
 
+                print("Driver Class : ",driver_class)
                 if driver_class is None:
 
                     print(
@@ -407,6 +413,18 @@ class InstrumentManager:
                 channel_id
             )
 
+            # ---------------------------------------------
+            # ADAM-6052
+            # ---------------------------------------------
+
+            if config.instrument_type == "ADAM6052":
+
+                print(
+                    f"ADAM-6052 ready for "
+                    f"Channel {channel_id}"
+                )
+
+                continue
             # ---------------------------------------------
             # Worker already running
             # ---------------------------------------------
@@ -736,3 +754,34 @@ class InstrumentManager:
             if isinstance(driver, driver_type):
                 return driver
         return None
+
+    def get_adam_driver(self, channel_id):
+
+        configs = (
+            self.context
+            .instrument_repository
+            .get_by_channel(channel_id)
+        )
+
+        for config in configs:
+
+            if config.instrument_type != "ADAM6052":
+                continue
+
+            driver = self.drivers.get(
+                config.instrument_id
+            )
+
+            if driver is None:
+                raise RuntimeError(
+                    f"ADAM-6052 "
+                    f"{config.instrument_id} "
+                    f"is not connected"
+                )
+
+            return driver
+
+        raise RuntimeError(
+            f"No ADAM-6052 configured "
+            f"for Channel {channel_id}"
+        )

@@ -30,17 +30,119 @@ import tkinter as tk
 
 
 
+# class AlarmPopup:
+
+#     def __init__(self, parent, controller, alarms):
+
+#         self.parent = parent
+#         self.controller = controller
+#         self.alarms = alarms
+
+#         self.popup = tk.Toplevel(parent)
+
+#         self.popup.title("CAN Alarm")
+#         self.popup.geometry("650x500")
+
+#         self.popup.transient(parent)
+#         self.popup.grab_set()
+
+#         # =========================
+#         # TITLE
+#         # =========================
+
+#         tk.Label(
+#             self.popup,
+#             text="CAN ALARM DETECTED",
+#             font=("Arial", 18, "bold")
+#         ).pack(pady=15)
+
+#         # =========================
+#         # ALARM LIST
+#         # =========================
+
+#         alarm_frame = tk.Frame(self.popup)
+#         alarm_frame.pack(
+#             fill="both",
+#             expand=True,
+#             padx=20,
+#             pady=10
+#         )
+
+#         for alarm in self.alarms:
+
+#             dut_id = alarm["dut_id"]
+#             parameter = alarm["parameter"]
+
+#             tk.Label(
+#                 alarm_frame,
+#                 text=f"DUT {dut_id}  →  {parameter}",
+#                 font=("Arial", 12)
+#             ).pack(
+#                 anchor="w",
+#                 pady=3
+#             )
+
+#         # =========================
+#         # BUTTONS
+#         # =========================
+
+#         button_frame = tk.Frame(self.popup)
+#         button_frame.pack(pady=20)
+
+#         tk.Button(
+#             button_frame,
+#             text="Resume",
+#             command=self.resume
+#         ).pack(
+#             side="left",
+#             padx=10
+#         )
+
+#         tk.Button(
+#             button_frame,
+#             text="Proceed to Next Cycle",
+#             command=self.next_cycle
+#         ).pack(
+#             side="left",
+#             padx=10
+#         )
+
+#     def resume(self):
+
+#         self.controller.alarm_active = False
+
+#         self.controller.resume_test()
+
+#         self.popup.grab_release()
+#         self.popup.destroy()
+
+#     def next_cycle(self):
+
+#         self.controller.alarm_active = False
+
+#         self.controller.proceed_to_next_cycle()
+
+#         self.popup.grab_release()
+#         self.popup.destroy()
+#         # self.controller.next_cycle()
+#         # self.destroy()
+
+
 class AlarmPopup:
 
-    def __init__(self, parent, controller, alarms):
+    def __init__(self, parent, controller, alarms, channel_id):
 
         self.parent = parent
         self.controller = controller
         self.alarms = alarms
+        self.channel_id = channel_id
 
         self.popup = tk.Toplevel(parent)
 
-        self.popup.title("CAN Alarm")
+        self.popup.title(
+            f"CAN Alarm - Channel {channel_id}"
+        )
+
         self.popup.geometry("650x500")
 
         self.popup.transient(parent)
@@ -52,7 +154,7 @@ class AlarmPopup:
 
         tk.Label(
             self.popup,
-            text="CAN ALARM DETECTED",
+            text=f"CAN ALARM DETECTED - CHANNEL {channel_id}",
             font=("Arial", 18, "bold")
         ).pack(pady=15)
 
@@ -61,6 +163,7 @@ class AlarmPopup:
         # =========================
 
         alarm_frame = tk.Frame(self.popup)
+
         alarm_frame.pack(
             fill="both",
             expand=True,
@@ -87,6 +190,7 @@ class AlarmPopup:
         # =========================
 
         button_frame = tk.Frame(self.popup)
+
         button_frame.pack(pady=20)
 
         tk.Button(
@@ -107,22 +211,28 @@ class AlarmPopup:
             padx=10
         )
 
+    # ======================================================
+    # RESUME
+    # ======================================================
+
     def resume(self):
 
-        self.controller.alarm_active = False
-
-        self.controller.resume_test()
+        self.controller.resume_test(
+            self.channel_id
+        )
 
         self.popup.grab_release()
         self.popup.destroy()
+
+    # ======================================================
+    # NEXT CYCLE
+    # ======================================================
 
     def next_cycle(self):
 
-        self.controller.alarm_active = False
-
-        self.controller.proceed_to_next_cycle()
+        self.controller.next_cycle(
+            self.channel_id
+        )
 
         self.popup.grab_release()
         self.popup.destroy()
-        # self.controller.next_cycle()
-        # self.destroy()

@@ -635,8 +635,13 @@ class DatabaseManager:
                 "EL34143A",
                 "EL34143ADriver",
                 "EL34143AWorker"
-            )
+            ),
 
+            (
+                "Adam6052",
+                "Adam6052Driver",
+                ""
+            )
         ]
 
         cursor.executemany(

@@ -53,4 +53,4 @@ class ASR3400Worker(threading.Thread):
 
             self.stop_event.wait(1)
 
-        self.driver.disconnect()
+        # self.driver.disconnect()

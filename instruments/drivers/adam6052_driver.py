@@ -169,7 +169,7 @@ class Adam6052Driver:
         value = bool(value)
 
         result = self.client.write_coil(
-            address=output_port,
+            address=output_port+16,
             value=value
         )
 
@@ -277,37 +277,67 @@ class Adam6052Driver:
     # TEST-SPECIFIC FUNCTIONS
     # ==========================================================
 
-    def set_charge_mode(
-        self,
-        charge_output=0,
-        discharge_output=1
-    ):
+    # def set_charge_mode(
+    #     self,
+    #     charge_output=0,
+    #     discharge_output=1
+    # ):
 
-        self.write_output(
-            charge_output,
-            True
-        )
+    #     self.write_output(
+    #         charge_output,
+    #         True
+    #     )
 
-        self.write_output(
-            discharge_output,
-            False
-        )
+    #     self.write_output(
+    #         discharge_output,
+    #         False
+    #     )
 
-    def set_discharge_mode(
-        self,
-        charge_output=0,
-        discharge_output=1
-    ):
+    def set_charge_mode(self):
 
-        self.write_output(
-            charge_output,
-            False
-        )
+        outputs = {
+            0: True,
+            1: False,
+            2: True,
+            3: True,
+            4: False,
+            5: True,
+            6: True,
+            7: False
+        }
 
-        self.write_output(
-            discharge_output,
-            True
-        )
+        self.write_outputs(outputs)
+
+    def set_discharge_mode(self):
+    
+            outputs = {
+                0: True,
+                1: False,
+                2: True,
+                3: True,
+                4: False,
+                5: True,
+                6: True,
+                7: False
+            }
+    
+            self.write_outputs(outputs)
+
+    # def set_discharge_mode(
+    #     self,
+    #     charge_output=0,
+    #     discharge_output=1
+    # ):
+
+    #     self.write_output(
+    #         charge_output,
+    #         False
+    #     )
+
+    #     self.write_output(
+    #         discharge_output,
+    #         True
+    #     )
 
     def output_off(
         self,

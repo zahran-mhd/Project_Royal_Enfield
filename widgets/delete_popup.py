@@ -18,7 +18,7 @@ class DeleteDutPopup:
         tk.Label(
             self.popup,
             text="Select DUT(s) to Delete",
-            font=("Arial", 13, "bold")
+            font=("Bookman Antiqua", 13, "bold")
         ).pack(pady=10)
 
         frame = tk.Frame(self.popup)

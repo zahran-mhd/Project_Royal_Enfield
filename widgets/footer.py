@@ -3,7 +3,7 @@ import tkinter as tk
 class Footer(tk.Frame):
 
     def __init__(self, parent,context):
-        super().__init__(parent, bg="#173A8F", height=40,bd=2,relief="solid")
+        super().__init__(parent, bg="#0AA08C", height=40,bd=2,relief="solid")
 
         self.pack_propagate(False)
         # tk.Label(
@@ -14,16 +14,16 @@ class Footer(tk.Frame):
         # ).pack(expand=True)
         self.context=context
 
-        center = tk.Frame(self, bg="#173A8F")
+        center = tk.Frame(self, bg="#0AA08C")
         center.pack(side="left", expand=True)
 
         tk.Button(
     center,
     text="Home",
-    font=("Arial", 12, "bold"),
+    font=("Bookman Antiqua", 12, "bold"),
     fg="white",
-    bg="#173A8F",
-    activebackground="#173A8F",
+    bg="#0AA08C",
+    activebackground="#0AA08C",
     activeforeground="white",
     relief="flat",
      cursor="hand2",

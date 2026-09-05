@@ -63,6 +63,8 @@ class AppContext:
 
         self.parameter_repository = None
 
+        self.alarm_repository = None
+
         # ==================================
         # SERVICES
         # ==================================

@@ -46,7 +46,7 @@ class SubHeader(tk.Frame):
             text="Not Logged In",
             bg="white",
             fg="#1F2937",
-            font=("Segoe UI", 11, "bold"),
+            font=("Bookman Antiqua", 11, "bold"),
             anchor="w"
         )
         self.user_lbl.grid(
@@ -64,7 +64,7 @@ class SubHeader(tk.Frame):
             text="Status",
             bg="white",
             fg="#374151",
-            font=("Segoe UI", 11),
+            font=("Bookman Antiqua", 11),
             anchor="center"
         )
         self.status_lbl.grid(

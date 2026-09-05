@@ -29,7 +29,7 @@ class LiveMonitoringPage(tk.Frame):
         title = tk.Label(
             self,
             text="Endurance - Live Monitoring",
-            font=("Segoe UI", 16, "bold"),
+            font=("Bookman Antiqua", 16, "bold"),
             bg="#eef2f7"
         )
         title.pack(pady=10)

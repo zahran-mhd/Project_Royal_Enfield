@@ -11,6 +11,7 @@ import time
 import threading
 from widgets.alarm_popup import AlarmPopup
 from controllers.line_regulation_controller import LineRegulationController
+from controllers.load_regulation_controller import LoadRegulationController
 
 CAN_PARAMETER_MAP = {
 
@@ -115,8 +116,11 @@ class TestController:
             }
         }
         self.line_regulation_controller = LineRegulationController(
-    self.context
-)
+                self.context
+            )
+        self.load_regulation_controller = LoadRegulationController(
+            self.context
+        )
         # self.csv_logger = CSVLogger(
         #     base_folder="CSV_Logs"
         # )
@@ -1054,9 +1058,29 @@ class TestController:
 
         elif values['test_type'] == "Load Regulation":
             print("Load Regulation Test")
+            self.load_regulation_controller.start_test(
+                channel_id=channel_id,
+                values=values
+            )
+
+            # for frame in self.get_all_channel_frames(channel_id):
+
+            #     frame.after(
+            #         0,
+            #         lambda f=frame:
+            #         f.stop_btn.configure(
+            #             state="normal"
+            #         )
+            #     )
+
+            self.context.app_controller.show_page(
+                "Load Regulation"
+            )
 
         else:
             print(values['test_type']," No such test")
+
+        
         # decoded = self.context.dbc_decoder.decode(
         #     msg.arbitration_id,
         #     msg.data
@@ -2326,6 +2350,7 @@ class TestController:
                 print("Charging...")
 
                 # adam.set_charge_mode(channel_id)
+                # adam.set_charge_mode()
 
                 self.context.test_session.mode = "Charge"
 

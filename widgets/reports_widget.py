@@ -26,7 +26,7 @@ class ReportsWidget(tk.Frame):
         tk.Label(
             filter_frame,
             text="Filter Options",
-            font=("Segoe UI", 15, "bold"),
+            font=("Bookman Antiqua", 15, "bold"),
             bg="white",
             fg="#243B64"
         ).grid(
@@ -54,7 +54,7 @@ class ReportsWidget(tk.Frame):
         tk.Label(
             filter_frame,
             text="Report Name",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="white",
             fg="#243B64"
         ).grid(
@@ -68,7 +68,7 @@ class ReportsWidget(tk.Frame):
         tk.Label(
             filter_frame,
             text="Report Date",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="white",
             fg="#243B64"
         ).grid(
@@ -82,7 +82,7 @@ class ReportsWidget(tk.Frame):
         tk.Label(
             filter_frame,
             text="Report Type",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="white",
             fg="#243B64"
         ).grid(
@@ -96,7 +96,7 @@ class ReportsWidget(tk.Frame):
         # Inputs
         self.report_name = ttk.Entry(
             filter_frame,
-            font=("Segoe UI", 10)
+            font=("Bookman Antiqua", 10)
         )
         self.report_name.grid(
             row=3,
@@ -109,7 +109,7 @@ class ReportsWidget(tk.Frame):
         self.report_date = DateEntry(
             filter_frame,
             date_pattern="dd-mm-yyyy",
-            font=("Segoe UI", 10)
+            font=("Bookman Antiqua", 10)
         )
         self.report_date.grid(
             row=3,
@@ -123,7 +123,7 @@ class ReportsWidget(tk.Frame):
             filter_frame,
             values=["Daily", "Weekly", "Monthly", "Custom"],
             state="readonly",
-            font=("Segoe UI", 10)
+            font=("Bookman Antiqua", 10)
         )
 
         self.report_type.set(
@@ -142,7 +142,7 @@ class ReportsWidget(tk.Frame):
         filter_btn = tk.Button(
             filter_frame,
             text="Filter",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="#3567E5",
             fg="white",
             activebackground="#2F5DD0",
@@ -175,7 +175,7 @@ class ReportsWidget(tk.Frame):
         tk.Label(
             report_frame,
             text="Available Reports",
-            font=("Segoe UI", 15, "bold"),
+            font=("Bookman Antiqua", 15, "bold"),
             bg="white",
             fg="#243B64"
         ).pack(
@@ -207,7 +207,7 @@ class ReportsWidget(tk.Frame):
         tk.Label(
             empty_box,
             text="No reports found",
-            font=("Segoe UI", 11),
+            font=("Bookman Antiqua", 11),
             bg="#F7F9FC",
             fg="#334155"
         ).pack(

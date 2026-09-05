@@ -127,7 +127,7 @@ class LiveTemperatureFrame(tk.Frame):
         tk.Label(
             card,
             text=name,
-            font=("Segoe UI", 15, "bold"),
+            font=("Bookman Antiqua", 15, "bold"),
             bg="white"
         ).pack(
             pady=(0, 2)

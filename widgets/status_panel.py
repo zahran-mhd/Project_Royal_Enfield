@@ -10,7 +10,7 @@ class StatusPanel(tk.LabelFrame):
         super().__init__(
             parent,
             text=title,
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             padx=8,
             pady=8,
             bg=bg_color

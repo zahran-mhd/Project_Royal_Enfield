@@ -12,7 +12,7 @@ class ReportsPage(tk.Frame):
         title = tk.Label(
             self,
             text="Reports",
-            font=("Segoe UI", 22, "bold"),
+            font=("Bookman Antiqua", 22, "bold"),
             bg="#EEF2F7",
             fg="#0B1B44"
         )

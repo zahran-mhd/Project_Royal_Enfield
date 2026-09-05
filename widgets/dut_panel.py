@@ -8,7 +8,7 @@ class DUTPanel(tk.LabelFrame):
         super().__init__(
             parent,
             text=dut_name,
-            font=("Segoe UI", 11, "bold"),
+            font=("Bookman Antiqua", 11, "bold"),
             padx=5,
             pady=5
         )

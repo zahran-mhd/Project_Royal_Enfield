@@ -54,7 +54,7 @@ class UserConfig(tk.Frame):
             header,
             text="+ Add User",
             font=ctk.CTkFont(
-                family="Segoe UI",
+                family="Bookman Antiqua",
                 size=16,
                 weight="bold"
             ),

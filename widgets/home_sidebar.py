@@ -20,7 +20,7 @@ class HomeSidebar(tk.Frame):
         self.menu_btn = tk.Button(
             self,
             text="MENU",
-            bg="#2563eb",
+            bg="#0AA08C",
             fg="white",
             font=("Bookman Antiqua", 12, "bold"),
             cursor="hand2",

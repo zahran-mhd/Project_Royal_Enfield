@@ -23,7 +23,7 @@ class HistoricalTrendWidget(tk.Frame):
         select_btn = tk.Button(
             top_frame,
             text="Select Folder",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="#4F5AE8",
             fg="white",
             activebackground="#4F5AE8",
@@ -40,7 +40,7 @@ class HistoricalTrendWidget(tk.Frame):
             textvariable=self.folder_path,
             bg="#E9EDF2",
             fg="#222222",
-            font=("Segoe UI", 11)
+            font=("Bookman Antiqua", 11)
         ).pack(side="left", padx=12)
 
         # Filter Card
@@ -59,14 +59,14 @@ class HistoricalTrendWidget(tk.Frame):
             filter_frame,
             text="Cycle Number",
             bg="white",
-            font=("Segoe UI", 10, "bold")
+            font=("Bookman Antiqua", 10, "bold")
         ).grid(row=0, column=0, padx=20, pady=(15, 5), sticky="w")
 
         tk.Label(
             filter_frame,
             text="Y-Axis Parameter",
             bg="white",
-            font=("Segoe UI", 10, "bold")
+            font=("Bookman Antiqua", 10, "bold")
         ).grid(row=0, column=3, padx=(5, 20), pady=(15, 5), sticky="w")
 
         self.from_entry = ttk.Entry(filter_frame, width=35)
@@ -90,7 +90,7 @@ class HistoricalTrendWidget(tk.Frame):
         self.upload_btn = tk.Button(
             filter_frame,
             text="Upload CSV",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="#4F5AE8",
             fg="white",
             activebackground="#4F5AE8",
@@ -148,7 +148,7 @@ class HistoricalTrendWidget(tk.Frame):
         plot_btn = tk.Button(
             filter_frame,
             text="Plot Graph",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="#4F5AE8",
             fg="white",
             activebackground="#4F5AE8",
@@ -169,7 +169,7 @@ class HistoricalTrendWidget(tk.Frame):
         export_btn = tk.Button(
             filter_frame,
             text="Export Graph",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="#4F5AE8",
             fg="white",
             activebackground="#4F5AE8",
@@ -209,7 +209,7 @@ class HistoricalTrendWidget(tk.Frame):
             graph_frame,
             text="Graph Preview",
             bg="white",
-            font=("Segoe UI", 11)
+            font=("Bookman Antiqua", 11)
         ).pack(anchor="nw", padx=15, pady=15)
 
         self.graph_container = tk.Frame(

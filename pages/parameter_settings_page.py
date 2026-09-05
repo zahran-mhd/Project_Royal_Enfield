@@ -88,7 +88,7 @@ class ParameterSettingsPage(tk.Frame):
         supplier_title = tk.Label(
             self.container,
             text="DUT Supplier Settings",
-            font=("Arial", 22, "bold"),
+            font=("Bookman Antiqua", 22, "bold"),
             bg="#f5f5f5"
         )
 
@@ -213,7 +213,7 @@ class ParameterSettingsPage(tk.Frame):
         title = tk.Label(
             self.container,
             text="Endurance",
-            font=("Arial", 22, "bold"),
+            font=("Bookman Antiqua", 22, "bold"),
             bg="#f5f5f5"
         )
         title.pack(anchor="w", padx=20, pady=(10, 10))
@@ -246,7 +246,7 @@ class ParameterSettingsPage(tk.Frame):
             charging,
             text="Charging",
             bg="white",
-            font=("Arial",16,"bold")
+            font=("Bookman Antiqua",16,"bold")
         ).grid(row=0,column=0,columnspan=2,sticky="w",padx=15,pady=(15,15))
         
         self.entries["ac_input_voltage"] = parameter_row(
@@ -299,7 +299,7 @@ class ParameterSettingsPage(tk.Frame):
             discharge,
             text="Discharging",
             bg="white",
-            font=("Arial",16,"bold")
+            font=("Bookman Antiqua",16,"bold")
         ).grid(row=0,column=0,columnspan=2,sticky="w",padx=15,pady=(15,15))
 
         self.entries["discharging_hp_load_current"] = parameter_row(
@@ -326,7 +326,7 @@ class ParameterSettingsPage(tk.Frame):
             cycle,
             text="Cycle Time Settings",
             bg="white",
-            font=("Arial",16,"bold")
+            font=("Bookman Antiqua",16,"bold")
         ).grid(row=0,column=0,columnspan=2,sticky="w",padx=15,pady=(15,15))
 
         self.entries["cycle_charging"] = parameter_row(
@@ -362,7 +362,7 @@ class ParameterSettingsPage(tk.Frame):
         title = tk.Label(
             self.container,
             text="LINE REGULATION",
-            font=("Arial",22,"bold"),
+            font=("Bookman Antiqua",22,"bold"),
             bg="#f5f5f5"
         )
         title.pack(anchor="w", padx=20, pady=(20,10))
@@ -458,7 +458,7 @@ class ParameterSettingsPage(tk.Frame):
             bg="#f2f2f2",
             relief="solid",
             bd=1,
-            font=("Arial", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             padx=12,
             pady=12    
         ).grid(
@@ -474,7 +474,7 @@ class ParameterSettingsPage(tk.Frame):
             bg="#f2f2f2",
             relief="solid",
             bd=1,
-            font=("Arial", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             padx=12,
             pady=12      # Increase this
         ).grid(
@@ -598,7 +598,7 @@ class ParameterSettingsPage(tk.Frame):
         title = tk.Label(
             self.container,
             text="LOAD REGULATION",
-            font=("Arial", 22, "bold"),
+            font=("Bookman Antiqua", 22, "bold"),
             bg="#f5f5f5"
         )
 
@@ -704,7 +704,7 @@ class ParameterSettingsPage(tk.Frame):
                         fg="white",
                         relief="flat",
                         command=self.add_new_dut,
-                        font=("Arial", 11, "bold"),
+                        font=("Bookman Antiqua", 11, "bold"),
                         padx=20,
                         pady=8
                     )
@@ -718,7 +718,7 @@ class ParameterSettingsPage(tk.Frame):
                         fg="white",
                         relief="flat",
                         command=self.delete_dut,
-                        font=("Arial", 11, "bold"),
+                        font=("Bookman Antiqua", 11, "bold"),
                         padx=20,
                         pady=8
                     )
@@ -746,7 +746,7 @@ class ParameterSettingsPage(tk.Frame):
                 fg="white",
                 relief="flat",
                 command=self.save_all_settings,
-                font=("Arial", 11, "bold"),
+                font=("Bookman Antiqua", 11, "bold"),
                 padx=20,
                 pady=8
             )

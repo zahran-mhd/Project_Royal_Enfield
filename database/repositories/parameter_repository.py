@@ -413,7 +413,7 @@ class ParameterRepository:
                 current_value
             FROM OBC_HV_DC_Current_Settings
             WHERE dut_id = ?
-            ORDER BY step_no, load_percent
+            ORDER BY hv_voltage, step_no, load_percent
         """, (dut_id,))
 
         rows = cursor.fetchall()
@@ -464,7 +464,7 @@ class ParameterRepository:
                     current_value
                 FROM HPDC_HV_DC_Current_Settings
                 WHERE dut_id = ?
-                ORDER BY step_no, load_percent
+                ORDER BY hv_voltage, step_no, load_percent
             """, (dut_id,))
     
             rows = cursor.fetchall()

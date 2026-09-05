@@ -10,7 +10,7 @@ class CustomRadioButton(tk.Frame):
         self.circle = tk.Label(
             self,
             text="○",
-            font=("Segoe UI Symbol", 12),
+            font=("Bookman Antiqua Symbol", 12),
             bg="white",
             cursor="hand2"
         )
@@ -21,7 +21,7 @@ class CustomRadioButton(tk.Frame):
             text=text,
             bg="white",
             cursor="hand2",
-            font=("Segoe UI", 10)
+            font=("Bookman Antiqua", 10)
         )
         self.label.pack(side="left", padx=(5, 0))
 

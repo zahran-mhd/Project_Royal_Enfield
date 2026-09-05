@@ -50,14 +50,14 @@ class TableWidget(tk.Frame):
             rowheight=23,
           borderwidth=1,
     relief="solid",
-            font=("Segoe UI", 10)
+            font=("Bookman Antiqua", 10)
         )
 
         style.configure(
             "LiveTable.Treeview.Heading",
             background="#1d4ed8",
             foreground="white",
-            font=("Segoe UI", 12, "bold")
+            font=("Bookman Antiqua", 12, "bold")
         )
 
         # Config Style
@@ -66,14 +66,14 @@ class TableWidget(tk.Frame):
             borderwidth=1,
     relief="solid",
             rowheight=35,
-            font=("Segoe UI", 10)
+            font=("Bookman Antiqua", 10)
         )
 
         style.configure(
             "Config.Treeview.Heading",
             background="#1d4ed8",
             foreground="white",
-            font=("Segoe UI", 11, "bold")
+            font=("Bookman Antiqua", 11, "bold")
         )
         
   

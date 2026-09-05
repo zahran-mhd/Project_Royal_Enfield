@@ -74,7 +74,7 @@ class FormPopup:
         tk.Label(
             card,
             text="",
-            font=("Segoe UI", 14, "bold"),
+            font=("Bookman Antiqua", 14, "bold"),
             bg="white",
             fg="#1f2937"
         ).pack(pady=(15, 20))
@@ -88,7 +88,7 @@ class FormPopup:
             tk.Label(
                 form_frame,
                 text=label,
-                font=("Segoe UI", 10),
+                font=("Bookman Antiqua", 10),
                 bg="white"
             ).grid(
                 row=i,
@@ -115,7 +115,7 @@ class FormPopup:
                     form_frame,
                     width=28,
                     date_pattern="yyyy-mm-dd",
-                    font=("Segoe UI", 10)
+                    font=("Bookman Antiqua", 10)
                 )
 
             else:
@@ -123,7 +123,7 @@ class FormPopup:
                 entry = tk.Entry(
                     form_frame,
                     width=32,
-                    font=("Segoe UI", 10)
+                    font=("Bookman Antiqua", 10)
                 )
 
 
@@ -168,7 +168,7 @@ class FormPopup:
             width=12,
             bg="#16a34a",
             fg="white",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             relief="flat",
             cursor="hand2",
             command=self.save
@@ -180,7 +180,7 @@ class FormPopup:
             width=12,
             bg="#dc2626",
             fg="white",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             relief="flat",
             cursor="hand2",
             command=self.popup.destroy

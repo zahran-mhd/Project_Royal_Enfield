@@ -8,7 +8,7 @@ def create_label(parent, text, row, column):
         parent,
         text=text,
         bg="white",
-        font=("Arial", 11)
+        font=("Bookman Antiqua", 11)
     )
     label.grid(
         row=row,
@@ -92,7 +92,7 @@ def parameter_row(parent, row, label_text, unit):
         parent,
         text=label_text,
         bg="white",
-        font=("Arial",11)
+        font=("Bookman Antiqua",11)
     ).grid(
         row=row,
         column=0,
@@ -114,7 +114,7 @@ def parameter_row(parent, row, label_text, unit):
         parent,
         text=unit,
         bg="white",
-        font=("Arial",11)
+        font=("Bookman Antiqua",11)
     ).grid(
         row=row+1,
         column=1,
@@ -140,7 +140,7 @@ def create_table(parent, columns, rows=3):
             text=text,
             bg="#3b5bdb",
             fg="yellow",
-            font=("Arial", 11, "bold"),
+            font=("Bookman Antiqua", 11, "bold"),
             relief="solid",
             bd=1,
             padx=10,
@@ -160,7 +160,7 @@ def create_table(parent, columns, rows=3):
             table,
             text=str(r),
             bg="white",
-            font=("Arial", 11),
+            font=("Bookman Antiqua", 11),
             relief="solid",
             bd=1
         ).grid(
@@ -213,7 +213,7 @@ def create_bottom_button(parent, text, color,command_action=None):
         fg="white",
         relief="flat",
         command=command_action,
-        font=("Arial", 11, "bold"),
+        font=("Bookman Antiqua", 11, "bold"),
         padx=20,
         pady=8
     )
@@ -227,7 +227,7 @@ def section_title(parent, text, row, column, columnspan=1):
         parent,
         text=text,
         bg="white",
-        font=("Arial",12,"bold")
+        font=("Bookman Antiqua",12,"bold")
     )
 
     label.grid(
@@ -249,7 +249,7 @@ def table_header(parent, text, row, column):
         bg="#f2f2f2",
         relief="solid",
         bd=1,
-        font=("Arial",10,"bold"),
+        font=("Bookman Antiqua",10,"bold"),
         padx=12,
         pady=7
     )
@@ -332,7 +332,7 @@ def load_header(parent):
         top,
         text="Dwell Time",
         bg="white",
-        font=("Arial",11,"bold")
+        font=("Bookman Antiqua",11,"bold")
     ).grid(row=0, column=0, sticky="w", padx=(0,8))
 
     dwell_time = ttk.Entry(
@@ -350,7 +350,7 @@ def load_header(parent):
         top,
         text="Sec",
         bg="white",
-        font=("Arial",11)
+        font=("Bookman Antiqua",11)
    ).grid(row=0, column=2, sticky="w", padx=(5,70))
 
 
@@ -359,7 +359,7 @@ def load_header(parent):
         top,
         text="Input Voltage",
         bg="white",
-        font=("Arial",11,"bold")
+        font=("Bookman Antiqua",11,"bold")
     ).grid(row=0, column=3, sticky="w", padx=(0,8))
 
     input_voltage = ttk.Entry(
@@ -376,7 +376,7 @@ def load_header(parent):
         top,
         text="V",
         bg="white",
-        font=("Arial",11)
+        font=("Bookman Antiqua",11)
    ).grid(row=0, column=5, sticky="w", padx=(5,70))
 
 
@@ -385,7 +385,7 @@ def load_header(parent):
         top,
         text="Input Frequency",
         bg="white",
-        font=("Arial",11,"bold")
+        font=("Bookman Antiqua",11,"bold")
     ).grid(row=0, column=6, sticky="w", padx=(0,8))
 
     input_frequency = ttk.Entry(
@@ -403,7 +403,7 @@ def load_header(parent):
         top,
         text="Hz",
         bg="white",
-        font=("Arial",11)
+        font=("Bookman Antiqua",11)
     ).grid(row=0, column=8, sticky="w", padx=(5,0))
 
     return {
@@ -450,7 +450,7 @@ def regulation_step(parent, title):
         frame,
         text="HV Load (%)",
         bg="#DCEEFF",
-        font=("Arial",10,"bold"),
+        font=("Bookman Antiqua",10,"bold"),
         relief="solid",
         bd=1
     ).grid(row=0, column=2, sticky="nsew")
@@ -459,7 +459,7 @@ def regulation_step(parent, title):
         frame,
         text="Set HV\nCurrent (A)",
         bg="#DCEEFF",
-        font=("Arial",10,"bold"),
+        font=("Bookman Antiqua",10,"bold"),
         relief="solid",
         bd=1
     ).grid(row=0, column=3, sticky="nsew")
@@ -472,7 +472,7 @@ def regulation_step(parent, title):
         frame,
         text=title,
         bg="#DCEEFF",
-        font=("Arial",12),
+        font=("Bookman Antiqua",12),
         justify="center",
         relief="solid",
         bd=1
@@ -584,7 +584,7 @@ def load_regulation_panel(parent, title):
         panel,
         text=title,
         bg="white",
-        font=("Arial",13,"bold")
+        font=("Bookman Antiqua",13,"bold")
     ).pack(
         anchor="center",
         pady=(0,18)

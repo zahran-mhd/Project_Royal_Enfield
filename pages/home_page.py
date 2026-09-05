@@ -110,7 +110,7 @@ class HomePage(tk.Frame):
         title_label = tk.Label(
             card,
             text=title,
-            font=("Arial", 23),
+            font=("Bookman Antiqua", 23),
             fg="#123d7a",
             bg="white"
         )
@@ -126,7 +126,7 @@ class HomePage(tk.Frame):
         value_label = tk.Label(
             card,
             text=value,
-            font=("Arial", 38, "bold"),
+            font=("Bookman Antiqua", 38, "bold"),
             fg="black",
             bg="white"
         )

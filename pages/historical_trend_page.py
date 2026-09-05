@@ -14,7 +14,7 @@ class HistoricalTrendPage(tk.Frame):
         title = tk.Label(
             self,
             text="Historical Trend",
-            font=("Segoe UI", 18, "bold"),
+            font=("Bookman Antiqua", 18, "bold"),
             bg="#f5f5f5",
           
         )

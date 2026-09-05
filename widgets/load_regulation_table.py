@@ -21,7 +21,7 @@ class LoadRegulationTable(tk.Frame):
         tk.Label(
             card,
             text=title_text,
-            font=("Segoe UI", 11, "bold"),
+            font=("Bookman Antiqua", 11, "bold"),
             bg="#DCE8D6"
         ).grid(
             row=0,
@@ -33,7 +33,7 @@ class LoadRegulationTable(tk.Frame):
         tk.Label(
             card,
             text="HV : 84Vdc",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             bg="white"
         ).grid(
             row=1,
@@ -48,7 +48,7 @@ class LoadRegulationTable(tk.Frame):
             tk.Label(
                 card,
                 text=text,
-                font=("Segoe UI", 7, "bold"),
+                font=("Bookman Antiqua", 7, "bold"),
                 bg="#F3F3F3",
                 relief="solid",
                 bd=1,
@@ -99,7 +99,7 @@ class LoadRegulationTable(tk.Frame):
                     card,
                     justify="center",
                     width=8,
-                    font=("Segoe UI", 8)
+                    font=("Bookman Antiqua", 8)
                 ).grid(
                     row=r,
                     column=c,
@@ -123,7 +123,7 @@ class LoadRegulationTable(tk.Frame):
         tk.Label(
             card,
             text="Load Regulation",
-            font=("Segoe UI", 10, "bold"),
+            font=("Bookman Antiqua", 10, "bold"),
             relief="solid",
             bd=1
         ).grid(

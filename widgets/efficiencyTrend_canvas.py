@@ -71,7 +71,7 @@ class EfficiencyTrendCanvas(tk.Canvas):
             width // 2,
             18,
             text=f"{self.channel_name} ({self.dut_name})",
-            font=("Segoe UI", 11, "bold")
+            font=("Bookman Antiqua", 11, "bold")
         )
 
         # --------------------------------------------------
@@ -90,7 +90,7 @@ class EfficiencyTrendCanvas(tk.Canvas):
                 (top + bottom) // 2,
                 text="No Data Available",
                 fill="gray",
-                font=("Segoe UI", 12, "italic")
+                font=("Bookman Antiqua", 12, "italic")
             )
             return
 
@@ -132,7 +132,7 @@ class EfficiencyTrendCanvas(tk.Canvas):
                 left - 25,
                 y,
                 text=f"{value:.1f}",
-                font=("Segoe UI", 8)
+                font=("Bookman Antiqua", 8)
             )
 
         # --------------------------------------------------
@@ -163,7 +163,7 @@ class EfficiencyTrendCanvas(tk.Canvas):
                 x,
                 bottom + 15,
                 text=str(i+1),
-                font=("Segoe UI", 8)
+                font=("Bookman Antiqua", 8)
             )#modify(str(i+1) for 1 index)
 
         # --------------------------------------------------
@@ -173,7 +173,7 @@ class EfficiencyTrendCanvas(tk.Canvas):
             width // 2,
             height - 15,
             text="Cycle",
-            font=("Segoe UI", 9)
+            font=("Bookman Antiqua", 9)
         )
 
         self.create_text(
@@ -181,7 +181,7 @@ class EfficiencyTrendCanvas(tk.Canvas):
             height // 2,
             text="Efficiency (%)",
             angle=90,
-            font=("Segoe UI", 9)
+            font=("Bookman Antiqua", 9)
         )
 
         # --------------------------------------------------
@@ -203,7 +203,7 @@ class EfficiencyTrendCanvas(tk.Canvas):
             top + 10,
             text="Charging",
             anchor="w",
-            font=("Segoe UI", 9)
+            font=("Bookman Antiqua", 9)
         )
 
         self.create_line(
@@ -220,7 +220,7 @@ class EfficiencyTrendCanvas(tk.Canvas):
             top + 28,
             text="Discharging",
             anchor="w",
-            font=("Segoe UI", 9)
+            font=("Bookman Antiqua", 9)
         )
 
         # --------------------------------------------------

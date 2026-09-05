@@ -39,7 +39,7 @@ class LineRegulationPage(tk.Frame):
         title = tk.Label(
             self,
             text="Line Regulation",
-            font=("Segoe UI", 18, "bold"),
+            font=("Bookman Antiqua", 18, "bold"),
             bg="#f5f5f5",
            
         )
@@ -72,7 +72,7 @@ class LineRegulationPage(tk.Frame):
             text="OBC Line Regulation - CAN Data",
             bg="#2864E8",
             fg="white",
-            font=("Arial", 14, "bold")
+            font=("Bookman Antiqua", 14, "bold")
         )
 
         title.pack(
@@ -86,7 +86,7 @@ class LineRegulationPage(tk.Frame):
                     text="Set HV Voltage: 84Vdc| HV Current 25.6A",
                     bg="#EAF2FF",
     fg="#1F3F68",
-                    font=("Arial", 12, "bold"),
+                    font=("Bookman Antiqua", 12, "bold"),
                     anchor="w"
                 )
         
@@ -151,22 +151,22 @@ class LineRegulationPage(tk.Frame):
             text="OBC Line Regulation - Power Analyzer Data",
             bg="#2864E8",
             fg="white",
-            font=("Arial", 14, "bold")
+            font=("Bookman Antiqua", 14, "bold")
         )
         title.pack(
                     fill="x",
                     padx=10,
                     pady=10
                 )
-        sub_title = tk.Label(
+        self.power_analyzer_sub_title = tk.Label(
             section,
             text="Set HV Voltage: 84Vdc| HV Current 25.6A",
             bg="#EAF2FF",
             fg="#1F3F68",
-            font=("Arial", 12, "bold"),
+            font=("Bookman Antiqua", 12, "bold"),
             anchor="w"
         )
-        sub_title.pack(
+        self.power_analyzer_sub_title.pack(
             fill="x",
             padx=10,
     pady=(0, 5),
@@ -209,6 +209,95 @@ class LineRegulationPage(tk.Frame):
         print("Line Regulation settings:")
         print(settings)
 
+    def test_completed(self):
+        pass    
+
+
+    # def update_active_row(
+    #     self,
+    #     ac_step,
+    #     ac_voltage,
+    #     hv_voltage,
+    #     hv_current
+    # ):
+
+    #     row_index = ac_step - 1
+
+    #     # ------------------------------------------
+    #     # CAN TABLE
+    #     # ------------------------------------------
+
+    #     self.can_table.update_cell(
+    #         row_index,
+    #         "Set AC Voltage (V)",
+    #         ac_voltage
+    #     )
+
+    #     # ------------------------------------------
+    #     # POWER ANALYZER TABLE
+    #     # ------------------------------------------
+
+    #     self.power_analyzer_table.update_cell(
+    #         row_index,
+    #         "Set AC Voltage (V)",
+    #         ac_voltage
+    #     )
+
+    def update_active_row(
+        self,
+        ac_step,
+        ac_voltage,
+        hv_voltage,
+        hv_current
+    ):
+
+        row = ac_step - 1
+
+        # ==========================================
+        # CAN TABLE
+        # ==========================================
+
+        self.can_table.update_cell(
+            row,
+            "Set AC Voltage (V)",
+            f"{ac_voltage:.1f}"
+        )
+
+        # ==========================================
+        # POWER ANALYZER TABLE
+        # ==========================================
+
+        self.power_analyzer_table.update_cell(
+            row,
+            "Set AC Voltage (V)",
+            f"{ac_voltage:.1f}"
+        )
+
+        # ==========================================
+        # CAN SUBTITLE
+        # ==========================================
+
+        self.sub_title.config(
+            text=(
+                f"Set HV Voltage: "
+                f"{hv_voltage:.1f} Vdc | "
+                f"HV Current: "
+                f"{hv_current:.1f} A"
+            )
+        )
+
+        # ==========================================
+        # POWER ANALYZER SUBTITLE
+        # ==========================================
+
+        self.power_analyzer_sub_title.config(
+            text=(
+                f"Set HV Voltage: "
+                f"{hv_voltage:.1f} Vdc | "
+                f"HV Current: "
+                f"{hv_current:.1f} A"
+            )
+        )
 
     def update_active_step(
         self,
@@ -284,3 +373,85 @@ class LineRegulationPage(tk.Frame):
     #     self.dwell_label.configure(
     #         text=f"Dwell: {dwell_time} s"
     #     )
+
+
+    def update_can_row(
+            self,
+            ac_step,
+            can_data
+        ):
+    
+            row = ac_step - 1
+    
+            self.can_table.update_row(
+                row,
+                {
+                    "Input AC Voltage CAN (V)":
+                        f"{can_data.get('input_voltage', 0):.2f}",
+    
+                    "Input AC Current CAN (A)":
+                        f"{can_data.get('input_current', 0):.2f}",
+    
+                    "Input Power CAN (W)":
+                        f"{can_data.get('input_power', 0):.2f}",
+    
+                    "Output OBC Voltage CAN (V)":
+                        f"{can_data.get('output_voltage', 0):.2f}",
+    
+                    "Output OBC Current CAN (A)":
+                        f"{can_data.get('output_current', 0):.2f}",
+    
+                    "Output Power CAN (W)":
+                        f"{can_data.get('output_power', 0):.2f}",
+    
+                    "Efficiency CAN (%)":
+                        f"{can_data.get('efficiency', 0):.2f}",
+                }
+            )
+    
+
+
+    def update_power_analyzer_row(
+        self,
+        ac_step,
+        analyzer_data
+    ):
+
+        row = ac_step - 1
+
+        self.power_analyzer_table.update_row(
+            row,
+            {
+                "Input AC Voltage Power Analyzer (V)":
+                    f"{analyzer_data.get('input_voltage', 0):.2f}",
+
+                "Input AC Current Power Analyzer (A)":
+                    f"{analyzer_data.get('input_current', 0):.2f}",
+
+                "Input Power Factor (A)":
+                    f"{analyzer_data.get('power_factor', 0):.3f}",
+
+                "Input Power Power Analyzer (W)":
+                    f"{analyzer_data.get('input_power', 0):.2f}",
+
+                "OBC Output Voltage Power Analyzer (V)":
+                    f"{analyzer_data.get('output_voltage', 0):.2f}",
+
+                "OBC Output Current Power Analyzer (A)":
+                    f"{analyzer_data.get('output_current', 0):.2f}",
+
+                "OBC Output Power Power Analyzer (W)":
+                    f"{analyzer_data.get('output_power', 0):.2f}",
+
+                "Efficiency Power Analyzer (%)":
+                    f"{analyzer_data.get('efficiency', 0):.2f}",
+            }
+        )
+
+    def clear_measurement_tables(self):
+        """Clear CAN and Power Analyzer measurement tables."""
+
+        self.can_table.clear()
+        self.power_analyzer_table.clear()
+
+    

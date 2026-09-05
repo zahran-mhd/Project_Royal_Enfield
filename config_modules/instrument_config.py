@@ -53,7 +53,7 @@ class   InstrumentConfig(tk.Frame):
             header,
             text="+ Add Instrument",
             font=ctk.CTkFont(
-                family="Segoe UI",
+                family="Bookman Antiqua",
                 size=16,
                 weight="bold"
             ),

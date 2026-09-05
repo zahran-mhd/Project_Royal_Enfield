@@ -69,7 +69,7 @@ class CTkTableWidget(ctk.CTkFrame):
                 header,
                 text=col,
                 text_color="white",
-                font=("Segoe UI", 14, "bold")
+                font=("Bookman Antiqua", 14, "bold")
             )
 
             header.grid_columnconfigure(

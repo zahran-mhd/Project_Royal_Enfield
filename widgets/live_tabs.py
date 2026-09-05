@@ -62,7 +62,7 @@ class LiveTabs(tk.Frame):
 
             if key == tab_name:
                 btn.config(
-                    bg="#1f6aa5",
+                    bg="#0AA08C",
                     font=("Bookman Antiqua", 15, "bold"),
                     fg="white",
                     relief="solid",

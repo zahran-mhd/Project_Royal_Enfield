@@ -14,13 +14,13 @@ class LoginWidget(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="ROYAL ENFIELD",
-            font=("Segoe UI", 24, "bold")
+            font=("Bookman Antiqua", 24, "bold")
         ).pack(pady=(25, 5))
 
         ctk.CTkLabel(
             self,
             text="",
-            font=("Segoe UI", 14)
+            font=("Bookman Antiqua", 14)
         ).pack(pady=(0, 20))
 
         # Username

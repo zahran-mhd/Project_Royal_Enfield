@@ -16,7 +16,7 @@ class ChannelFrame(tk.LabelFrame):
         super().__init__(
             parent,
             text=channel_name,
-            font=("Segoe UI", 11, "bold"),  # smaller font
+            font=("Bookman Antiqua", 11, "bold"),  # smaller font
             padx=5,
             pady=5                           # was 10
         )
@@ -33,14 +33,14 @@ class ChannelFrame(tk.LabelFrame):
         self.cycle_lbl = tk.Label(
             left,
             text="Cycle : 0",
-            font=("Segoe UI", 9)
+            font=("Bookman Antiqua", 9)
         )
         self.cycle_lbl.pack(anchor="w")
 
         self.time_lbl = tk.Label(
             left,
             text="Time Remaining : 00:00:00",
-            font=("Segoe UI", 9)
+            font=("Bookman Antiqua", 9)
         )
         self.time_lbl.pack(anchor="w")
 
@@ -48,7 +48,7 @@ class ChannelFrame(tk.LabelFrame):
         #     header,
         #     text="STOP",
         #     font=ctk.CTkFont(
-        #         family="Segoe UI",
+        #         family="Bookman Antiqua",
         #         size=16,
         #         weight="bold"
         #     ),
@@ -111,7 +111,7 @@ class ChannelFrame(tk.LabelFrame):
         #     header,
         #     text="⏹  STOP",
         #     font=ctk.CTkFont(
-        #         family="Segoe UI",
+        #         family="Bookman Antiqua",
         #         size=15,
         #         weight="bold"
         #     ),
@@ -140,7 +140,7 @@ class ChannelFrame(tk.LabelFrame):
         #             header,
         #             text="+ Add Instrument",
         #             font=ctk.CTkFont(
-        #                 family="Segoe UI",
+        #                 family="Bookman Antiqua",
         #                 size=16,
         #                 weight="bold"
         #             ),

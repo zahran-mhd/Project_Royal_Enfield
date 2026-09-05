@@ -126,7 +126,7 @@ class EfficiencyTrendController:
     #             10,
     #             text=f"{dut}",
     #             anchor="nw",
-    #             font=("Segoe UI", 12, "bold"),
+    #             font=("Bookman Antiqua", 12, "bold"),
     #             fill="black",
     #             tags="title"
     #         )

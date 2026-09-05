@@ -20,7 +20,7 @@ class DatabaseManager:
         self.create_default_users()
         self.create_default_channels()
         self.create_default_instrument_types()
-        # self.create_default_alarms()
+        self.create_default_alarms()
 
     def get_connection(self):
         return self.conn
@@ -464,23 +464,37 @@ class DatabaseManager:
         # ==========================================
 
         cursor.execute("""
+        
+                CREATE TABLE IF NOT EXISTS AlarmSettings
+                (
+                    AlarmID INTEGER PRIMARY KEY AUTOINCREMENT,
+        
+                    AlarmName TEXT UNIQUE NOT NULL,
+        
+                    IsEnabled INTEGER NOT NULL DEFAULT 1
+        
+                    
+                )
+                """)
 
-        CREATE TABLE IF NOT EXISTS AlarmSettings
-        (
-            AlarmID INTEGER PRIMARY KEY AUTOINCREMENT,
+        # cursor.execute("""
 
-            AlarmName TEXT UNIQUE NOT NULL,
+        # CREATE TABLE IF NOT EXISTS AlarmSettings
+        # (
+        #     AlarmID INTEGER PRIMARY KEY AUTOINCREMENT,
 
-            IsEnabled INTEGER NOT NULL DEFAULT 1,
+        #     AlarmName TEXT UNIQUE NOT NULL,
 
-            MinValue REAL,
+        #     IsEnabled INTEGER NOT NULL DEFAULT 1,
 
-            MaxValue REAL,
+        #     MinValue REAL,
 
-            AlarmType TEXT NOT NULL
-                CHECK (AlarmType IN ('Critical', 'Warning'))
-        )
-        """)
+        #     MaxValue REAL,
+
+        #     AlarmType TEXT NOT NULL
+        #         CHECK (AlarmType IN ('Critical', 'Warning'))
+        # )
+        # """)
 
         # # ==========================================
         # # AUDIT LOG
@@ -575,21 +589,23 @@ class DatabaseManager:
         VALUES(?)
             """,
             [
-        ('Input Under Voltage'),
+        ('Input Under Voltage',),
 
-        ('Output Under Voltage'),
+        ('Output Under Voltage',),
 
-        ('Input Over Voltage'),
+        ('Input Over Voltage',),
 
-        ('Output Over Voltage'),
+        ('Output Over Voltage',),
 
-        ('OBC Over Current Protection'),
+        ('OBC Over Current Protection',),
 
-        ('OBC Short Current Protection'),
+        ('OBC Short Current Protection',),
 
-        ('HP DCDC Over Current Protection'),
+        ('HP DCDC Over Current Protection',),
 
-        ('HP DCDC Short Current Protection')
+        ('HP DCDC Short Current Protection',),
+
+        ('CAN Communication Failure',)    
             ]
         )
         self.conn.commit()

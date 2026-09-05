@@ -13,7 +13,7 @@ import tkinter as tk
 #         tk.Label(
 #             self,
 #             text=f"DUT {dut}\n{parameter} Alarm",
-#             font=("Segoe UI", 12, "bold")
+#             font=("Bookman Antiqua", 12, "bold")
 #         ).pack(padx=20, pady=20)
 
 #         tk.Button(
@@ -53,7 +53,7 @@ import tkinter as tk
 #         tk.Label(
 #             self.popup,
 #             text="CAN ALARM DETECTED",
-#             font=("Arial", 18, "bold")
+#             font=("Bookman Antiqua", 18, "bold")
 #         ).pack(pady=15)
 
 #         # =========================
@@ -76,7 +76,7 @@ import tkinter as tk
 #             tk.Label(
 #                 alarm_frame,
 #                 text=f"DUT {dut_id}  →  {parameter}",
-#                 font=("Arial", 12)
+#                 font=("Bookman Antiqua", 12)
 #             ).pack(
 #                 anchor="w",
 #                 pady=3
@@ -155,7 +155,7 @@ class AlarmPopup:
         tk.Label(
             self.popup,
             text=f"CAN ALARM DETECTED - CHANNEL {channel_id}",
-            font=("Arial", 18, "bold")
+            font=("Bookman Antiqua", 18, "bold")
         ).pack(pady=15)
 
         # =========================
@@ -179,7 +179,7 @@ class AlarmPopup:
             tk.Label(
                 alarm_frame,
                 text=f"DUT {dut_id}  →  {parameter}",
-                font=("Arial", 12)
+                font=("Bookman Antiqua", 12)
             ).pack(
                 anchor="w",
                 pady=3

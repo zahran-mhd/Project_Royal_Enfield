@@ -23,7 +23,7 @@ class ConfigurationController:
     def highlight_tab(self, selected_btn):
         default_bg = "#dce3eb"
         default_fg = "#2c3e50"
-        active_bg = "#1f6aa5"
+        active_bg = "#0AA08C"
         active_fg = "white"
 
         for btn in self.view.channel_buttons.values():

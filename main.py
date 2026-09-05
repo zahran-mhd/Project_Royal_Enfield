@@ -9,6 +9,7 @@ from database.repositories.instrument_repository import InstrumentRepository
 from database.repositories.parameter_repository import ParameterRepository
 from database.repositories.channel_repository import ChannelRepository
 from database.repositories.test_repository import TestRepository
+from database.repositories.alarm_repository import AlarmRepository
 
 from controllers.login_controller import LoginController
 from controllers.app_controller import AppController
@@ -17,6 +18,7 @@ from controllers.test_controller import TestController
 from controllers.test_settings_controller import TestSettingsController
 from controllers.parameter_settings_controller import ParameterSettingsController
 from controllers.efficiency_trend_controller import EfficiencyTrendController
+from controllers.alarm_controller import AlarmController
 from instruments.workers.alarm_monitor import AlarmMonitor
 
 from instruments.instrument_manager import InstrumentManager
@@ -25,6 +27,9 @@ from instruments.dbc_decoder import DBCDecoder
 
 from views.menu_window import MenuWindow
 from views.home_window import HomeScreen
+
+
+
 
 
 def main():
@@ -117,6 +122,14 @@ def main():
 
     context.parameter_settings_controller = (
             ParameterSettingsController(context,context.db)
+    )
+
+    context.alarm_repository = AlarmRepository(
+        context.db.conn
+    )
+
+    context.alarm_controller = AlarmController(
+        context.alarm_repository
     )
 
     

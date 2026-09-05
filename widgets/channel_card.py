@@ -301,7 +301,7 @@ class ChannelCard(ctk.CTkFrame):
             ctk.CTkLabel(
                 serial_frame,
                 text=f"{dut} SN",
-                font=("Segoe UI", 10),
+                font=("Bookman Antiqua", 10),
                 text_color="#4b5563"
             ).grid(
                 row=0,
@@ -405,7 +405,7 @@ class ChannelCard(ctk.CTkFrame):
         self.start_btn = ctk.CTkButton(
             self,
             text="Start Test",
-             font=("Segoe UI", 15, "bold"),
+             font=("Bookman Antiqua", 15, "bold"),
             fg_color="#16a34a",
             hover_color="#15803d",
             cursor="hand2",

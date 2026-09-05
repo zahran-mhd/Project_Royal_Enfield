@@ -79,7 +79,7 @@ class Sidebar(tk.Frame):
 
             if menu == selected_menu:
                 btn.config(
-                    bg="#2563eb",
+                    bg="#0AA08C",
                     fg="white"
                 )
             else:

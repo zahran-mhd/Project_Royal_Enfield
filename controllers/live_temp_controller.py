@@ -88,7 +88,7 @@
 #                 x,
 #                 y,
 #                 text=f"T{i + 1}: 0°C",
-#                 font=("Arial", 8, "bold"),
+#                 font=("Bookman Antiqua", 8, "bold"),
 #                 fill="blue"
 #             )
 
@@ -282,7 +282,7 @@ class LiveTempController:
                 x,
                 y,
                 text=f"T{i + 1}: --°C",
-                font=("Arial", 8, "bold"),
+                font=("Bookman Antiqua", 8, "bold"),
                 fill="black"
             )
 

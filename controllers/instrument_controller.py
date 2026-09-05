@@ -1,6 +1,7 @@
 from models.instrument_data import InstrumentData
 from widgets.form_popup import FormPopup
 from tkinter import messagebox
+import threading
 
 class InstrumentController:
 
@@ -243,3 +244,75 @@ class InstrumentController:
 
             ]
         )
+        
+        
+    def connect_all(self):
+        print("InstrumentController.connect_all() called")
+
+        # Immediately change button
+        self.view.connect_btn.configure(
+            text="Connecting...",
+            state="disabled"
+        )
+
+        # Run connection in background
+        threading.Thread(
+            target=self._run_connect_all,
+            daemon=True
+        ).start()
+
+
+    def _run_connect_all(self):
+        try:
+            self.context.instrument_manager.connect_all()
+
+        except Exception as ex:
+            print("Connection Error:", ex)
+
+        finally:
+            # Return to Tkinter main thread
+            self.view.after(
+                0,
+                self._connection_completed
+            )
+
+
+    def _connection_completed(self):
+        print("Connection process completed")
+
+        # Reload instruments from DB
+        self.load_instruments()
+
+        # Get latest connection status
+        instruments = self.instrument_repository.get_by_channel(
+            self.selected_channel_id
+        )
+
+        all_connected = (
+            instruments
+            and all(ins.status == 1 for ins in instruments)
+        )
+
+        if all_connected:
+            messagebox.showinfo(
+                "Connection Successful",
+                "All instruments connected successfully."
+            )
+
+            # Keep disabled because all are connected
+            self.view.connect_btn.configure(
+                text="Connect",
+                state="disabled"
+            )
+
+        else:
+            messagebox.showerror(
+                "Connection Failed",
+                "Some instruments are not connected."
+            )
+
+            # Enable Connect again
+            self.view.connect_btn.configure(
+                text="Connect",
+                state="normal"
+            )

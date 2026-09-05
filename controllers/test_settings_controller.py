@@ -64,9 +64,9 @@ class TestSettingsController():
         # page.start_live_plot(values["selected_duts"])
     
     def get_settings(self):
-        
-        selected_duts = [  
-        dut
+
+        selected_duts = [
+            dut
             for dut, var in self.dut_vars.items()
             if var.get()
         ]
@@ -75,30 +75,51 @@ class TestSettingsController():
         dut_b = self.dut_list[1]
 
         # Use the first selected DUT as dut_id
-        dut_id = int(selected_duts[0].replace("DUT", "")) if selected_duts else None
-        print(dut_id)
+        dut_id = (
+            int(selected_duts[0].replace("DUT", ""))
+            if selected_duts
+            else None
+        )
+
+        test_type = self.selected_test.get()
+
+        # Cycles and interval are needed only for Endurance
+        if test_type == "Endurance":
+            no_of_cycles = self.cycles_entry.get().strip()
+            interval_seconds = self.time_entry.get().strip()
+        else:
+            no_of_cycles = ""
+            interval_seconds = ""
+
+        print("DUT ID:", dut_id)
+        print("Test Type:", test_type)
+        print("Cycles:", no_of_cycles)
+        print("Interval:", interval_seconds)
+
         return {
-    "channel_id": self.channel_id,
-    "dut_id": dut_id,
+            "channel_id": self.channel_id,
+            "dut_id": dut_id,
 
-    "selected_duts": selected_duts,   # <-- Add this back
-     "dut_a_name": dut_a,
-    "dut_b_name": dut_b,
+            "selected_duts": selected_duts,
 
-    "use_dut_a": 1 if dut_a in selected_duts else 0,
-    "use_dut_b": 1 if dut_b in selected_duts else 0,
+            "dut_a_name": dut_a,
+            "dut_b_name": dut_b,
 
-    "supplier": self.supplier_combo.get(),
-    "test_type": self.selected_test.get(),
-    "test_name": self.test_name.get(),
+            "use_dut_a": 1 if dut_a in selected_duts else 0,
+            "use_dut_b": 1 if dut_b in selected_duts else 0,
 
-    "dut_a_serial_no": self.serial_entries[dut_a].get(),
-    "dut_b_serial_no": self.serial_entries[dut_b].get(),
-            
-            
-    "no_of_cycles": self.cycles_entry.get(),
-    "interval_seconds": self.time_entry.get()
-}
+            "supplier": self.supplier_combo.get(),
+
+            "test_type": test_type,
+
+            "test_name": self.test_name.get().strip(),
+
+            "dut_a_serial_no": self.serial_entries[dut_a].get().strip(),
+            "dut_b_serial_no": self.serial_entries[dut_b].get().strip(),
+
+            "no_of_cycles": no_of_cycles,
+            "interval_seconds": interval_seconds
+        }
     def validate_settings(self, values):
 
         if not values["dut_type"]:
@@ -129,8 +150,7 @@ class TestSettingsController():
             )
             return False
 
-                # Validate DUT A serial number
-                # Validate DUT A serial number
+        # Validate DUT A serial number
         if values["use_dut_a"]:
             serial = values["dut_a_serial_no"].strip()
 
@@ -141,7 +161,7 @@ class TestSettingsController():
                 )
                 return False
 
-            if not serial.isdigit():
+            if not serial.isalnum():
                 messagebox.showerror(
                     "Validation Error",
                     f"{values['dut_a_name']} Serial Number must contain only letters and numbers."
@@ -155,7 +175,6 @@ class TestSettingsController():
                 )
                 return False
 
-
         # Validate DUT B serial number
         if values["use_dut_b"]:
             serial = values["dut_b_serial_no"].strip()
@@ -167,7 +186,7 @@ class TestSettingsController():
                 )
                 return False
 
-            if not serial.isdigit():
+            if not serial.isalnum():
                 messagebox.showerror(
                     "Validation Error",
                     f"{values['dut_b_name']} Serial Number must contain only letters and numbers."
@@ -180,8 +199,10 @@ class TestSettingsController():
                     f"{values['dut_b_name']} Serial Number must not exceed 10 characters."
                 )
                 return False
+
         # Validate cycles
-        if values['test_type'] == "Endurance":
+        if values["test_type"] == "Endurance":
+
             try:
                 cycles = int(values["no_of_cycles"])
 
@@ -202,9 +223,11 @@ class TestSettingsController():
             # Validate interval
             try:
                 interval = float(values["interval_seconds"])
+
                 if interval <= 0:
                     raise ValueError
-            except ValueError:
+
+            except (ValueError, TypeError):
                 messagebox.showerror(
                     "Validation Error",
                     "Please enter a valid Interval."

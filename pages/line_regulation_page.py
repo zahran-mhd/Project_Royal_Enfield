@@ -1,17 +1,13 @@
+
 import tkinter as tk
 
 from widgets.regulation_table import RegulationTable
 from controllers.line_regulation_controller import LineRegulationController
 
 
-
 class LineRegulationPage(tk.Frame):
 
-    def __init__(
-        self,
-        parent,
-        context
-    ):
+    def __init__(self, parent, context):
 
         super().__init__(
             parent,
@@ -21,14 +17,14 @@ class LineRegulationPage(tk.Frame):
         self.context = context
 
         self.controller = LineRegulationController(
-        context=self.context
-    )
+            context=self.context
+        )
 
         self.create_title()
-
         self.create_can_section()
-
         self.create_power_analyzer_section()
+        self.create_HP_DCDC_CAN_section()
+        self.create_HP_DCDC_power_analyser_section()
 
     # --------------------------------------------------
     # TITLE
@@ -45,13 +41,11 @@ class LineRegulationPage(tk.Frame):
         )
 
         title.pack(
-       
             padx=15
-           
         )
 
     # --------------------------------------------------
-    # CAN SECTION
+    # OBC CAN SECTION
     # --------------------------------------------------
 
     def create_can_section(self):
@@ -80,29 +74,27 @@ class LineRegulationPage(tk.Frame):
             padx=10,
             pady=10
         )
-        
-        self.sub_title = tk.Label(
-                    section,
-                    text="Set HV Voltage: 84Vdc| HV Current 25.6A",
-                    bg="#EAF2FF",
-    fg="#1F3F68",
-                    font=("Bookman Antiqua", 12, "bold"),
-                    anchor="w"
-                )
-        
-        self.sub_title.pack(
-    fill="x",
-    padx=10,
-    pady=(0, 5),
-    ipady=6
-)
-     
+
+        sub_title = tk.Label(
+            section,
+            text="Set HV Voltage: 84Vdc | HV Current: 25.6A",
+            bg="#EAF2FF",
+            fg="#1F3F68",
+            font=("Arial", 12, "bold"),
+            anchor="w"
+        )
+
+        sub_title.pack(
+            fill="x",
+            padx=10,
+            pady=(0, 5),
+            ipady=6
+        )
 
         columns = [
             "Set AC Voltage (V)",
             "Input AC Voltage CAN (V)",
             "Input AC Current CAN (A)",
-            # "Input Power Factor (A)",
             "Input Power CAN (W)",
             "Output OBC Voltage CAN (V)",
             "Output OBC Current CAN (A)",
@@ -114,13 +106,11 @@ class LineRegulationPage(tk.Frame):
         self.can_table = RegulationTable(
             section,
             columns=columns,
-               row_values=[
-                    ("100",),
-                    ("230",),
-                    ("270",)
-                
-    ]
-            
+            row_values=[
+                ("100",),
+                ("230",),
+                ("270",)
+            ]
         )
 
         self.can_table.pack(
@@ -130,7 +120,7 @@ class LineRegulationPage(tk.Frame):
         )
 
     # --------------------------------------------------
-    # POWER ANALYZER SECTION
+    # OBC POWER ANALYZER SECTION
     # --------------------------------------------------
 
     def create_power_analyzer_section(self):
@@ -153,32 +143,34 @@ class LineRegulationPage(tk.Frame):
             fg="white",
             font=("Bookman Antiqua", 14, "bold")
         )
+
         title.pack(
-                    fill="x",
-                    padx=10,
-                    pady=10
-                )
+            fill="x",
+            padx=10,
+            pady=10
+        )
+
         self.power_analyzer_sub_title = tk.Label(
             section,
-            text="Set HV Voltage: 84Vdc| HV Current 25.6A",
+            text="Set HV Voltage: 84Vdc | HV Current: 25.6A",
             bg="#EAF2FF",
             fg="#1F3F68",
             font=("Bookman Antiqua", 12, "bold"),
             anchor="w"
         )
+
         self.power_analyzer_sub_title.pack(
             fill="x",
             padx=10,
-    pady=(0, 5),
-    ipady=6
-           
+            pady=(0, 5),
+            ipady=6
         )
 
         columns = [
             "Set AC Voltage (V)",
             "Input AC Voltage Power Analyzer (V)",
             "Input AC Current Power Analyzer (A)",
-            "Input Power Factor (A)",
+            "Input Power Factor",
             "Input Power Power Analyzer (W)",
             "OBC Output Voltage Power Analyzer (V)",
             "OBC Output Current Power Analyzer (A)",
@@ -190,12 +182,11 @@ class LineRegulationPage(tk.Frame):
         self.power_analyzer_table = RegulationTable(
             section,
             columns=columns,
-             row_values=[
-                    ("100",),
-                    ("230",),
-                    ("270",)
-                ]
-            
+            row_values=[
+                ("100",),
+                ("230",),
+                ("270",)
+            ]
         )
 
         self.power_analyzer_table.pack(
@@ -203,6 +194,160 @@ class LineRegulationPage(tk.Frame):
             padx=10,
             pady=10
         )
+
+    # --------------------------------------------------
+    # HP DCDC CAN SECTION
+    # --------------------------------------------------
+
+    def create_HP_DCDC_CAN_section(self):
+
+        section = tk.Frame(
+            self,
+            bg="white"
+        )
+
+        section.pack(
+            fill="x",
+            padx=16,
+            pady=10
+        )
+
+        title = tk.Label(
+            section,
+            text="HP DCDC Line Regulation - CAN Data",
+            bg="#2864E8",
+            fg="white",
+            font=("Arial", 14, "bold")
+        )
+
+        title.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )
+
+        sub_title = tk.Label(
+            section,
+            text="HP DCDC Set Current: 30A",
+            bg="#EAF2FF",
+            fg="#1F3F68",
+            font=("Arial", 12, "bold"),
+            anchor="w"
+        )
+
+        sub_title.pack(
+            fill="x",
+            padx=10,
+            pady=(0, 5),
+            ipady=6
+        )
+
+        columns = [
+            "Set HV Voltage (V)",
+            "Input HV Voltage CAN (V)",
+            "Input HV Current CAN (A)",
+            "Input Power CAN (W)",
+            "Output HP DCDC Voltage CAN (V)",
+            "Output HP DCDC Current CAN (A)",
+            "Output Power CAN (W)",
+            "Efficiency CAN (%)",
+            "Line Regulation (%)"
+        ]
+
+        self.hp_dcdc_table = RegulationTable(
+            section,
+            columns=columns,
+            row_values=[
+                ("100",),
+                ("230",),
+                ("270",)
+            ]
+        )
+
+        self.hp_dcdc_table.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )
+
+    # --------------------------------------------------
+    # HP DCDC POWER ANALYZER SECTION
+    # --------------------------------------------------
+
+    def create_HP_DCDC_power_analyser_section(self):
+
+        section = tk.Frame(
+            self,
+            bg="white"
+        )
+
+        section.pack(
+            fill="x",
+            padx=16,
+            pady=10
+        )
+
+        title = tk.Label(
+            section,
+            text="HP DCDC Line Regulation - Power Analyzer Data",
+            bg="#2864E8",
+            fg="white",
+            font=("Arial", 14, "bold")
+        )
+
+        title.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )
+
+        sub_title = tk.Label(
+            section,
+            text="HP DCDC Set Current: 30A",
+            bg="#EAF2FF",
+            fg="#1F3F68",
+            font=("Arial", 12, "bold"),
+            anchor="w"
+        )
+
+        sub_title.pack(
+            fill="x",
+            padx=10,
+            pady=(0, 5),
+            ipady=6
+        )
+
+        columns = [
+            "Set HV Voltage (V)",
+            "Input HV Voltage Power Analyzer (V)",
+            "Input HV Current Power Analyzer (A)",
+            "Input Power Factor",
+            "Input Power Power Analyzer (W)",
+            "Output HP DCDC Voltage Power Analyzer (V)",
+            "Output HP DCDC Current Power Analyzer (A)",
+            "Output HP DCDC Power Analyzer (W)",
+            "Efficiency Power Analyzer (%)",
+            "Line Regulation (%)"
+        ]
+
+        self.HP_DCDC_power_analyzer_table = RegulationTable(
+            section,
+            columns=columns,
+            row_values=[
+                ("100",),
+                ("230",),
+                ("270",)
+            ]
+        )
+
+        self.HP_DCDC_power_analyzer_table.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )
+
+
+        
 
     def update_test_settings(self, settings):
 

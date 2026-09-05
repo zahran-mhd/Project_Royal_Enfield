@@ -266,8 +266,11 @@ class LoadRegulationPage(tk.Frame):
         self.create_can_section()
 
         self.create_power_analyzer_section()
+        
+        
+        self.create_hpdcdc_can_section()
 
-    # ==========================================================
+    # --------------------------------------------------
     # TITLE
     # ==========================================================
 
@@ -1167,4 +1170,166 @@ class LoadRegulationPage(tk.Frame):
             "Load Regulation page: "
             "test stopped"
         )
+
+
+        
+        
+    # --------------------------------------------------
+        # CAN SECTION
+        # --------------------------------------------------
+    
+    def create_hpdcdc_can_section(self):
+
+        section = tk.Frame(
+            self,
+            bg="white"
+        )
+
+        section.pack(
+            fill="x",
+            padx=16,
+            pady=10
+        )
+
+        title = tk.Label(
+            section,
+            text="HP DCDC - CAN Data",
+            bg="#2864E8",
+            fg="white",
+            font=("Arial", 14, "bold")
+        )
+
+        title.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )
+        sub_title = tk.Label(
+        section,
+        text="HV: 84 Vdc",
+        bg="#EAF2FF",
+        fg="#1F3F68",
+        font=("Arial", 12, "bold"),
+        anchor="w"
+    )
+
+        sub_title.pack(
+            fill="x",
+            padx=10,
+            pady=(0, 5),
+            ipady=6
+        )
+            
+
+        columns = [
+              "HV Load (%)",
+            "Set HP DCDC Curren(A)",
+            "Input HV Voltage CAN(V)",
+            "Input HV Current CAN(V)",
+        
+            "Input Power CAN (W)",
+            "Output HP DCDC Voltage CAN (V)",
+            "Output HP DCDC Current CAN (A)",
+            "Output Power CAN (W)",
+            "Efficiency CAN (%)",
+            "Load Regulation (%)"
+        ]
+
+        table = RegulationTable(
+            section,
+            columns=columns,
+                row_values=[
+                ( "No load","0.00"),
+        ("25","6.40"),
+        ("50","12.80"),
+        ("75","19.20"),
+        ("100","25.60"),
+    ]
+        )
+
+        table.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )# --------------------------------------------------
+            # POWER ANALYZER SECTION
+            # --------------------------------------------------
+        
+    def create_hpdcdc_power_analyzer_section(self):
+
+        section = tk.Frame(
+            self,
+            bg="white"
+        )
+
+        section.pack(
+            fill="x",
+            padx=16,
+            pady=10
+        )
+
+        title = tk.Label(
+            section,
+            text="HP DCDC Load Regulation - Power Analyzer Data",
+            bg="#2864E8",
+            fg="white",
+            font=("Arial", 14, "bold")
+        )
+        title.pack(
+                    fill="x",
+                    padx=10,
+                    pady=10
+                )
+        sub_title = tk.Label(
+                section,
+                text="HV: 84 Vdc",
+                bg="#EAF2FF",
+                fg="#1F3F68",
+                font=("Arial", 12, "bold"),
+                anchor="w"
+            )
+        
+        sub_title.pack(
+            fill="x",
+            padx=10,
+            pady=(0, 5),
+            ipady=6
+        )
+
+        columns = [
+            "HV Load (%)",
+            "Set HP DCDC Curren(A)",
+            "Input HV Voltage Power Analyzer (V)",
+            "Input HV Current Power Analyzer (A)",
+            # "Input Power Factor (A)",
+            "Input Power Power Analyzer (W)",
+            "Output HP DCDC Voltage Power Analyzer (V)",
+            "Output HP DCDC Current Power Analyzer (A)",
+            "OBC Output Power Power Analyzer (W)",
+            "Efficiency Power Analyzer (%)",
+            "Load Regulation (%)"
+        ]
+
+        table = RegulationTable(
+            section,
+            columns=columns,
+            row_values=[
+                ( "No load","0.00"),
+        ("25","6.40"),
+        ("50","12.80"),
+        ("75","19.20"),
+        ("100","25.60"),
+    ]
+        
+        )
+
+        table.pack(
+            fill="x",
+            padx=10,
+            pady=10
+        )
+        
+
+
+
 

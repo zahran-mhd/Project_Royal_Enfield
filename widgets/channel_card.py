@@ -36,12 +36,12 @@ class ChannelCard(ctk.CTkFrame):
 
         self.create_widgets()
 
-    # =====================================================
-    # CREATE UI
-    # =====================================================
-
+     # =====================================================
+       # CREATE UI
+       # =====================================================
+   
     def create_widgets(self):
-
+   
         duts = self.dut_list
         row = 0
 
@@ -74,7 +74,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Type of DUT",
-             font=("Bookman Antiqua", 15, "bold"),
+            font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -85,7 +85,11 @@ class ChannelCard(ctk.CTkFrame):
         )
 
         rows = self.test_settings_controller.get_all_duts()
-        self.dut_map = {row["dut_name"]: row["dut_id"] for row in rows}
+
+        self.dut_map = {
+            db_row["dut_name"]: db_row["dut_id"]
+            for db_row in rows
+        }
 
         print("DUT DATABASE ROWS:", rows)
         print("DUT MAP:", self.dut_map)
@@ -96,7 +100,7 @@ class ChannelCard(ctk.CTkFrame):
             state="readonly",
             width=250,
             command=self.on_dut_type_changed
-            )
+        )
 
         self.supplier_combo.grid(
             row=row,
@@ -106,58 +110,6 @@ class ChannelCard(ctk.CTkFrame):
             padx=(10, 15),
             pady=5
         )
-
-        row += 1
-
-        # =================================================
-        # DUT SELECTION
-        # =================================================
-
-        ctk.CTkLabel(
-            self,
-            text="Select DUT",
-             font=("Bookman Antiqua", 15, "bold"),
-            text_color="#374151"
-        ).grid(
-            row=row,
-            column=0,
-            sticky="nw",
-            padx=15,
-            pady=5
-        )
-
-        dut_frame = ctk.CTkFrame(
-            self,
-            fg_color="transparent"
-        )
-        
-
-        dut_frame.grid(
-            row=row,
-            column=1,
-            columnspan=2,
-            sticky="w",
-            padx=(10, 15)
-        )
-
-        self.dut_vars = {}
-
-        for dut in duts:
-
-            var = ctk.BooleanVar(value=False)
-
-            self.dut_vars[dut] = var
-
-            ctk.CTkCheckBox(
-                dut_frame,
-                text=dut,
-                variable=var,
-                command=self.on_checkbox_changed,
-                cursor="hand2"
-            ).pack(
-                side="left",
-                padx=10
-            )
 
         row += 1
 
@@ -176,7 +128,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Test Type",
-             font=("Bookman Antiqua", 15, "bold"),
+            font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -199,7 +151,9 @@ class ChannelCard(ctk.CTkFrame):
             padx=(10, 15)
         )
 
-        self.selected_test = ctk.StringVar(value="")
+        self.selected_test = ctk.StringVar(
+            value=""
+        )
 
         tests = [
             "Endurance",
@@ -214,11 +168,83 @@ class ChannelCard(ctk.CTkFrame):
                 text=test,
                 variable=self.selected_test,
                 value=test,
-                cursor="hand2"
+                cursor="hand2",
+                command=self.on_test_type_changed
             ).pack(
                 anchor="w",
                 pady=2
             )
+
+        row += 1
+
+        # =================================================
+        # SEPARATOR
+        # =================================================
+
+        self.create_separator(row)
+
+        row += 1
+
+        # =================================================
+        # DUT SELECTION
+        # =================================================
+
+        ctk.CTkLabel(
+            self,
+            text="Select DUT",
+            font=("Bookman Antiqua", 15, "bold"),
+            text_color="#374151"
+        ).grid(
+            row=row,
+            column=0,
+            sticky="nw",
+            padx=15,
+            pady=5
+        )
+
+        dut_frame = ctk.CTkFrame(
+            self,
+            fg_color="transparent"
+        )
+
+        dut_frame.grid(
+            row=row,
+            column=1,
+            columnspan=2,
+            sticky="w",
+            padx=(10, 15)
+        )
+
+        self.dut_vars = {}
+        self.dut_checkboxes = {}
+
+        for dut in duts:
+
+            var = ctk.BooleanVar(
+                value=False
+            )
+
+            self.dut_vars[dut] = var
+
+            checkbox = ctk.CTkCheckBox(
+                dut_frame,
+                text=dut,
+                variable=var,
+                command=self.on_checkbox_changed,
+                cursor="hand2",
+                font=ctk.CTkFont(
+                    family="Arial",
+                    size=13,
+                    weight="normal"
+                )
+            )
+
+            checkbox.pack(
+                side="left",
+                padx=10
+            )
+
+            self.dut_checkboxes[dut] = checkbox
 
         row += 1
 
@@ -237,7 +263,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Test Name",
-             font=("Bookman Antiqua", 15, "bold"),
+            font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -269,8 +295,8 @@ class ChannelCard(ctk.CTkFrame):
 
         ctk.CTkLabel(
             self,
-             font=("Bookman Antiqua", 15, "bold"),
             text="Serial Numbers",
+            font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -338,8 +364,8 @@ class ChannelCard(ctk.CTkFrame):
 
         ctk.CTkLabel(
             self,
-             font=("Bookman Antiqua", 15, "bold"),
             text="Cycles",
+            font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -372,7 +398,7 @@ class ChannelCard(ctk.CTkFrame):
         ctk.CTkLabel(
             self,
             text="Interval (sec)",
-             font=("Bookman Antiqua", 15, "bold"),
+            font=("Bookman Antiqua", 15, "bold"),
             text_color="#374151"
         ).grid(
             row=row,
@@ -425,9 +451,15 @@ class ChannelCard(ctk.CTkFrame):
         # GRID CONFIGURATION
         # =================================================
 
-        self.columnconfigure(1, weight=1)
-        self.columnconfigure(2, weight=1)
+        self.columnconfigure(
+            1,
+            weight=1
+        )
 
+        self.columnconfigure(
+            2,
+            weight=1
+        )
     # =====================================================
     # SEPARATOR
     # =====================================================
@@ -450,10 +482,12 @@ class ChannelCard(ctk.CTkFrame):
         )
 
     # =====================================================
-    # DUT CHECKBOX CALLBACK
-    # =====================================================
-
+        # DUT CHECKBOX CALLBACK
+        # =====================================================
+    
     def on_checkbox_changed(self):
+    
+        test_type = self.selected_test.get()
 
         selected = [
             dut
@@ -461,8 +495,38 @@ class ChannelCard(ctk.CTkFrame):
             if var.get()
         ]
 
+        # =================================================
+        # LINE / LOAD REGULATION
+        # ONLY ONE DUT
+        # =================================================
 
-        print("ChannelCard:", selected)
+        if test_type in [
+            "Line Regulation",
+            "Load Regulation"
+        ]:
+
+            if len(selected) > 1:
+
+                # Keep the most recently selected DUT
+                selected_dut = selected[-1]
+
+                for dut, var in self.dut_vars.items():
+
+                    var.set(
+                        dut == selected_dut
+                    )
+
+                selected = [selected_dut]
+
+        # =================================================
+        # ENDURANCE
+        # MULTIPLE DUTs ALLOWED
+        # =================================================
+
+        print(
+            "Selected DUTs:",
+            selected
+        )
 
         if self.dut_callback:
 
@@ -918,4 +982,94 @@ class ChannelCard(ctk.CTkFrame):
             self.start_callback(
                 self,
                 self.get_settings()
+            )
+            
+    
+    # =====================================================
+    # TEST TYPE CALLBACK
+    # =====================================================
+
+    def on_test_type_changed(self):
+
+        test_type = self.selected_test.get()
+
+        print(
+            "Selected Test Type:",
+            test_type
+        )
+
+        # =================================================
+        # CYCLES / INTERVAL
+        # =================================================
+
+        if test_type == "Endurance":
+
+            self.cycles_entry.configure(
+                state="normal"
+            )
+
+            self.time_entry.configure(
+                state="normal"
+            )
+
+        else:
+
+            self.cycles_entry.configure(
+                state="disabled"
+            )
+
+            self.time_entry.configure(
+                state="disabled"
+            )
+
+        # =================================================
+        # DUT SELECTION
+        # =================================================
+
+        selected = [
+            dut
+            for dut, var in self.dut_vars.items()
+            if var.get()
+        ]
+
+        # =================================================
+        # LINE / LOAD REGULATION
+        # ONLY ONE DUT
+        # =================================================
+
+        if test_type in [
+            "Line Regulation",
+            "Load Regulation"
+        ]:
+
+            if len(selected) > 1:
+
+                # Keep the most recently selected DUT
+                selected_dut = selected[-1]
+
+                for dut, var in self.dut_vars.items():
+
+                    var.set(
+                        dut == selected_dut
+                    )
+
+                selected = [
+                    selected_dut
+                ]
+
+        # =================================================
+        # CALLBACK
+        # =================================================
+
+        print(
+            "Selected DUTs:",
+            selected
+        )
+
+        if self.dut_callback:
+
+            self.dut_callback(
+                self.channel_id,
+                self.channel_name,
+                selected
             )

@@ -93,14 +93,43 @@ class   InstrumentConfig(tk.Frame):
 
         self.table.edit_callback = self.controller.edit_instrument
         self.table.delete_callback = self.controller.delete_instrument
+        
+        self.connect_btn = ctk.CTkButton(
+        self.card,
+        text="Connect",
+        font=ctk.CTkFont(
+            family="Segoe UI",
+            size=16,
+            weight="bold"
+        ),
+        fg_color="#2563EB",
+        hover_color="#1D4ED8",
+        text_color="white",
+        corner_radius=8,
+        width=150,
+        height=38,
+         command=self.controller.connect_all,
+    )
+
+        self.connect_btn.pack(
+            pady=(5, 20)
+        )
 
     
     def display_instruments(self, instruments):
 
         self.table.clear()
 
+        all_disconnected = True
+
         for index, ins in enumerate(instruments, start=1):
-            status = "Connected" if ins.status == 1 else "Disconnected"
+
+            if ins.status == 1:
+                status = "Connected"
+                all_disconnected = False
+            else:
+                status = "Disconnected"
+
             self.table.insert(
                 [
                     index,
@@ -112,4 +141,9 @@ class   InstrumentConfig(tk.Frame):
                 ],
                 key=(ins.instrument_id, ins.channel_id)
             )
-    
+
+        # Enable Connect only when ALL instruments are disconnected
+        if all_disconnected and instruments:
+            self.connect_btn.configure(state="normal")
+        else:
+            self.connect_btn.configure(state="disabled")

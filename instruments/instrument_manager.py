@@ -151,6 +151,8 @@ class InstrumentManager:
     #             )
 
     def connect_all(self):
+        
+        
 
         configs = self.context.instrument_repository.get_all()
 
